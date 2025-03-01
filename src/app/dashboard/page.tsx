@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/app/Navbar";
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  //LineChart, Line, CartesianGrid, Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  //LineChart, Line, , Legend
 } from "recharts";
 import axios from "axios";
 import { motion } from "framer-motion";
