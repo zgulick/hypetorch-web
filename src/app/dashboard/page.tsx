@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/app/Navbar";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps
   //LineChart, Line, , Legend
 } from "recharts";
 import axios from "axios";
@@ -13,14 +13,30 @@ import {
   Users, Activity, BarChart2
 } from "lucide-react";
 // import Image from "next/image";
+import { TooltipProps } from 'recharts';
+import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+
+interface EntityData {
+    name: string;
+    hypeScore: number;
+    mentions: number;
+    sentiment: number;
+    talkTime: number;
+    changePercent: number;
+  }
 
 export default function Dashboard() {
-  const [data, setData] = useState({
-    hype: [],
-    mentions: [],
-    sentiment: [],
-    talkTime: [],
-  });
+    const [data, setData] = useState<{
+        hype: EntityData[];
+        mentions: EntityData[];
+        sentiment: EntityData[];
+        talkTime: EntityData[];
+      }>({
+        hype: [],
+        mentions: [],
+        sentiment: [],
+        talkTime: [],
+      });
 
   const [error, setError] = useState(null);
   const [highestHype, setHighestHype] = useState(0);
@@ -42,25 +58,36 @@ export default function Dashboard() {
     );
   };
 
-  // Custom tooltip for charts
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-xl">
-          <p className="font-medium text-white">{label}</p>
-          {payload.map((entry, index) => (
-            <p key={index} className="text-sm">
-              <span className="font-medium" style={{ color: entry.color }}>
-                {entry.name}:
-              </span>{" "}
-              <span className="text-gray-300">{entry.value.toFixed(2)}</span>
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
+// Custom tooltip for charts
+const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({ 
+  active, 
+  payload, 
+  label 
+}) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-xl">
+        <p className="font-medium text-white">{label}</p>
+        {payload.map((entry, index) => (
+          <p key={index} className="text-sm">
+            <span 
+              className="font-medium" 
+              style={{ color: entry.color }}
+            >
+              {entry.name}:
+            </span>{" "}
+            <span className="text-gray-300">
+              {typeof entry.value === 'number' 
+                ? entry.value.toFixed(2) 
+                : String(entry.value)}
+            </span>
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
   useEffect(() => {
     async function fetchData() {
