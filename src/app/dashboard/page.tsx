@@ -38,7 +38,7 @@ export default function Dashboard() {
         talkTime: [],
       });
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [highestHype, setHighestHype] = useState(0);
   const [topMentions, setTopMentions] = useState(0);
   const [bestSentiment, setBestSentiment] = useState(0);
@@ -136,8 +136,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
             
             // Calculate average sentiment if sentiment data exists
             if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-              sentimentScores[entity] = metricsResponse.data.sentiment.reduce((a, b) => a + b, 0) / 
-                                         metricsResponse.data.sentiment.length;
+                newSentimentScores[entity] = metricsResponse.data.sentiment.reduce((a: number, b: number) => a + b, 0) / metricsResponse.data.sentiment.length;                                         metricsResponse.data.sentiment.length;
             } else {
               sentimentScores[entity] = 0;
             }
@@ -166,7 +165,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
         console.log("Collected sentiment scores:", sentimentScores);
 
         // Format entity names consistently
-        const formatName = (name) =>
+        const formatName = (name: string) =>
           name.toUpperCase() === "WNBA" || name.toUpperCase() === "NBA"
             ? name.toUpperCase()
             : name
@@ -185,9 +184,6 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
             sentiment: newSentimentScores[name] || 0,
             talkTime: newTalkTime[name] || 0,
             // HIGHLIGHT END
-            mentions: mentions[name] || 0,
-            sentiment: sentimentScores[name] || 0,
-            talkTime: talkTime[name] || 0,
             // Add some variation with random change percentages for UI (can be removed when you have real data)
             changePercent: Math.random() > 0.3 ? Math.random() * 15 : -Math.random() * 10
           }))
@@ -226,7 +222,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError(error?.message || "An error occurred while fetching data");
+        setError((error as { message?: string })?.message || "An error occurred while fetching data");
         setIsLoading(false);
       }
     }
@@ -506,8 +502,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
                       dataKey="sentiment" 
                       name="Sentiment Score"
                       radius={[4, 4, 0, 0]}
-                      fill={(entry) => (entry.sentiment >= 0 ? "#f59e0b" : "#ef4444")}
-                    />
+                      fill="url(#hypeGradient)"                  />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
