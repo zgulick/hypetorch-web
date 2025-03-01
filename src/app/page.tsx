@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import { ArrowRight, BarChart2, TrendingUp, LineChart, Zap } from "lucide-react";
@@ -199,7 +199,7 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="text-gray-400 mb-10 text-lg"
           >
-            Whether you're managing talent, building brands, or tracking competitors, 
+            Whether you&apos;re managing talent, building brands, or tracking competitors, 
             HypeTorch provides the analytics foundation for strategic decision-making.
           </motion.p>
           <motion.a

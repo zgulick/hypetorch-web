@@ -63,7 +63,7 @@ export default function About() {
             >
               <h2 className="text-3xl font-bold mb-6 text-white">Our Mission</h2>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                We're on a mission to transform how organizations understand and measure influence in the digital age. 
+                We&apos;re on a mission to transform how organizations understand and measure influence in the digital age. 
                 While followers and views provide basic metrics, HypeTorch delivers deeper analytics that reveals the true 
                 impact of personalities, brands, and campaigns.
               </p>

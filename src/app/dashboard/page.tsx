@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/app/Navbar";
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  LineChart, Line, CartesianGrid, Legend
+  //LineChart, Line, CartesianGrid, Legend
 } from "recharts";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -12,7 +12,7 @@ import {
   ArrowUpRight, ArrowDownRight, TrendingUp, 
   Users, Activity, BarChart2
 } from "lucide-react";
-import Image from "next/image";
+// import Image from "next/image";
 
 export default function Dashboard() {
   const [data, setData] = useState({
