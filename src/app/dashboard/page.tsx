@@ -89,6 +89,11 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
   return null;
 };
 
+// Add these state declarations at the top of your component, before useEffect
+const [mentions, setMentions] = useState<{ [key: string]: number }>({});
+const [talkTime, setTalkTime] = useState<{ [key: string]: number }>({});
+const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }>({});
+
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -99,10 +104,10 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
         console.log("Raw HYPE scores:", hypeScores);
 
         // Prepare to collect metrics for each entity
-        const mentions = {};
-        const sentimentScores = {};
-        const talkTime = {};
-
+        const newMentions: { [key: string]: number } = {};
+        const newSentimentScores: { [key: string]: number } = {};
+        const newTalkTime: { [key: string]: number } = {};
+        
         // Create a list of promises to fetch data for each entity
         const promises = Object.keys(hypeScores).map(async (entity) => {
           try {
@@ -110,6 +115,22 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
               `https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entity)}/metrics`
             );
             
+            // [NEW] Use type-safe object assignment
+          // HIGHLIGHT START
+          newMentions[entity] = metricsResponse.data.mentions || 0;
+          newTalkTime[entity] = metricsResponse.data.talk_time || 0;
+          
+          // Calculate average sentiment if sentiment data exists
+          if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
+            newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
+              // [NEW] Add type assertion to resolve reduce method typing
+              (a: number, b: number) => a + b, 0
+            ) / metricsResponse.data.sentiment.length;
+          } else {
+            newSentimentScores[entity] = 0;
+          }
+          // HIGHLIGHT END
+
             mentions[entity] = metricsResponse.data.mentions || 0;
             talkTime[entity] = metricsResponse.data.talk_time || 0;
             
@@ -122,11 +143,23 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
             }
           } catch (err) {
             console.warn(`Could not fetch metrics for ${entity}:`, err);
+            // HIGHLIGHT START
+            newMentions[entity] = 0;
+            newTalkTime[entity] = 0;
+            newSentimentScores[entity] = 0;
+            // HIGHLIGHT END
           }
         });
 
         // Wait for all API calls to complete
         await Promise.all(promises);
+
+        // [NEW] Update state with the new objects
+        // HIGHLIGHT START
+        setMentions(newMentions);
+        setTalkTime(newTalkTime);
+        setSentimentScores(newSentimentScores);
+        // HIGHLIGHT END
 
         console.log("Collected mentions:", mentions);
         console.log("Collected talk time:", talkTime);
@@ -146,6 +179,12 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
           .map((name) => ({
             name: formatName(name),
             hypeScore: hypeScores[name] || 0,
+            // [NEW] Use new objects for metrics
+            // HIGHLIGHT START
+            mentions: newMentions[name] || 0,
+            sentiment: newSentimentScores[name] || 0,
+            talkTime: newTalkTime[name] || 0,
+            // HIGHLIGHT END
             mentions: mentions[name] || 0,
             sentiment: sentimentScores[name] || 0,
             talkTime: talkTime[name] || 0,
