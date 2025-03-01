@@ -29,8 +29,8 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   
   // Trend indicator component
-  const TrendIndicator = ({ value }) => {
-    const numValue = parseFloat(value);
+  const TrendIndicator = ({ value }: { value: number | string }) => {
+    const numValue = parseFloat(value.toString());
     const isPositive = numValue >= 0;
     return (
       <div className={`flex items-center rounded-full ${
