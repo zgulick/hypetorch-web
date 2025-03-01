@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/app/Navbar";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   //LineChart, Line, , Legend
 } from "recharts";
 import axios from "axios";
