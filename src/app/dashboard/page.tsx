@@ -94,6 +94,7 @@ const [mentions, setMentions] = useState<{ [key: string]: number }>({});
 const [talkTime, setTalkTime] = useState<{ [key: string]: number }>({});
 const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }>({});
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -136,7 +137,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
             
             // Calculate average sentiment if sentiment data exists
             if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-                newSentimentScores[entity] = metricsResponse.data.sentiment.reduce((a: number, b: number) => a + b, 0) / metricsResponse.data.sentiment.length;                                         metricsResponse.data.sentiment.length;
+                newSentimentScores[entity] = metricsResponse.data.sentiment.reduce((a: number, b: number) => a + b, 0) / metricsResponse.data.sentiment.length;
             } else {
               sentimentScores[entity] = 0;
             }
