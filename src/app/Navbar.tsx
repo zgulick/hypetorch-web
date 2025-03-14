@@ -17,14 +17,14 @@ export default function Navbar() {
       setScrolled(window.scrollY > 20);
     };
     
-    const handleClickOutside = (event: MouseEvent | any) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent | Event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setSportsDropdownOpen(false);
       }
     };
     
     window.addEventListener("scroll", handleScroll);
-    document.addEventListener("mousedown", handleClickOutside as EventListener);
+    document.addEventListener("mousedown", handleClickOutside);
     
     return () => {
       window.removeEventListener("scroll", handleScroll);
