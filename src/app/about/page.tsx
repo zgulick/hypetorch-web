@@ -55,23 +55,25 @@ export default function About() {
       <section className="py-16 px-6 bg-gray-900/50">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl font-bold mb-6 text-white">Our Mission</h2>
-              <p className="text-gray-300 mb-6 leading-relaxed">
-                We&apos;re on a mission to transform how organizations understand and measure influence in the digital age. 
-                While followers and views provide basic metrics, HypeTorch delivers deeper analytics that reveals the true 
-                impact of personalities, brands, and campaigns.
-              </p>
-              <p className="text-gray-300 leading-relaxed">
-                Our proprietary HYPE Score™ algorithm combines multi-platform data sources with advanced machine 
-                learning to deliver actionable insights for talent managers, brand strategists, and media executives.
-              </p>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-3xl font-bold mb-6 text-white">Our Mission</h2>
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              HypeTorch partners with industry leaders to deliver proprietary analytics solutions that 
+              quantify influence and engagement. Through strategic data partnerships, we transform rich media 
+              content into actionable intelligence for organizations across sports, entertainment, and digital media.
+            </p>
+            <p className="text-gray-300 leading-relaxed">
+              While traditional metrics like followers and views offer basic insights, HypeTorch's JORDN™ and RODMN™ 
+              scores provide deeper analytics that reveal the true impact of personalities, brands, and campaigns. 
+              Our proprietary algorithms convert complex data into clear, actionable metrics that provide competitive 
+              advantages for talent management, brand partnerships, and content strategy.
+            </p>
+          </motion.div>
             
             <motion.div
               initial={{ opacity: 0, x: 20 }}

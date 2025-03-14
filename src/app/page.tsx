@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import { ArrowRight, BarChart2, TrendingUp, LineChart, Zap } from "lucide-react";
 import Image from "next/image";
+import RotatingText from '@/components/rotatingtext';
 
 export default function Home() {
   return (
@@ -22,20 +23,6 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-6"
-          >
-            <Image 
-              src="/logo.png" 
-              alt="HypeTorch Logo" 
-              width={120} 
-              height={120} 
-              className="mx-auto mb-6"
-            />
-          </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -43,7 +30,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500 leading-tight mb-6"
           >
-            Quantify Influence in Real-Time
+            Advanced Analytics for<br/><RotatingText />
           </motion.h1>
 
           <motion.p
@@ -52,8 +39,8 @@ export default function Home() {
             transition={{ delay: 0.5, duration: 1 }}
             className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10"
           >
-            HypeTorch delivers enterprise-grade analytics that track social influence, 
-            media impact, and audience engagement across digital platforms.
+            Our proprietary JORDN™ and RODMN™ scoring systems provide actionable insights on
+            audience engagement, media presence, and influence potential.
           </motion.p>
 
           <motion.div
@@ -140,9 +127,9 @@ export default function Home() {
               <div className="bg-orange-600/20 p-3 rounded-lg w-fit mb-5">
                 <LineChart className="w-6 h-6 text-orange-500" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Predictive Analysis</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">JORDN™ Score System</h3>
               <p className="text-gray-400">
-                Track emerging trends and predict influence trajectories before they become mainstream using our advanced ML algorithms.
+                Our flagship metric combines multiple influence factors into a single, comparable score.
               </p>
             </motion.div>
 
@@ -156,9 +143,9 @@ export default function Home() {
               <div className="bg-red-600/20 p-3 rounded-lg w-fit mb-5">
                 <TrendingUp className="w-6 h-6 text-red-500" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Multi-Platform Monitoring</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">Multi-Source Analysis</h3>
               <p className="text-gray-400">
-                Comprehensive data collection across social media, news, podcasts, and search trends for a complete picture of influence.
+                Comprehensive data collection across media platforms for a complete influence profile.
               </p>
             </motion.div>
 
@@ -172,9 +159,9 @@ export default function Home() {
               <div className="bg-amber-600/20 p-3 rounded-lg w-fit mb-5">
                 <Zap className="w-6 h-6 text-amber-500" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">HYPE Score™ Algorithm</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">Contextual Intelligence</h3>
               <p className="text-gray-400">
-                Our proprietary HYPE Score™ quantifies influence through weighted metrics, normalized across platforms for accurate comparisons.
+                Advanced algorithms that understand how and where entities are being discussed.
               </p>
             </motion.div>
           </div>
@@ -190,7 +177,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold mb-6"
           >
-            Ready to harness the power of <span className="text-orange-400">data-driven influence?</span>
+            <span className="text-orange-400">Discover how HypeTorch metrics can enhance your business intelligence</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -209,10 +196,10 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            href="mailto:hypetorch@gmail.com?subject=Enterprise%20Inquiry"
+            href="mailto:hypetorch@gmail.com?subject=Partnership%20Inquiry"
             className="inline-block px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg shadow-lg shadow-orange-900/30"
           >
-            Schedule a Demo
+            Explore Partnership Options
           </motion.a>
         </div>
       </section>
