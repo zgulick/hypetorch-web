@@ -68,7 +68,7 @@ export default function About() {
               content into actionable intelligence for organizations across sports, entertainment, and digital media.
             </p>
             <p className="text-gray-300 leading-relaxed">
-              While traditional metrics like followers and views offer basic insights, HypeTorch's JORDN™ and RODMN™ 
+              While traditional metrics like followers and views offer basic insights, HypeTorch&apos;s JORDN™ and RODMN™ 
               scores provide deeper analytics that reveal the true impact of personalities, brands, and campaigns. 
               Our proprietary algorithms convert complex data into clear, actionable metrics that provide competitive 
               advantages for talent management, brand partnerships, and content strategy.
