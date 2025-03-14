@@ -1,21 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, MouseEvent } from "react";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sportsDropdownOpen, setSportsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+    
+    const handleClickOutside = (event: MouseEvent | any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setSportsDropdownOpen(false);
+      }
+    };
+    
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside as EventListener);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside as EventListener);
+    };
   }, []);
 
   return (
@@ -50,12 +64,39 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link
-              href="/dashboard"
-              className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
-            >
-              Dashboard
-            </Link>
+            
+            {/* Sports Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setSportsDropdownOpen(!sportsDropdownOpen)}
+                className="text-gray-300 hover:text-orange-400 transition-colors font-medium flex items-center gap-1"
+              >
+                Sports <ChevronDown size={16} className={`transition-transform duration-200 ${sportsDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <AnimatePresence>
+                {sportsDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-lg shadow-xl overflow-hidden z-50"
+                  >
+                    <Link 
+                      href="/dashboard" 
+                      className="block px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-orange-400 transition-colors"
+                      onClick={() => setSportsDropdownOpen(false)}
+                    >
+                      Unrivaled
+                    </Link>
+                    {/* Add more sports categories here as needed */}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
             <Link
               href="/about"
               className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
@@ -98,13 +139,33 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link
-                href="/dashboard"
-                className="text-white hover:text-orange-400 transition-colors w-full text-center py-3"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
+              
+              {/* Mobile Sports Dropdown */}
+              <div className="w-full">
+                <button
+                  onClick={() => setSportsDropdownOpen(!sportsDropdownOpen)}
+                  className="text-white hover:text-orange-400 transition-colors w-full text-center py-3 flex items-center justify-center gap-1"
+                >
+                  Sports <ChevronDown size={16} className={`transition-transform duration-200 ${sportsDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {sportsDropdownOpen && (
+                  <div className="w-full bg-gray-800/30 rounded-lg mt-2">
+                    <Link
+                      href="/dashboard"
+                      className="text-gray-200 hover:text-orange-400 transition-colors w-full text-center py-3 block"
+                      onClick={() => {
+                        setSportsDropdownOpen(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Unrivaled
+                    </Link>
+                    {/* Add more sports categories here as needed */}
+                  </div>
+                )}
+              </div>
+              
               <Link
                 href="/about"
                 className="text-white hover:text-orange-400 transition-colors w-full text-center py-3"
