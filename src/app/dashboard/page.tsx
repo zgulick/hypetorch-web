@@ -18,7 +18,7 @@ import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipCont
 import ErrorBoundary from "@/components/errorboundary";
 // import { useLoadingState } from "@/hooks/useLoadingState";
 import { DashboardSkeleton } from "@/components/skeletonloader";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 //import TrendIndicator from "@/components/trendindicator";
 // Add this hook call near the top of your component function
 interface EntityData {
