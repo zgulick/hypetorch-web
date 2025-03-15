@@ -26,7 +26,7 @@ export default function CookieBanner() {
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-sm">
             This website uses necessary cookies to ensure you get the best experience. 
-            We don't use cookies for tracking or marketing purposes.{" "}
+            We don&apos;t use cookies for tracking or marketing purposes.{" "}
             <a href="/privacy-policy" className="text-orange-400 hover:underline">
                 Learn more
             </a>

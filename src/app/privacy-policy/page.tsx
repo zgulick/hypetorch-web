@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-2">Introduction</h2>
             <p>
-              HypeTorch ("we", "our", or "us") respects your privacy and is committed to protecting your personal data. 
+              HypeTorch (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) respects your privacy and is committed to protecting your personal data. 
               This privacy policy will inform you about how we look after your personal data when you visit our website 
               and tell you about your privacy rights and how the law protects you.
             </p>
@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
             <h2 className="text-xl font-semibold text-white mb-2">Updates to This Policy</h2>
             <p>
               We may update this privacy policy from time to time. The updated version will be indicated by an updated 
-              "Last updated" date and the updated version will be effective as soon as it is accessible.
+              &quot;Last updated&quot; date and the updated version will be effective as soon as it is accessible.
             </p>
             <p className="mt-4 text-sm text-gray-400">
               Last updated: March 15, 2025
