@@ -96,7 +96,14 @@ export default function Navbar() {
                 )}
               </AnimatePresence>
             </div>
-            
+
+            <Link
+              href="/compare"
+              className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
+            >
+              Compare
+            </Link>
+
             <Link
               href="/about"
               className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
@@ -166,6 +173,14 @@ export default function Navbar() {
                 )}
               </div>
               
+              <Link
+                href="/compare"
+                className="text-white hover:text-orange-400 transition-colors w-full text-center py-3"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Compare
+              </Link>
+
               <Link
                 href="/about"
                 className="text-white hover:text-orange-400 transition-colors w-full text-center py-3"
