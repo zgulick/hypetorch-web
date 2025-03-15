@@ -65,23 +65,23 @@ interface EntityData {
     );
   };
 
-  const handleCompare = (entityName: string) => {
-    if (compareQueue.includes(entityName)) {
-      // Remove from queue if already selected
-      setCompareQueue(compareQueue.filter(name => name !== entityName));
-    } else if (compareQueue.length < 2) {
-      // Add to queue if less than 2 entities selected
-      const newQueue = [...compareQueue, entityName];
-      setCompareQueue(newQueue);
+  //const handleCompare = (entityName: string) => {
+    //if (compareQueue.includes(entityName)) {
+      //// Remove from queue if already selected
+      //setCompareQueue(compareQueue.filter(name => name !== entityName));
+    //} else if (compareQueue.length < 2) {
+      //// Add to queue if less than 2 entities selected
+      //const newQueue = [...compareQueue, entityName];
+      //setCompareQueue(newQueue);
       
-      // If we have 2 entities, navigate to compare page
-      if (newQueue.length === 2) {
-        router.push(`/compare?entity1=${encodeURIComponent(newQueue[0])}&entity2=${encodeURIComponent(newQueue[1])}`);
-        // Clear queue after navigation
-        setTimeout(() => setCompareQueue([]), 100);
-      }
-    }
-  };
+      //// If we have 2 entities, navigate to compare page
+      //if (newQueue.length === 2) {
+        //router.push(`/compare?entity1=${encodeURIComponent(newQueue[0])}&entity2=${encodeURIComponent(newQueue[1])}`);
+        //// Clear queue after navigation
+        //setTimeout(() => setCompareQueue([]), 100);
+      //}
+    //}
+  //};
   
 // Custom tooltip for charts
 const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({ 
