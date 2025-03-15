@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { logoutAdmin } from '../../lib/auth';
+import { logoutAdmin } from '@/app/lib/auth';
 import { useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 

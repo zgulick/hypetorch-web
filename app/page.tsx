@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import { ArrowRight, BarChart2, TrendingUp, LineChart, Zap } from "lucide-react";
 import Image from "next/image";
-import RotatingText from './components/rotatingtext';
+import RotatingText from '@/components/rotatingtext';
 
 export default function Home() {
   return (
