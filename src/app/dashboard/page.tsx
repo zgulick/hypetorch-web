@@ -15,7 +15,11 @@ import {
 // import Image from "next/image";
 import { TooltipProps } from 'recharts';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-
+import ErrorBoundary from "@/components/errorboundary";
+import { useLoadingState } from "@/hooks/useLoadingState";
+import { DashboardSkeleton } from "@/components/skeletonloader";
+import TrendIndicator from "@/components/trendindicator";
+// Add this hook call near the top of your component function
 interface EntityData {
     name: string;
     hypeScore: number;
@@ -25,18 +29,18 @@ interface EntityData {
     changePercent: number;
   }
 
-export default function Dashboard() {
+  export default function Dashboard() {
     const [data, setData] = useState<{
-        hype: EntityData[];
-        mentions: EntityData[];
-        sentiment: EntityData[];
-        talkTime: EntityData[];
-      }>({
-        hype: [],
-        mentions: [],
-        sentiment: [],
-        talkTime: [],
-      });
+      hype: EntityData[];
+      mentions: EntityData[];
+      sentiment: EntityData[];
+      talkTime: EntityData[];
+    }>({
+      hype: [],
+      mentions: [],
+      sentiment: [],
+      talkTime: [],
+    });
 
   const [error, setError] = useState<string | null>(null);
   const [highestHype, setHighestHype] = useState(0);
@@ -93,12 +97,19 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
 const [mentions, setMentions] = useState<{ [key: string]: number }>({});
 const [talkTime, setTalkTime] = useState<{ [key: string]: number }>({});
 const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }>({});
+const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      try {
+        // Add this after setIsLoading(true);
+        try {
+          // Get last updated timestamp
+          const timestampResponse = await axios.get("https://hypetorch-api.onrender.com/api/last_updated");
+          if (timestampResponse.data.last_updated) {
+            setLastUpdated(new Date(timestampResponse.data.last_updated * 1000));
+          }
         // Fetch Hype Scores
         const hypeResponse = await axios.get("https://hypetorch-api.onrender.com/api/hype_scores");
         const hypeScores = hypeResponse.data;
@@ -243,22 +254,35 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
               HYPE Analytics Dashboard
             </h1>
             <p className="text-gray-400 mt-1">Real-time influence tracking across platforms</p>
+            {lastUpdated && (
+              <p className="text-xs text-gray-500 mt-1">
+                Last updated: {lastUpdated.toLocaleString()}
+              </p>
+            )}
           </div>
           <div className="flex mt-4 md:mt-0 space-x-2">
             <button className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 border border-gray-700">
               <TrendingUp size={16} /> Weekly Report
             </button>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 border border-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+                <path d="M16 21h5v-5"></path>
+              </svg> 
+              Refresh Data
+            </button>
           </div>
         </div>
         
+        <ErrorBoundary>
         {isLoading ? (
           // Loading state
-          <div className="flex justify-center items-center h-64">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full border-t-4 border-r-4 border-orange-500 animate-spin"></div>
-              <div className="w-16 h-16 rounded-full border-b-4 border-l-4 border-red-500 animate-spin absolute top-0 animate-ping"></div>
-            </div>
-          </div>
+          <DashboardSkeleton />
         ) : error ? (
           // Error state
           <div className="bg-red-900/20 border border-red-900 text-red-200 p-6 rounded-lg my-8">
@@ -510,6 +534,7 @@ const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }
             </motion.div>
           </>
         )}
+      </ErrorBoundary>
       </div>
 
       {/* Footer */}
