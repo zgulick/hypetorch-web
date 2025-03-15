@@ -7,7 +7,7 @@ import ComparisonCard from "@/components/comparisoncard";
 import ComparisonChart from "@/components/comparisonchart";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { BarChart2, TrendingUp, MessageSquare, Activity, Globe } from "lucide-react";
+import { BarChart2, Activity, Globe } from "lucide-react";
 
 interface EntityData {
   name: string;
