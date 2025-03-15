@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Save, X, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function EntitiesPage() {
-  const [entities, setEntities] = useState<any[]>([]);
+  interface Entity {
+    id: string;
+    name: string;
+    category: string;
+    subcategory: string;
+    type: string;
+  }
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingEntity, setEditingEntity] = useState<null | string>(null);
   const [formData, setFormData] = useState({
