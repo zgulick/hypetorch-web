@@ -136,7 +136,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-gray-950/98 z-40 pt-24 px-6 md:hidden"
+            className="fixed inset-0 bg-gray-950 z-40 pt-24 px-6 md:hidden"
           >
             <div className="flex flex-col items-center gap-8 text-lg">
               <Link
