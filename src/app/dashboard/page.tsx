@@ -48,8 +48,8 @@ interface EntityData {
   const [topMentions, setTopMentions] = useState(0);
   const [bestSentiment, setBestSentiment] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [compareQueue, setCompareQueue] = useState<string[]>([]);
-  const router = useRouter();
+  //const [compareQueue, setCompareQueue] = useState<string[]>([]);
+  //const router = useRouter();
   
   // Trend indicator component
   const TrendIndicator = ({ value }: { value: number | string }) => {
