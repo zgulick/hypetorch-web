@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, MouseEvent } from "react";
 import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAuthenticated } from './lib/auth';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -110,6 +111,15 @@ export default function Navbar() {
             >
               About
             </Link>
+            {/* Only show Admin link if authenticated */}
+            {isAuthenticated() && (
+              <Link
+                href="/admin"
+                className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
+              >
+                Admin
+              </Link>
+            )}
             <Link
               href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Inquiry"
               className="px-5 py-2 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-medium hover:shadow-lg hover:shadow-orange-900/20 transition-shadow"

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // app/layout.tsx (or where your root layout is)
-import CookieBanner from '@/components/cookiebanner';
+import CookieBanner from './components/cookiebanner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

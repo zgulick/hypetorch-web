@@ -15,9 +15,9 @@ import {
 // import Image from "next/image";
 import { TooltipProps } from 'recharts';
 import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-import ErrorBoundary from "@/components/errorboundary";
+import ErrorBoundary from "../components/errorboundary";
 // import { useLoadingState } from "@/hooks/useLoadingState";
-import { DashboardSkeleton } from "@/components/skeletonloader";
+import { DashboardSkeleton } from "../components/skeletonloader";
 //import { useRouter } from "next/navigation";
 //import TrendIndicator from "@/components/trendindicator";
 // Add this hook call near the top of your component function
