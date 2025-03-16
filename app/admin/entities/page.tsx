@@ -33,7 +33,6 @@ export default function EntitiesPage() {
   );
 
   useEffect(() => {
-    // Fetch entities from your API
     const fetchEntities = async () => {
       setLoading(true);
       try {
@@ -54,8 +53,8 @@ export default function EntitiesPage() {
           return {
             id: name, // Using name as ID
             name: details.name || name,
-            category: 'Sports', // Default for now
-            subcategory: 'Unrivaled', // Default for now
+            category: details.category || 'Sports',
+            subcategory: details.subcategory || 'Unrivaled',
             type: details.type || 'person'
           };
         });
@@ -66,13 +65,6 @@ export default function EntitiesPage() {
       } catch (err) {
         console.error("Error fetching entities:", err);
         setError("Failed to load entities. Please try again later.");
-        
-        // Fallback mock data
-        setEntities([
-          { id: "Caitlin Clark", name: "Caitlin Clark", category: "Sports", subcategory: "Unrivaled", type: "person" },
-          { id: "Angel Reese", name: "Angel Reese", category: "Sports", subcategory: "Unrivaled", type: "person" },
-          { id: "WNBA", name: "WNBA", category: "Sports", subcategory: "Unrivaled", type: "non-person" }
-        ]);
       } finally {
         setLoading(false);
       }
@@ -80,7 +72,7 @@ export default function EntitiesPage() {
 
     fetchEntities();
   }, []);
-
+  
   const handleEdit = (id: string) => {
     const entityToEdit = entities.find(e => e.id === id);
     if (entityToEdit) {
