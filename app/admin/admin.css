@@ -1,0 +1,27 @@
+/* admin.css - Place this file in the app/admin directory */
+
+/* Set default text colors for admin pages */
+h1, h2, h3, h4, h5, h6, p, span, div, label, button {
+    color: white;
+  }
+  
+  /* Style cards and containers */
+  .bg-gray-800, .bg-gray-900, 
+  [class*="bg-gray-800"], [class*="bg-gray-900"] {
+    background-color: #1f2937;
+    color: white;
+  }
+  
+  /* Fix specific text colors */
+  .text-gray-400 {
+    color: #9ca3af !important;
+  }
+  
+  .text-gray-300 {
+    color: #d1d5db !important;
+  }
+  
+  /* Fix border colors */
+  .border-gray-700 {
+    border-color: #374151 !important;
+  }
