@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Save, X, AlertCircle, Loader2 } from 'lucide-react';
 
+
 export default function EntitiesPage() {
   interface Entity {
     id: string;
@@ -93,19 +94,57 @@ export default function EntitiesPage() {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this entity?')) {
-      // In a real implementation, you would call your API here
-      // For now, just update the UI
-      setEntities(entities.filter(e => e.id !== id));
+      try {
+        const response = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Failed to delete entity');
+        }
+        
+        // Update UI by removing the entity
+        setEntities(entities.filter(e => e.id !== id));
+        
+      } catch (error) {
+        console.error("Error deleting entity:", error);
+        let errorMessage = "Failed to delete entity. Please try again.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        alert(errorMessage);
+      }
     }
   };
 
   const handleSave = async (id: string) => {
     setSaving(true);
     try {
-      // In a real implementation, you would call your API here
-      // For now, just update the UI
+      // Get the entity data from the form
+      const entityData = {
+        name: formData.name,
+        category: formData.category,
+        subcategory: formData.subcategory,
+        type: formData.type
+      };
+      
+      // Call the API to update the entity
+      const response = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(entityData),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to save: ${response.statusText}`);
+      }
+      
+      // Update the UI
       setEntities(entities.map(e => 
         e.id === id ? { ...e, ...formData } : e
       ));
@@ -121,7 +160,29 @@ export default function EntitiesPage() {
   const handleAdd = async () => {
     setSaving(true);
     try {
-      // In a real implementation, you would call your API here
+      // Create entity data object
+      const entityData = {
+        name: formData.name,
+        category: formData.category,
+        subcategory: formData.subcategory,
+        type: formData.type
+      };
+      
+      // Call the API to create the entity
+      const response = await fetch("https://hypetorch-api.onrender.com/api/entities", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(entityData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to add entity');
+      }
+      
+      // Add to UI
       const newEntity = {
         id: formData.name,
         ...formData
@@ -136,9 +197,14 @@ export default function EntitiesPage() {
         subcategory: 'Unrivaled',
         type: 'person'
       });
-    } catch (err) {
-      console.error("Error adding entity:", err);
-      alert("Failed to add entity. Please try again.");
+    } catch (error) {
+      console.error("Error adding entity:", error);
+      // Handle the error properly with type checking
+      let errorMessage = "Failed to add entity. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      alert(errorMessage || "Failed to add entity. Please try again.");
     } finally {
       setSaving(false);
     }
