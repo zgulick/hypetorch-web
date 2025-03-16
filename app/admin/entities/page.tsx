@@ -43,27 +43,39 @@ export default function EntitiesPage() {
         }
         
         const entityNames = await response.json();
+        console.log("🔍 Fetched Entity Names:", entityNames);
         
         // For each entity name, fetch details
         const entityDetailsPromises = entityNames.map(async (name: string) => {
-          const detailsResponse = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(name)}`);
-          if (!detailsResponse.ok) return null;
-          const details = await detailsResponse.json();
-          
-          return {
-            id: name, // Using name as ID
-            name: details.name || name,
-            category: details.category || 'Sports',
-            subcategory: details.subcategory || 'Unrivaled',
-            type: details.type || 'person'
-          };
+          try {
+            const detailsResponse = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(name)}`);
+            
+            if (!detailsResponse.ok) {
+              console.error(`Failed to fetch details for ${name}:`, await detailsResponse.text());
+              return null;
+            }
+            
+            const details = await detailsResponse.json();
+            console.log(`🔍 Details for ${name}:`, details);
+            
+            return {
+              id: name, // Using name as ID
+              name: details.name || name,
+              category: details.category || 'Sports', 
+              subcategory: details.subcategory || 'Unrivaled', 
+              type: details.type || 'person'
+            };
+          } catch (err) {
+            console.error(`Error processing ${name}:`, err);
+            return null;
+          }
         });
         
         const fetchedEntities = await Promise.all(entityDetailsPromises);
         setEntities(fetchedEntities.filter(e => e !== null));
         setError(null);
       } catch (err) {
-        console.error("Error fetching entities:", err);
+        console.error("❌ Error fetching entities:", err);
         setError("Failed to load entities. Please try again later.");
       } finally {
         setLoading(false);
@@ -72,7 +84,7 @@ export default function EntitiesPage() {
 
     fetchEntities();
   }, []);
-  
+
   const handleEdit = (id: string) => {
     const entityToEdit = entities.find(e => e.id === id);
     if (entityToEdit) {
