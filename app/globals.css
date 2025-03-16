@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add this to app/globals.css */
+[class*="admin"] h1, 
+[class*="admin"] h2, 
+[class*="admin"] h3, 
+[class*="admin"] p, 
+[class*="admin"] span, 
+[class*="admin"] label {
+  color: white;
+}
