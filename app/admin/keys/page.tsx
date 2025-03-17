@@ -24,7 +24,7 @@ export default function ApiKeyManagement() {
     fetchApiKeys();
   }, []);
 
-  // Change these API calls
+// Update these functions in app/admin/keys/page.tsx
 const fetchApiKeys = async () => {
     setIsLoading(true);
     try {
@@ -46,13 +46,13 @@ const fetchApiKeys = async () => {
       setErrorMessage("Client name is required");
       return;
     }
-
+  
     try {
-        const response = await api.post('/admin/keys', { 
-          client_name: newKeyName 
-        }, {
-          params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
-        });
+      const response = await api.post('/admin/keys', { 
+        client_name: newKeyName 
+      }, {
+        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
+      });
       
       // If the response includes the new API key, store it temporarily
       if (response.data.api_key) {
@@ -69,8 +69,7 @@ const fetchApiKeys = async () => {
       setErrorMessage("Failed to create API key");
     }
   };
-
-
+  
   const revokeApiKey = async (keyId: number) => {
     if (!window.confirm('Are you sure you want to revoke this API key?')) return;
   
