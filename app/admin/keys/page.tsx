@@ -27,6 +27,7 @@ export default function ApiKeyManagement() {
   // Update these functions in app/admin/keys/page.tsx
   const fetchApiKeys = async () => {
     setIsLoading(true);
+    console.log('🔍 Admin Keys Route Hit!');  // Add this debug print
     try {
       // Add these debug logs
       console.log('Admin Secret:', process.env.NEXT_PUBLIC_ADMIN_SECRET);
