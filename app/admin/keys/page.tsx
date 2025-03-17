@@ -4,6 +4,11 @@ import { useState, useEffect } from 'react';
 import { Trash2, Plus } from 'lucide-react';
 import api from '@/lib/api';
 
+// Add this after your imports and before the component definition
+if (!process.env.NEXT_PUBLIC_ADMIN_SECRET) {
+    console.error("WARNING: NEXT_PUBLIC_ADMIN_SECRET environment variable is not set!");
+  }
+
 interface ApiKey {
   id: number;
   client_name: string;
@@ -27,15 +32,11 @@ export default function ApiKeyManagement() {
   // Update these functions in app/admin/keys/page.tsx
   const fetchApiKeys = async () => {
     setIsLoading(true);
-    console.log('🔍 Admin Keys Route Hit!');  // Add this debug print
     try {
-      // Add these debug logs
-      console.log('Admin Secret:', process.env.NEXT_PUBLIC_ADMIN_SECRET);
-      console.log('Admin Secret Length:', process.env.NEXT_PUBLIC_ADMIN_SECRET?.length);
+      console.log('Making API request to admin/keys');
       
-      const response = await api.get('/admin/keys', {
-        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
-      });
+      const response = await api.get('/admin/keys');
+      
       setApiKeys(response.data);
       setErrorMessage(null);
     } catch (err) {
@@ -55,8 +56,6 @@ export default function ApiKeyManagement() {
     try {
       const response = await api.post('/admin/keys', { 
         client_name: newKeyName 
-      }, {
-        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
       });
       
       // If the response includes the new API key, store it temporarily
@@ -79,9 +78,7 @@ export default function ApiKeyManagement() {
     if (!window.confirm('Are you sure you want to revoke this API key?')) return;
   
     try {
-      await api.delete(`/admin/keys/${keyId}`, {
-        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
-      });
+      await api.delete(`/admin/keys/${keyId}`);
       fetchApiKeys();
     } catch (err) {
       console.error("Error revoking API key:", err);
