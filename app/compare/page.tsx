@@ -5,7 +5,7 @@ import Navbar from "@/app/Navbar";
 import EntitySelector from "@/components/entityselector";
 import ComparisonCard from "@/components/comparisoncard";
 import ComparisonChart from "@/components/comparisonchart";
-import axios from "axios";
+import api from '@/lib/api'
 import { motion } from "framer-motion";
 import { BarChart2, Activity, Globe } from "lucide-react";
 
@@ -47,14 +47,14 @@ export default function ComparePage() {
       
       try {
         // Fetch data for entity one
-        const entityOneResponse = await axios.get(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entityOne)}`);
+        const entityOneResponse = await api.get(`/entities/${encodeURIComponent(entityOne)}`);
         // Also fetch trending data
-        const entityOneTrending = await axios.get(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entityOne)}/trending`);
+        const entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);        
         
         // Fetch data for entity two
-        const entityTwoResponse = await axios.get(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entityTwo)}`);
+        const entityTwoResponse = await api.get(`/entities/${encodeURIComponent(entityTwo)}`);
         // Also fetch trending data
-        const entityTwoTrending = await axios.get(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entityTwo)}/trending`);
+        const entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);        
         
         // Combine the data
         setEntityOneData({
