@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Info } from 'lucide-react';
+import { Save, Info, Loader2} from 'lucide-react';
 import api from '@/lib/api';
 
 export default function SettingsPage() {
@@ -22,12 +22,12 @@ export default function SettingsPage() {
   });
 
   const [saveStatus, setSaveStatus] = useState<null | {success: boolean, message: string}>(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   // Fetch settings when component mounts
   useEffect(() => {
     const fetchSettings = async () => {
-      setLoading(true);
+      // setLoading(true);
       try {
         const response = await api.get('/admin/settings');
         if (response.data) {
@@ -37,7 +37,7 @@ export default function SettingsPage() {
         console.error("Error fetching settings:", error);
         // Keep default settings if fetch fails
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
     
@@ -98,7 +98,6 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-
       <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 mb-6">
         <h2 className="text-xl font-semibold mb-4">General Settings</h2>
         
