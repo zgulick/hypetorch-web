@@ -45,9 +45,11 @@ export default function UploadDataPage() {
         message: response.data.message || (response.status === 200 ? 'File uploaded successfully!' : 'Error uploading file')
       });
     } catch (error) {
+      console.error('Upload error:', error);
+    
       setUploadStatus({
         success: false,
-        message: 'Error uploading file. Please try again.'
+        message: (error as any)?.response?.data?.message || 'Error uploading file. Please try again.'
       });
     } finally {
       setUploading(false);
