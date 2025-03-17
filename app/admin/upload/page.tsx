@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Upload, Check, AlertCircle, Loader2 } from 'lucide-react';
 import api from '@/lib/api';
+import { AxiosError } from 'axios';
+
 
 export default function UploadDataPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -44,12 +46,20 @@ export default function UploadDataPage() {
         success: response.status === 200,
         message: response.data.message || (response.status === 200 ? 'File uploaded successfully!' : 'Error uploading file')
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Upload error:', error);
+    
+      let errorMessage = 'Error uploading file. Please try again.';
+    
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
     
       setUploadStatus({
         success: false,
-        message: (error as any)?.response?.data?.message || 'Error uploading file. Please try again.'
+        message: errorMessage
       });
     } finally {
       setUploading(false);
