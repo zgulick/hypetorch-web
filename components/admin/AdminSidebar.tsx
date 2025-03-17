@@ -10,7 +10,8 @@ import {
   Upload, 
   Settings, 
   LogOut, 
-  BarChart
+  BarChart,
+  Key
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -70,6 +71,15 @@ export default function AdminSidebar() {
               Settings
             </Link>
           </li>
+          <li>
+            <Link 
+              href="/admin/keys" 
+              className={`flex items-center px-4 py-3 ${isActive('/admin/keys') ? 'bg-gray-700 text-orange-400' : 'hover:bg-gray-700'}`}
+            >
+              <Key size={18} className="mr-3" />
+              API Keys
+            </Link>
+          </li>  
           <li>
             <Link 
               href="/dashboard" 
