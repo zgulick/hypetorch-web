@@ -8,6 +8,7 @@ import ComparisonChart from "@/components/comparisonchart";
 import api from '@/lib/api';
 import { motion } from "framer-motion";
 import { BarChart2, Activity, Globe } from "lucide-react";
+import { AxiosError } from 'axios';
 
 interface EntityData {
   name: string;
@@ -77,17 +78,28 @@ export default function ComparePage() {
           ...entityTwoResponse.data,
           ...entityTwoTrending.data
         });
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("FULL ERROR DETAILS:", {
-            errorMessage: error.message,
-            errorResponse: error as { response?: any },  // Type annotation instead of type assertion
-            errorConfig: error as { config?: any }       // Type annotation instead of type assertion
-          });
-        } else {
-          console.error("An unknown error occurred:", error);
+      
+        interface AxiosError extends Error {
+          response?: {
+            data?: unknown;
+            status?: number;
+            headers?: Record<string, string>;
+          };
+          config?: Record<string, unknown>;
         }
-      } finally {
+        
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            const axiosError = error as AxiosError;
+            console.error("FULL ERROR DETAILS:", {
+              errorMessage: axiosError.message,
+              errorResponse: axiosError.response,
+              errorConfig: axiosError.config
+            });
+          } else {
+            console.error("An unknown error occurred:", error);
+          }
+        } finally {
         setIsLoading(false);
       }
     }
