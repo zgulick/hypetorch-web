@@ -5,7 +5,7 @@ import Navbar from "@/app/Navbar";
 import EntitySelector from "@/components/entityselector";
 import ComparisonCard from "@/components/comparisoncard";
 import ComparisonChart from "@/components/comparisonchart";
-import api from '@/lib/api'
+import api from '@/lib/api';
 import { motion } from "framer-motion";
 import { BarChart2, Activity, Globe } from "lucide-react";
 
