@@ -6,7 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   //LineChart, Line, , Legend
 } from "recharts";
-import axios from "axios";
+import api from "@/lib/api";
 import { motion } from "framer-motion";
 import { 
   ArrowUpRight, ArrowDownRight, TrendingUp, 
@@ -127,12 +127,12 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         // Add this after setIsLoading(true);
         try {
           // Get last updated timestamp
-          const timestampResponse = await axios.get("https://hypetorch-api.onrender.com/api/last_updated");
+          const timestampResponse = await api.get("/last_updated");
           if (timestampResponse.data.last_updated) {
             setLastUpdated(new Date(timestampResponse.data.last_updated * 1000));
           }
         // Fetch Hype Scores
-        const hypeResponse = await axios.get("https://hypetorch-api.onrender.com/api/hype_scores");
+        const hypeResponse = await api.get("/hype_scores");
         const hypeScores = hypeResponse.data;
         console.log("Raw HYPE scores:", hypeScores);
 
@@ -144,8 +144,8 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         // Create a list of promises to fetch data for each entity
         const promises = Object.keys(hypeScores).map(async (entity) => {
           try {
-            const metricsResponse = await axios.get(
-              `https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(entity)}/metrics`
+            const metricsResponse = await api.get(
+              `/entities/${encodeURIComponent(entity)}/metrics`
             );
             
             // [NEW] Use type-safe object assignment
