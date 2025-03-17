@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Save, Info, Loader2} from 'lucide-react';
+import { Save, Info } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function SettingsPage() {
