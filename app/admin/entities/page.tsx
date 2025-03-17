@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Save, X, AlertCircle, Loader2 } from 'lucide-react';
-
+import api from '@/lib/api';
 
 export default function EntitiesPage() {
   interface Entity {
@@ -36,34 +36,20 @@ export default function EntitiesPage() {
     const fetchEntities = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://hypetorch-api.onrender.com/api/entities');
+        const response = await api.get('/entities');
+        console.log("🔍 Fetched Entity Names:", response.data);
         
-        if (!response.ok) {
-          throw new Error(`Error fetching entities: ${response.status}`);
-        }
-        
-        const entityNames = await response.json();
-        console.log("🔍 Fetched Entity Names:", entityNames);
-        
-        // For each entity name, fetch details
-        const entityDetailsPromises = entityNames.map(async (name: string) => {
+        const entityDetailsPromises = response.data.map(async (name: string) => {
           try {
-            const detailsResponse = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(name)}`);
-            
-            if (!detailsResponse.ok) {
-              console.error(`Failed to fetch details for ${name}:`, await detailsResponse.text());
-              return null;
-            }
-            
-            const details = await detailsResponse.json();
-            console.log(`🔍 Details for ${name}:`, details);
+            const detailsResponse = await api.get(`/entities/${encodeURIComponent(name)}`);
+            console.log(`🔍 Details for ${name}:`, detailsResponse.data);
             
             return {
-              id: name, // Using name as ID
-              name: details.name || name,
-              category: details.category || 'Sports', 
-              subcategory: details.subcategory || 'Unrivaled', 
-              type: details.type || 'person'
+              id: name,
+              name: detailsResponse.data.name || name,
+              category: detailsResponse.data.category || 'Sports', 
+              subcategory: detailsResponse.data.subcategory || 'Unrivaled', 
+              type: detailsResponse.data.type || 'person'
             };
           } catch (err) {
             console.error(`Error processing ${name}:`, err);
@@ -101,16 +87,8 @@ export default function EntitiesPage() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this entity?')) {
       try {
-        const response = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(id)}`, {
-          method: 'DELETE',
-        });
+        await api.delete(`/entities/${encodeURIComponent(id)}`);
         
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Failed to delete entity');
-        }
-        
-        // Update UI by removing the entity
         setEntities(entities.filter(e => e.id !== id));
         
       } catch (error) {
@@ -125,94 +103,65 @@ export default function EntitiesPage() {
   };
 
   const handleSave = async (id: string) => {
-    setSaving(true);
-    try {
-      // Get the entity data from the form
-      const entityData = {
-        name: formData.name,
-        category: formData.category,
-        subcategory: formData.subcategory,
-        type: formData.type
-      };
-      
-      // Call the API to update the entity
-      const response = await fetch(`https://hypetorch-api.onrender.com/api/entities/${encodeURIComponent(id)}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(entityData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to save: ${response.statusText}`);
-      }
-      
-      // Update the UI
-      setEntities(entities.map(e => 
-        e.id === id ? { ...e, ...formData } : e
-      ));
-      setEditingEntity(null);
-    } catch (err) {
-      console.error("Error saving entity:", err);
-      alert("Failed to save changes. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
+  setSaving(true);
+  try {
+    const entityData = {
+      name: formData.name,
+      category: formData.category,
+      subcategory: formData.subcategory,
+      type: formData.type
+    };
+    
+    await api.put(`/entities/${encodeURIComponent(id)}`, entityData);
+    
+    setEntities(entities.map(e => 
+      e.id === id ? { ...e, ...formData } : e
+    ));
+    setEditingEntity(null);
+  } catch (err) {
+    console.error("Error saving entity:", err);
+    alert("Failed to save changes. Please try again.");
+  } finally {
+    setSaving(false);
+  }
+};
 
-  const handleAdd = async () => {
-    setSaving(true);
-    try {
-      // Create entity data object
-      const entityData = {
-        name: formData.name,
-        category: formData.category,
-        subcategory: formData.subcategory,
-        type: formData.type
-      };
-      
-      // Call the API to create the entity
-      const response = await fetch("https://hypetorch-api.onrender.com/api/entities", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(entityData),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to add entity');
-      }
-      
-      // Add to UI
-      const newEntity = {
-        id: formData.name,
-        ...formData
-      };
-      setEntities([...entities, newEntity]);
-      setShowAddForm(false);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        category: 'Sports',
-        subcategory: 'Unrivaled',
-        type: 'person'
-      });
-    } catch (error) {
-      console.error("Error adding entity:", error);
-      // Handle the error properly with type checking
-      let errorMessage = "Failed to add entity. Please try again.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      alert(errorMessage || "Failed to add entity. Please try again.");
-    } finally {
-      setSaving(false);
+const handleAdd = async () => {
+  setSaving(true);
+  try {
+    const entityData = {
+      name: formData.name,
+      category: formData.category,
+      subcategory: formData.subcategory,
+      type: formData.type
+    };
+    
+    await api.post("/entities", entityData);
+    
+    const newEntity = {
+      id: formData.name,
+      ...formData
+    };
+    setEntities([...entities, newEntity]);
+    setShowAddForm(false);
+    
+    setFormData({
+      name: '',
+      category: 'Sports',
+      subcategory: 'Unrivaled',
+      type: 'person'
+    });
+  } catch (error) {
+    console.error("Error adding entity:", error);
+    let errorMessage = "Failed to add entity. Please try again.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
     }
-  };
+    alert(errorMessage);
+  } finally {
+    setSaving(false);
+  }
+};
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Upload, Check, AlertCircle, Loader2 } from 'lucide-react';
+import api from '@/lib/api';
 
 export default function UploadDataPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -27,36 +28,30 @@ export default function UploadDataPage() {
       });
       return;
     }
-
+  
     setUploading(true);
     setUploadStatus(null);
-
+  
     // Create a FormData object to send the file
     const formData = new FormData();
     formData.append('file', file);
     formData.append('time_period', selectedTimeframe);
     
     try {
-      const response = await fetch('https://hypetorch-api.onrender.com/api/upload_json', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const data = await response.json();
+      const response = await api.post('/upload_json', formData);
       
       setUploadStatus({
-        success: response.ok,
-        message: data.message || (response.ok ? 'File uploaded successfully!' : 'Error uploading file')
+        success: response.status === 200,
+        message: response.data.message || (response.status === 200 ? 'File uploaded successfully!' : 'Error uploading file')
       });
-    // Remove the variable entirely from the catch declaration
-    } catch {
+    } catch (error) {
       setUploadStatus({
         success: false,
         message: 'Error uploading file. Please try again.'
       });
     } finally {
       setUploading(false);
-      if (document.getElementById('fileInput') as HTMLInputElement) {
+      if (document.getElementById('fileInput')) {
         (document.getElementById('fileInput') as HTMLInputElement).value = '';
       }
       setFile(null);
