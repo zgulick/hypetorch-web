@@ -81,8 +81,8 @@ export default function ComparePage() {
         if (error instanceof Error) {
           console.error("FULL ERROR DETAILS:", {
             errorMessage: error.message,
-            errorResponse: (error as any).response,  // Use type assertion
-            errorConfig: (error as any).config
+            errorResponse: error as { response?: any },  // Type annotation instead of type assertion
+            errorConfig: error as { config?: any }       // Type annotation instead of type assertion
           });
         } else {
           console.error("An unknown error occurred:", error);
