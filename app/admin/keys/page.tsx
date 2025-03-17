@@ -24,10 +24,13 @@ export default function ApiKeyManagement() {
     fetchApiKeys();
   }, []);
 
-  const fetchApiKeys = async () => {
+  // Change these API calls
+const fetchApiKeys = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('/admin/keys');
+      const response = await api.get('/admin/keys', {
+        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
+      });
       setApiKeys(response.data);
       setErrorMessage(null);
     } catch (err) {
@@ -37,7 +40,7 @@ export default function ApiKeyManagement() {
       setIsLoading(false);
     }
   };
-
+  
   const createApiKey = async () => {
     if (!newKeyName.trim()) {
       setErrorMessage("Client name is required");
@@ -45,9 +48,11 @@ export default function ApiKeyManagement() {
     }
 
     try {
-      const response = await api.post('/admin/keys', { 
-        client_name: newKeyName 
-      });
+        const response = await api.post('/admin/keys', { 
+          client_name: newKeyName 
+        }, {
+          params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
+        });
       
       // If the response includes the new API key, store it temporarily
       if (response.data.api_key) {
@@ -65,11 +70,14 @@ export default function ApiKeyManagement() {
     }
   };
 
+
   const revokeApiKey = async (keyId: number) => {
     if (!window.confirm('Are you sure you want to revoke this API key?')) return;
-
+  
     try {
-      await api.delete(`/admin/keys/${keyId}`);
+      await api.delete(`/admin/keys/${keyId}`, {
+        params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
+      });
       fetchApiKeys();
     } catch (err) {
       console.error("Error revoking API key:", err);
