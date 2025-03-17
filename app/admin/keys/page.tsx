@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Copy, Trash2, Plus, RefreshCw } from 'lucide-react';
+import { Trash2, Plus } from 'lucide-react';
 import api from '@/lib/api';
 
 interface ApiKey {
@@ -10,36 +10,37 @@ interface ApiKey {
   is_active: boolean;
   created_at: string;
   expires_at?: string;
+  api_key?: string;  // Optional field for newly created keys
 }
 
 export default function ApiKeyManagement() {
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [newKeyName, setNewKeyName] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [copiedKeyId, setCopiedKeyId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [newGeneratedKey, setNewGeneratedKey] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApiKeys();
   }, []);
 
   const fetchApiKeys = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await api.get('/admin/keys');
       setApiKeys(response.data);
-      setError(null);
+      setErrorMessage(null);
     } catch (err) {
       console.error("Error fetching API keys:", err);
-      setError("Failed to load API keys");
+      setErrorMessage("Failed to load API keys");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const createApiKey = async () => {
     if (!newKeyName.trim()) {
-      setError("Client name is required");
+      setErrorMessage("Client name is required");
       return;
     }
 
@@ -48,6 +49,11 @@ export default function ApiKeyManagement() {
         client_name: newKeyName 
       });
       
+      // If the response includes the new API key, store it temporarily
+      if (response.data.api_key) {
+        setNewGeneratedKey(response.data.api_key);
+      }
+      
       // Refresh keys list
       fetchApiKeys();
       
@@ -55,7 +61,7 @@ export default function ApiKeyManagement() {
       setNewKeyName('');
     } catch (err) {
       console.error("Error creating API key:", err);
-      setError("Failed to create API key");
+      setErrorMessage("Failed to create API key");
     }
   };
 
@@ -67,19 +73,47 @@ export default function ApiKeyManagement() {
       fetchApiKeys();
     } catch (err) {
       console.error("Error revoking API key:", err);
-      setError("Failed to revoke API key");
+      setErrorMessage("Failed to revoke API key");
     }
   };
 
-  const copyToClipboard = (keyId: number, key: string) => {
+  const copyToClipboard = (key: string) => {
     navigator.clipboard.writeText(key);
-    setCopiedKeyId(keyId);
-    setTimeout(() => setCopiedKeyId(null), 2000);
+    // Optionally, you could add a temporary visual indicator
   };
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">API Key Management</h1>
+
+      {/* New Key Generation Popup */}
+      {newGeneratedKey && (
+        <div className="bg-green-900/30 border border-green-800 p-4 rounded-md mb-4">
+          <h3 className="font-semibold mb-2">New API Key Generated</h3>
+          <div className="flex items-center justify-between">
+            <code className="bg-gray-800 p-2 rounded">{newGeneratedKey}</code>
+            <button 
+              onClick={() => {
+                copyToClipboard(newGeneratedKey);
+                setNewGeneratedKey(null);
+              }} 
+              className="ml-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+            >
+              Copy
+            </button>
+          </div>
+          <p className="text-sm text-yellow-200 mt-2">
+            Please save this key. It will only be shown once.
+          </p>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="bg-red-900/30 border border-red-800 p-4 rounded-md mb-4">
+          {errorMessage}
+        </div>
+      )}
 
       {/* Create New Key Section */}
       <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 mb-8">
@@ -131,7 +165,7 @@ export default function ApiKeyManagement() {
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <button
                     onClick={() => revokeApiKey(key.id)}
-                    className="text-red-500 hover:text-red-400 mr-2"
+                    className="text-red-500 hover:text-red-400"
                   >
                     <Trash2 size={18} />
                   </button>
