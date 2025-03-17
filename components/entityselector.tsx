@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from '@/lib/api';  // Import your configured API instance
 import { Search } from "lucide-react";
 
 interface EntitySelectorProps {
@@ -19,11 +19,15 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
     async function fetchEntities() {
       try {
         setIsLoading(true);
-        const response = await axios.get("https://hypetorch-api.onrender.com/api/entities");
+        console.log('🔍 Fetching Entities with API Key:', process.env.NEXT_PUBLIC_API_KEY);
+        
+        const response = await api.get("/entities");  // Use api instead of axios.get
+        console.log('✅ Entities Fetched:', response.data);
+        
         setEntities(response.data);
       } catch (error) {
         console.error("Error fetching entities:", error);
-      } finally {
+      } finally{
         setIsLoading(false);
       }
     }
