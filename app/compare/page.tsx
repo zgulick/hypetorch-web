@@ -5,7 +5,7 @@ import Navbar from "@/app/Navbar";
 import EntitySelector from "@/components/entityselector";
 import ComparisonCard from "@/components/comparisoncard";
 import ComparisonChart from "@/components/comparisonchart";
-import api from '@/lib/api';
+import api, { API_KEY }  from '@/lib/api';
 import { motion } from "framer-motion";
 import { BarChart2, Activity, Globe } from "lucide-react";
 
@@ -45,28 +45,67 @@ export default function ComparePage() {
       if (!entityOne || !entityTwo) return;
       
       setIsLoading(true);
-      console.log('API Key from env:', process.env.NEXT_PUBLIC_API_KEY);
-      console.log('API Instance Headers:', api.defaults.headers);
+      
       try {
-        console.log("Fetching for Entity One:", entityOne);
-        console.log("Encoded Entity One:", encodeURIComponent(entityOne));
-    
-        const entityOneResponse = await api.get(`/entities/${encodeURIComponent(entityOne)}`);
-        console.log("Entity One Response:", entityOneResponse);
-    
-        console.log("Fetching Trending for Entity One:", entityOne);
-        const entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);
-        console.log("Entity One Trending Response:", entityOneTrending); 
-
-        console.log("Fetching for Entity Two:", entityTwo);
-        console.log("Encoded Entity Two:", encodeURIComponent(entityTwo));
+        // 🚨 EXPLICIT DEBUGGING
+        console.log('🔍 DEBUG: Fetch Start');
+        console.log('🔑 Env API Key:', process.env.NEXT_PUBLIC_API_KEY);
+        console.log('🔑 Hardcoded API Key:', API_KEY);  // from your api.ts
         
-        const entityTwoResponse = await api.get(`/entities/${encodeURIComponent(entityTwo)}`);
-        console.log("Entity Two Response:", entityTwoResponse);
+        // Log exactly what you're about to request
+        console.log('🌐 Requesting Entity:', entityOne);
+        console.log('🌐 Encoded Entity:', encodeURIComponent(entityOne));
+  
+        // Explicit try/catch for EACH request
+        let entityOneResponse, entityOneTrending;
+        let entityTwoResponse, entityTwoTrending;
         
-        console.log("Fetching Trending for Entity Two:", entityTwo);
-        const entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);
-        console.log("Entity Two Trending Response:", entityTwoTrending);       
+        try {
+          entityOneResponse = await api.get(`/entities/${encodeURIComponent(entityOne)}`);
+          console.log('✅ Entity One Response:', entityOneResponse);
+        } catch (specificError) {
+          console.error('❌ Entity One Fetch Error:', {
+            message: (specificError as Error).message,
+            name: (specificError as Error).name,
+            stack: (specificError as Error).stack
+          });
+          throw specificError;  // Re-throw to be caught by outer catch
+        }
+  
+        try {
+          entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);
+          console.log('✅ Entity One Trending Response:', entityOneTrending);
+        } catch (specificError) {
+          console.error('❌ Entity One Trending Error:', {
+            message: (specificError as Error).message,
+            name: (specificError as Error).name,
+            stack: (specificError as Error).stack
+          });
+          throw specificError;
+        }
+        try {
+          entityTwoResponse = await api.get(`/entities/${encodeURIComponent(entityTwo)}`);
+          console.log('✅ Entity Two Response:', entityTwoResponse);
+        } catch (specificError) {
+          console.error('❌ Entity Two Fetch Error:', {
+            message: (specificError as Error).message,
+            name: (specificError as Error).name,
+            stack: (specificError as Error).stack
+          });
+          throw specificError;  // Re-throw to be caught by outer catch
+        }
+  
+        try {
+          entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);
+          console.log('✅ Entity Two Trending Response:', entityTwoTrending);
+        } catch (specificError) {
+          console.error('❌ Entity Two Trending Error:', {
+            message: (specificError as Error).message,
+            name: (specificError as Error).name,
+            stack: (specificError as Error).stack
+          });
+          throw specificError;
+        }
         
         // Combine the data
         setEntityOneData({
@@ -80,25 +119,13 @@ export default function ComparePage() {
         });
               
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          const axiosError = error as { 
-            response?: { 
-              data?: unknown; 
-              status?: number; 
-              headers?: Record<string, string> 
-            }; 
-            config?: Record<string, unknown> 
-          };
-          console.error("FULL ERROR DETAILS:", {
-            errorMessage: error.message,
-            errorResponse: axiosError.response,
-            errorConfig: axiosError.config
-          });
-        } else {
-          console.error("An unknown error occurred:", error);
-        }
+        console.error("🚨 FULL FETCH ERROR:", {
+          errorMessage: error instanceof Error ? error.message : 'Unknown error',
+          errorType: error instanceof Error ? error.name : 'Unknown type'
+        });
       } finally {
         setIsLoading(false);
+  
       }
     }
     

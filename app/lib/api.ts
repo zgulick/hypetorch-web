@@ -13,6 +13,8 @@ const api = axios.create({
     }
   });
 
+export { API_KEY };
+
 // Add a request interceptor to ensure API key is included in every request
 api.interceptors.request.use(
     config => {
