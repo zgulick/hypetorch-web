@@ -24,10 +24,14 @@ export default function ApiKeyManagement() {
     fetchApiKeys();
   }, []);
 
-// Update these functions in app/admin/keys/page.tsx
-const fetchApiKeys = async () => {
+  // Update these functions in app/admin/keys/page.tsx
+  const fetchApiKeys = async () => {
     setIsLoading(true);
     try {
+      // Add these debug logs
+      console.log('Admin Secret:', process.env.NEXT_PUBLIC_ADMIN_SECRET);
+      console.log('Admin Secret Length:', process.env.NEXT_PUBLIC_ADMIN_SECRET?.length);
+      
       const response = await api.get('/admin/keys', {
         params: { admin_key: process.env.NEXT_PUBLIC_ADMIN_SECRET }
       });
