@@ -44,17 +44,28 @@ export default function ComparePage() {
       if (!entityOne || !entityTwo) return;
       
       setIsLoading(true);
-      
+      console.log('API Key from env:', process.env.NEXT_PUBLIC_API_KEY);
+      console.log('API Instance Headers:', api.defaults.headers);
       try {
-        // Fetch data for entity one
+        console.log("Fetching for Entity One:", entityOne);
+        console.log("Encoded Entity One:", encodeURIComponent(entityOne));
+    
         const entityOneResponse = await api.get(`/entities/${encodeURIComponent(entityOne)}`);
-        // Also fetch trending data
-        const entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);        
+        console.log("Entity One Response:", entityOneResponse);
+    
+        console.log("Fetching Trending for Entity One:", entityOne);
+        const entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);
+        console.log("Entity One Trending Response:", entityOneTrending); 
+
+        console.log("Fetching for Entity Two:", entityTwo);
+        console.log("Encoded Entity Two:", encodeURIComponent(entityTwo));
         
-        // Fetch data for entity two
         const entityTwoResponse = await api.get(`/entities/${encodeURIComponent(entityTwo)}`);
-        // Also fetch trending data
-        const entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);        
+        console.log("Entity Two Response:", entityTwoResponse);
+        
+        console.log("Fetching Trending for Entity Two:", entityTwo);
+        const entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);
+        console.log("Entity Two Trending Response:", entityTwoTrending);       
         
         // Combine the data
         setEntityOneData({
@@ -66,8 +77,16 @@ export default function ComparePage() {
           ...entityTwoResponse.data,
           ...entityTwoTrending.data
         });
-      } catch (error) {
-        console.error("Error fetching entity data:", error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error("FULL ERROR DETAILS:", {
+            errorMessage: error.message,
+            errorResponse: (error as any).response,  // Use type assertion
+            errorConfig: (error as any).config
+          });
+        } else {
+          console.error("An unknown error occurred:", error);
+        }
       } finally {
         setIsLoading(false);
       }
