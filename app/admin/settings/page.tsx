@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Info } from 'lucide-react';
+import api from '@/lib/api';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -21,6 +22,27 @@ export default function SettingsPage() {
   });
 
   const [saveStatus, setSaveStatus] = useState<null | {success: boolean, message: string}>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch settings when component mounts
+  useEffect(() => {
+    const fetchSettings = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get('/admin/settings');
+        if (response.data) {
+          setSettings(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+        // Keep default settings if fetch fails
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -31,9 +53,13 @@ export default function SettingsPage() {
     });
   };
 
-  const handleSave = () => {
-    // This would be an API call in the real implementation
-    setTimeout(() => {
+  const handleSave = async () => {
+    try {
+      setSaveStatus({ success: false, message: 'Saving settings...' });
+      
+      // Call API to save settings
+      await api.post('/admin/settings', settings);
+      
       setSaveStatus({
         success: true,
         message: 'Settings saved successfully!'
@@ -43,7 +69,13 @@ export default function SettingsPage() {
       setTimeout(() => {
         setSaveStatus(null);
       }, 3000);
-    }, 1000);
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      setSaveStatus({
+        success: false,
+        message: 'Error saving settings. Please try again.'
+      });
+    }
   };
 
   return (

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BarChart2, Users, Upload, Clock, Loader2, AlertCircle } from 'lucide-react';
+import api from '@/lib/api';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -14,32 +15,33 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
+    // Replace the fetchStats function with this:
     const fetchStats = async () => {
       setLoading(true);
       try {
         // Fetch entity count
-        const entitiesResponse = await fetch('https://hypetorch-api.onrender.com/api/entities');
-        if (!entitiesResponse.ok) {
+        const entitiesResponse = await api.get('/entities');
+        if (!entitiesResponse.data) {
           throw new Error('Failed to fetch entities');
         }
-        const entities = await entitiesResponse.json();
-        
+        const entities = entitiesResponse.data;
+    
         // Fetch last updated info
-        const lastUpdatedResponse = await fetch('https://hypetorch-api.onrender.com/api/last_updated');
-        const lastUpdatedData = await lastUpdatedResponse.json();
-        
+        const lastUpdatedResponse = await api.get('/last_updated');
+        const lastUpdatedData = lastUpdatedResponse.data;
+    
         // Set the stats
         setStats({
           totalEntities: entities.length,
           lastUpdated: new Date(lastUpdatedData.last_updated * 1000).toLocaleDateString(),
           dataPoints: entities.length * 5 // Approximate number of data points (metrics per entity)
         });
-        
+    
         setError(null);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
         setError("Failed to load dashboard statistics. Please try again later.");
-        
+    
         // Set fallback data
         setStats({
           totalEntities: 112,
