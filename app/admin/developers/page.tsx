@@ -10,7 +10,6 @@ import {
   AlertCircle, 
   ChevronRight,
   ChevronDown,
-  ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
 import { API_KEY } from '@/lib/api';
@@ -39,7 +38,7 @@ const Endpoint: React.FC<EndpointProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(expanded);
   
-  // Determine method color
+  {'// Determine method color'}
   const methodColors = {
     GET: 'bg-blue-600',
     POST: 'bg-green-600',
