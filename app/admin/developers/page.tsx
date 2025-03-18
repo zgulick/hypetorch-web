@@ -521,7 +521,7 @@ export default function ApiDocs() {
       <div className="bg-gray-800 rounded-lg border border-gray-700 p-6">
         <h2 className="text-xl font-semibold mb-4">Need Help?</h2>
         <p className="mb-4">
-          If you have any questions or need assistance with our API, please don't hesitate to reach out.
+          If you have any questions or need assistance with our API, please don&apos;t hesitate to reach out.
         </p>
         <p className="text-gray-300">
           Contact us at <a href="mailto:hypetorch@gmail.com" className="text-orange-500 hover:underline">hypetorch@gmail.com</a>
