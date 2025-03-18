@@ -14,6 +14,38 @@ import {
 import Link from 'next/link';
 import { API_KEY } from '@/lib/api';
 
+// Add this right after your imports section at the top of the file
+const ParametersTable: React.FC<{ params: any[] }> = ({ params }) => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full mb-4">
+        <thead className="bg-gray-800">
+          <tr>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Name</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Type</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Required</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {params.map((param, index) => (
+            <tr key={index} className="border-b border-gray-700">
+              <td className="px-4 py-2 text-sm font-mono text-gray-300">{param.name}</td>
+              <td className="px-4 py-2 text-sm text-gray-300">{param.type}</td>
+              <td className="px-4 py-2 text-sm text-gray-300">
+                {param.required ? (
+                  <span className="text-orange-500">Required</span>
+                ) : (
+                  <span className="text-gray-500">Optional</span>
+                )}
+              </td>
+              <td className="px-4 py-2 text-sm text-gray-300">{param.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
 interface EndpointProps {
   method: string;
   path: string;
@@ -69,38 +101,10 @@ const Endpoint: React.FC<EndpointProps> = ({
           {params.length > 0 && (
             <>
               <h4 className="text-sm font-semibold mb-2 text-gray-200">Parameters</h4>
-              <div className="overflow-x-auto">
-                {/* Start table */}
-              <table className="min-w-full mb-4">
-              <thead className="bg-gray-800">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Name</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Type</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Required</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {params.map((param, index) => (
-                      <tr key={index} className="border-b border-gray-700">
-                        <td className="px-4 py-2 text-sm font-mono text-gray-300">{param.name}</td>
-                        <td className="px-4 py-2 text-sm text-gray-300">{param.type}</td>
-                        <td className="px-4 py-2 text-sm text-gray-300">
-                          {param.required ? (
-                            <span className="text-orange-500">Required</span>
-                          ) : (
-                            <span className="text-gray-500">Optional</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-2 text-sm text-gray-300">{param.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <ParametersTable params={params} />
             </>
           )}
-          
+        
           {response && (
             <>
               <h4 className="text-sm font-semibold mb-2 text-gray-200">Example Response</h4>
