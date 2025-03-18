@@ -12,7 +12,7 @@ import {
   LogOut, 
   BarChart,
   Key,
-  Code
+  FileText
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -72,14 +72,15 @@ export default function AdminSidebar() {
               Settings
             </Link>
           </li>
-          // In the navigation links section:
+          // Find the navigation links section in AdminSidebar.tsx and add this link:
+
           <li>
             <Link 
-              href="/admin/developers" 
-              className={`flex items-center px-4 py-3 ${isActive('/admin/developers') ? 'bg-gray-700 text-orange-400' : 'hover:bg-gray-700'}`}
+              href="/admin/docs" 
+              className={`flex items-center px-4 py-3 ${isActive('/admin/docs') ? 'bg-gray-700 text-orange-400' : 'hover:bg-gray-700'}`}
             >
-              <Code size={18} className="mr-3" />
-              API Documentation
+              <FileText size={18} className="mr-3" />
+              API Docs
             </Link>
           </li>
           <li>
