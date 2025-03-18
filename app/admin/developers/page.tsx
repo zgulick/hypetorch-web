@@ -38,7 +38,6 @@ const Endpoint: React.FC<EndpointProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(expanded);
   
-  {'// Determine method color'}
   const methodColors = {
     GET: 'bg-blue-600',
     POST: 'bg-green-600',
@@ -71,16 +70,17 @@ const Endpoint: React.FC<EndpointProps> = ({
             <>
               <h4 className="text-sm font-semibold mb-2 text-gray-200">Parameters</h4>
               <div className="overflow-x-auto">
-                <table className="min-w-full mb-4">
-                  <thead className="bg-gray-800">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Name</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Type</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Required</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                {/* Start table */}
+              <table className="min-w-full mb-4">
+              <thead className="bg-gray-800">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Name</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Type</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Required</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-400">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
                     {params.map((param, index) => (
                       <tr key={index} className="border-b border-gray-700">
                         <td className="px-4 py-2 text-sm font-mono text-gray-300">{param.name}</td>
