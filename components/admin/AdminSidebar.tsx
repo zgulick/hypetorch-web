@@ -11,7 +11,8 @@ import {
   Settings, 
   LogOut, 
   BarChart,
-  Key
+  Key,
+  Code
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -69,6 +70,16 @@ export default function AdminSidebar() {
             >
               <Settings size={18} className="mr-3" />
               Settings
+            </Link>
+          </li>
+          // In the navigation links section:
+          <li>
+            <Link 
+              href="/admin/developers" 
+              className={`flex items-center px-4 py-3 ${isActive('/admin/developers') ? 'bg-gray-700 text-orange-400' : 'hover:bg-gray-700'}`}
+            >
+              <Code size={18} className="mr-3" />
+              API Documentation
             </Link>
           </li>
           <li>
