@@ -72,8 +72,8 @@ export default function AdminSidebar() {
               Settings
             </Link>
           </li>
-          // Find the navigation links section in AdminSidebar.tsx and add this link:
-
+          { // Find the navigation links section in AdminSidebar.tsx and add this link: 
+            }
           <li>
             <Link 
               href="/admin/docs" 
