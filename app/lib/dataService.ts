@@ -1,5 +1,39 @@
-// app/lib/dataService.ts
+// File path: hypetorch-web/app/lib/dataService.ts
+
 import api from './api';
+
+// Interface for entities with metrics
+interface EntityComparisonData {
+  entities: {
+    [key: string]: {
+      name?: string;
+      hype_score?: number;
+      rodmn_score?: number;
+      mentions?: number;
+      talk_time?: number;
+      sentiment?: number[];
+      wikipedia_views?: number;
+      reddit_mentions?: number;
+      google_trends?: number;
+      history?: {
+        [metric: string]: Array<{
+          timestamp: string;
+          value: number;
+          time_period?: string;
+        }>;
+      };
+    };
+  };
+  metadata: {
+    timestamp: string;
+    metrics_included: string[];
+    filters: {
+      start_date?: string;
+      end_date?: string;
+      time_period?: string;
+    };
+  };
+}
 
 // Fetch multiple entities with metrics for comparison
 export async function getEntityComparison(
@@ -7,7 +41,7 @@ export async function getEntityComparison(
   metrics?: string[],
   timePeriod?: string,
   includeHistory?: boolean
-) {
+): Promise<EntityComparisonData> {
   const entitiesParam = entities.join(',');
   const metricsParam = metrics ? metrics.join(',') : '';
   
@@ -28,6 +62,16 @@ export async function getEntityComparison(
   }
 }
 
+// Interface for history data
+interface HistoryData {
+  name: string;
+  history: Array<{
+    timestamp: string;
+    value: number;
+    time_period?: string;
+  }>;
+}
+
 // Get historical data for entities
 export async function getEntityHistory(
   entity: string,
@@ -35,7 +79,7 @@ export async function getEntityHistory(
   limit: number = 30,
   startDate?: string,
   endDate?: string
-) {
+): Promise<HistoryData> {
   try {
     let endpoint = `/entities/${encodeURIComponent(entity)}/history`;
     
@@ -58,6 +102,18 @@ export async function getEntityHistory(
   }
 }
 
+// Interface for trending entities
+interface TrendingEntity {
+  entity_name: string;
+  current_value: number;
+  previous_value: number;
+  percent_change: number;
+}
+
+interface TrendingResponse {
+  trending: TrendingEntity[];
+}
+
 // Get trending entities
 export async function getTrendingEntities(
   metric: string = 'hype_scores',
@@ -65,7 +121,7 @@ export async function getTrendingEntities(
   timePeriod?: string,
   category?: string,
   subcategory?: string
-) {
+): Promise<TrendingResponse> {
   try {
     const response = await api.get('/trending', {
       params: {
