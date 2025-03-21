@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/app/Navbar";
 import {
   BarChart2, 
   TrendingUp, 
   Shuffle, 
   Calendar, 
-  Sliders, 
   HelpCircle, 
   Download, 
   Bookmark,
@@ -21,15 +19,8 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, 
   Legend, ResponsiveContainer, BarChart, Bar,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, 
-  Radar, AreaChart, Area
+  Radar, AreaChart, Area, TooltipProps
 } from "recharts";
-
-interface ChartDataItem {
-    metric: string;
-    metricKey: string;
-    fullMark: number;
-    [key: string]: string | number;
-  }
 
 // Time period options for the UI
 const TIME_PERIODS = [
@@ -50,6 +41,73 @@ const METRICS = [
   { key: "google_trend", label: "Google Trends", color: "#06b6d4", description: "Google search interest" },
 ];
 
+// Define proper interfaces
+interface ChartDataItem {
+  metric: string;
+  metricKey: string;
+  fullMark: number;
+  [key: string]: string | number;
+}
+
+interface HistoryItem {
+  timestamp: string;
+  value: number;
+  time_period?: string;
+}
+
+interface HistoryData {
+  [metric: string]: {
+    entity1: HistoryItem[];
+    entity2: HistoryItem[];
+  };
+}
+
+interface EntityData {
+  [metric: string]: number | any[];
+history?: {
+    [metric: string]: HistoryItem[];
+  };
+}
+
+interface ComparisonData {
+  entities: {
+    [key: string]: EntityData;
+  };
+  metadata: {
+    timestamp: string;
+    metrics_included: string[];
+    filters: {
+      start_date?: string;
+      end_date?: string;
+      time_period?: string;
+    };
+  };
+}
+
+// Custom Tooltip component for Recharts
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-lg">
+        <p className="font-medium text-white mb-2">{label}</p>
+        {payload.map((entry, index) => (
+          <p key={index} className="text-sm flex items-center">
+            <span 
+              className="w-3 h-3 rounded-full mr-2" 
+              style={{ backgroundColor: entry.color || '#ccc' }}
+            />
+            <span className="font-medium">{entry.name || 'Unknown'}: </span>
+            <span className="ml-1 text-gray-300">
+              {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
+            </span>
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function EnhancedComparison() {
   // Router and search params
   const router = useRouter();
@@ -59,7 +117,7 @@ export default function EnhancedComparison() {
   const [entityOne, setEntityOne] = useState<string | null>(null);
   const [entityTwo, setEntityTwo] = useState<string | null>(null);
   const [allEntities, setAllEntities] = useState<string[]>([]);
-  const [comparisonData, setComparisonData] = useState<any>(null);
+  const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timePeriod, setTimePeriod] = useState("last_30_days");
@@ -118,7 +176,7 @@ export default function EnhancedComparison() {
     if (history === 'false') {
       setIncludeHistory(false);
     }
-  }, [searchParams]);
+  }, [searchParams]);  
   
   // Fetch comparison data when entities or filters change
   useEffect(() => {
@@ -129,20 +187,71 @@ export default function EnhancedComparison() {
       setError(null);
       
       try {
-        // Construct API request parameters
-        const params = {
-          entities: `${entityOne},${entityTwo}`,
-          metrics: selectedMetrics.join(','),
-          time_period: timePeriod,
-          include_history: includeHistory
+        // Fetch data for each entity separately
+        const [entity1Data, entity2Data] = await Promise.all([
+          api.get(`/entities/${encodeURIComponent(entityOne)}`),
+          api.get(`/entities/${encodeURIComponent(entityTwo)}`)
+        ]);
+        
+        // Fetch trending data for each entity
+        const [entity1Trending, entity2Trending] = await Promise.all([
+          api.get(`/entities/${encodeURIComponent(entityOne)}/trending`),
+          api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`)
+        ]);
+        
+        // Combine into the format expected by the component
+        const data: ComparisonData = {
+          entities: {
+            [entityOne]: {
+              ...entity1Data.data,
+              ...entity1Trending.data
+            },
+            [entityTwo]: {
+              ...entity2Data.data,
+              ...entity2Trending.data
+            }
+          },
+          metadata: {
+            timestamp: new Date().toISOString(),
+            metrics_included: selectedMetrics,
+            filters: {
+              time_period: timePeriod
+            }
+          }
         };
         
-        console.log("Fetching comparison data with params:", params);
+        // If history is requested, fetch it
+        if (includeHistory) {
+          try {
+            const [entity1History, entity2History] = await Promise.all([
+              api.get(`/entities/${encodeURIComponent(entityOne)}/history`),
+              api.get(`/entities/${encodeURIComponent(entityTwo)}/history`)
+            ]);
+            
+            // Add history data
+            if (!data.entities[entityOne].history) {
+              data.entities[entityOne].history = {};
+            }
+            
+            if (!data.entities[entityTwo].history) {
+              data.entities[entityTwo].history = {};
+            }
+            
+            if (data.entities[entityOne].history) {
+              data.entities[entityOne].history["hype_score"] = entity1History.data.history || [];
+            }
+            
+            if (data.entities[entityTwo].history) {
+              data.entities[entityTwo].history["hype_score"] = entity2History.data.history || [];
+            }
+          } catch (historyErr) {
+            console.error("Error fetching history data:", historyErr);
+            // Continue without history data
+          }
+        }
         
-        const response = await api.get('/compare', { params });
-        
-        console.log("Comparison data received:", response.data);
-        setComparisonData(response.data);
+        console.log("Comparison data received:", data);
+        setComparisonData(data);
       } catch (err) {
         console.error("Error fetching comparison data:", err);
         setError("Failed to load comparison data. Please try again.");
@@ -191,11 +300,11 @@ export default function EnhancedComparison() {
     if (availableEntities.length === 0) return;
     
     const randomIndex1 = Math.floor(Math.random() * availableEntities.length);
-    let randomEntity1 = availableEntities[randomIndex1];
+    const randomEntity1 = availableEntities[randomIndex1];
     
     const filteredEntities = availableEntities.filter(e => e !== randomEntity1);
     const randomIndex2 = Math.floor(Math.random() * filteredEntities.length);
-    let randomEntity2 = filteredEntities[randomIndex2];
+    const randomEntity2 = filteredEntities[randomIndex2];
     
     setEntityOne(randomEntity1);
     setEntityTwo(randomEntity2);
@@ -225,15 +334,21 @@ export default function EnhancedComparison() {
   }, [allEntities, searchTerm]);
   
   // Prepare comparison data for charts
-  const chartData = useMemo(() => {
+  const chartData = useMemo<ChartDataItem[]>(() => {
     if (!comparisonData || !entityOne || !entityTwo) return [];
     
     return selectedMetrics.map(metric => {
       const metricInfo = METRICS.find(m => m.key === metric);
       if (!metricInfo) return null;
       
-      const entity1Value = comparisonData.entities[entityOne]?.[metric] || 0;
-      const entity2Value = comparisonData.entities[entityTwo]?.[metric] || 0;
+      // Type guard to ensure we're working with numbers
+      const entity1Value = typeof comparisonData.entities[entityOne]?.[metric] === 'number' 
+        ? comparisonData.entities[entityOne]?.[metric] as number
+        : 0;
+        
+      const entity2Value = typeof comparisonData.entities[entityTwo]?.[metric] === 'number'
+        ? comparisonData.entities[entityTwo]?.[metric] as number
+        : 0;
       
       return {
         metric: metricInfo.label,
@@ -242,16 +357,17 @@ export default function EnhancedComparison() {
         [entityTwo]: entity2Value,
         fullMark: Math.max(entity1Value, entity2Value) * 1.2 // 20% buffer for radar chart
       };
-    }).filter(Boolean);
+    }).filter(Boolean) as ChartDataItem[];
   }, [comparisonData, entityOne, entityTwo, selectedMetrics]);
   
   // Get history data for line charts
-  const historyData = useMemo(() => {
-    if (!comparisonData || !entityOne || !entityTwo || !includeHistory) return {};
+  const historyData = useMemo<HistoryData>(() => {
+    if (!comparisonData || !entityOne || !entityTwo || !includeHistory) return {} as HistoryData;
     
-    const result: any = {};
+    const result: HistoryData = {};
     
     selectedMetrics.forEach(metric => {
+      // Safe access to potentially undefined nested properties
       const entity1History = comparisonData.entities[entityOne]?.history?.[metric] || [];
       const entity2History = comparisonData.entities[entityTwo]?.history?.[metric] || [];
       
@@ -272,7 +388,7 @@ export default function EnhancedComparison() {
     let csv = "Metric," + entityOne + "," + entityTwo + "\n";
     
     // Add data rows
-    chartData.forEach((item: any) => {
+    chartData.forEach((item) => {
       csv += `${item.metric},${item[entityOne]},${item[entityTwo]}\n`;
     });
     
@@ -399,7 +515,7 @@ export default function EnhancedComparison() {
                       >
                         <span>{entity}</span>
                         <button
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent) => {
                             e.stopPropagation();
                             toggleFavorite(entity);
                           }}
@@ -572,272 +688,223 @@ export default function EnhancedComparison() {
                           fillOpacity={0.2} 
                         />
                         <Legend />
-                        <Tooltip content={({ active, payload, label }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-lg">
-                                <p className="font-medium text-white mb-2">{label}</p>
-                                {payload.map((entry, index) => (
-                                  <p key={index} className="text-sm flex items-center">
-                                  <span 
-                                    className="w-3 h-3 rounded-full mr-2" 
-                                    style={{ backgroundColor: entry.color as string }}
-                                  />
-                                  <span className="font-medium">{entry.name}: </span>
-                                  <span className="ml-1 text-gray-300">
-                                    {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-                                  </span>
-                                </p>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
-                      }} />
-                    </RadarChart>
-                  ) : chartType === 'bar' ? (
-                    <BarChart data={chartData} layout="vertical">
-                      <XAxis type="number" stroke="#9CA3AF" />
-                      <YAxis dataKey="metric" type="category" stroke="#9CA3AF" width={120} />
-                      <Tooltip content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-lg">
-                              <p className="font-medium text-white mb-2">{label}</p>
-                              {payload.map((entry, index) => (
-                                <p key={index} className="text-sm flex items-center">
-                                  <span 
-                                    className="w-3 h-3 rounded-full mr-2" 
-                                    style={{ backgroundColor: entry.color as string }}
-                                  />
-                                  <span className="font-medium">{entry.name}: </span>
-                                  <span className="ml-1 text-gray-300">
-                                    {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-                                  </span>
-                                </p>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
-                      }} />
-                      <Legend />
-                      <Bar dataKey={entityOne} name={entityOne} fill="#f97316" radius={[0, 4, 4, 0]} />
-                      <Bar dataKey={entityTwo} name={entityTwo} fill="#3b82f6" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  ) : (
-                    // Line chart for time comparison
-                    <AreaChart data={selectedMetrics.map(metric => {
-                      const metricInfo = METRICS.find(m => m.key === metric);
-                      return {
-                        name: metricInfo?.label || metric,
-                        [entityOne]: comparisonData.entities[entityOne]?.[metric] || 0,
-                        [entityTwo]: comparisonData.entities[entityTwo]?.[metric] || 0,
-                      };
-                    })}>
-                      <XAxis dataKey="name" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
-                      <Tooltip content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-lg">
-                              <p className="font-medium text-white mb-2">{label}</p>
-                              {payload.map((entry, index) => (
-                                <p key={index} className="text-sm flex items-center">
-                                  <span 
-                                    className="w-3 h-3 rounded-full mr-2" 
-                                    style={{ backgroundColor: entry.color as string }}
-                                  />
-                                  <span className="font-medium">{entry.name}: </span>
-                                  <span className="ml-1 text-gray-300">
-                                    {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-                                  </span>
-                                </p>
-                              ))}
-                            </div>
-                          );
-                        }
-                        return null;
-                      }} />
-                      <Legend />
-                      <Area 
-                        type="monotone" 
-                        dataKey={entityOne} 
-                        name={entityOne}
-                        stroke="#f97316" 
-                        fill="#f97316" 
-                        fillOpacity={0.2} 
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey={entityTwo} 
-                        name={entityTwo}
-                        stroke="#3b82f6" 
-                        fill="#3b82f6" 
-                        fillOpacity={0.2} 
-                      />
-                    </AreaChart>
-                  )}
-                </ResponsiveContainer>
+                        <Tooltip content={<CustomTooltip />} />
+                      </RadarChart>
+                    ) : chartType === 'bar' ? (
+                      <BarChart data={chartData} layout="vertical">
+                        <XAxis type="number" stroke="#9CA3AF" />
+                        <YAxis dataKey="metric" type="category" stroke="#9CA3AF" width={120} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                        <Bar dataKey={entityOne} name={entityOne} fill="#f97316" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey={entityTwo} name={entityTwo} fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    ) : (
+                      // Line chart for time comparison
+                      <AreaChart data={selectedMetrics.map(metric => {
+                        const metricInfo = METRICS.find(m => m.key === metric);
+                        // Ensure we're working with numbers
+                        const entity1Value = typeof comparisonData.entities[entityOne]?.[metric] === 'number'
+                          ? comparisonData.entities[entityOne]?.[metric] as number
+                          : 0;
+                        
+                        const entity2Value = typeof comparisonData.entities[entityTwo]?.[metric] === 'number'
+                          ? comparisonData.entities[entityTwo]?.[metric] as number
+                          : 0;
+                          
+                        return {
+                          name: metricInfo?.label || metric,
+                          [entityOne]: entity1Value,
+                          [entityTwo]: entity2Value,
+                        };
+                      })}>
+                        <XAxis dataKey="name" stroke="#9CA3AF" />
+                        <YAxis stroke="#9CA3AF" />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                        <Area 
+                          type="monotone" 
+                          dataKey={entityOne} 
+                          name={entityOne}
+                          stroke="#f97316" 
+                          fill="#f97316" 
+                          fillOpacity={0.2} 
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey={entityTwo} 
+                          name={entityTwo}
+                          stroke="#3b82f6" 
+                          fill="#3b82f6" 
+                          fillOpacity={0.2} 
+                        />
+                      </AreaChart>
+                    )}
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-center">
+                  <div className="p-3 rounded-lg bg-orange-600/10 border border-orange-600/30">
+                    <span className="text-orange-400 font-semibold">{entityOne}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-blue-600/10 border border-blue-600/30">
+                    <span className="text-blue-400 font-semibold">{entityTwo}</span>
+                  </div>
+                </div>
               </div>
               
-              <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-center">
-                <div className="p-3 rounded-lg bg-orange-600/10 border border-orange-600/30">
-                  <span className="text-orange-400 font-semibold">{entityOne}</span>
-                </div>
-                <div className="p-3 rounded-lg bg-blue-600/10 border border-blue-600/30">
-                  <span className="text-blue-400 font-semibold">{entityTwo}</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Metrics Detail Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {selectedMetrics.map(metricKey => {
-                const metric = METRICS.find(m => m.key === metricKey);
-                if (!metric) return null;
-                
-                const entity1Value = comparisonData.entities[entityOne]?.[metricKey] || 0;
-                const entity2Value = comparisonData.entities[entityTwo]?.[metricKey] || 0;
-                const difference = entity1Value - entity2Value;
-                const percentDiff = entity2Value !== 0
-                  ? (difference / Math.abs(entity2Value)) * 100
-                  : difference * 100;
-                
-                return (
-                  <div key={metricKey} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-lg font-semibold">{metric.label}</h3>
-                      <div className="bg-gray-700 p-1 rounded-md text-xs text-gray-300 flex items-center gap-1">
-                        <HelpCircle size={12} />
-                        <span>{metric.description}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-orange-900/10 border border-orange-900/30 rounded-lg p-4">
-                        <p className="text-sm text-gray-400">{entityOne}</p>
-                        <p className="text-2xl font-bold">{entity1Value.toFixed(2)}</p>
-                      </div>
-                      
-                      <div className="bg-blue-900/10 border border-blue-900/30 rounded-lg p-4">
-                        <p className="text-sm text-gray-400">{entityTwo}</p>
-                        <p className="text-2xl font-bold">{entity2Value.toFixed(2)}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 text-center">
-                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
-                        difference > 0 
-                          ? 'bg-green-900/20 text-green-400' 
-                          : difference < 0 
-                            ? 'bg-red-900/20 text-red-400'
-                            : 'bg-gray-700 text-gray-400'
-                      }`}>
-                        {difference > 0 ? (
-                          <>
-                            <TrendingUp size={14} className="mr-1" />
-                            {entityOne} leads by {Math.abs(difference).toFixed(2)} ({Math.abs(percentDiff).toFixed(1)}%)
-                          </>
-                        ) : difference < 0 ? (
-                          <>
-                            <TrendingUp size={14} className="mr-1" />
-                            {entityTwo} leads by {Math.abs(difference).toFixed(2)} ({Math.abs(percentDiff).toFixed(1)}%)
-                          </>
-                        ) : (
-                          <>Identical values</>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            
-            {/* Historical Trend Charts */}
-            {includeHistory && (
-              <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-6">Historical Trends</h2>
-                
-                <div className="space-y-6">
-                  {selectedMetrics.map(metricKey => {
-                    const metric = METRICS.find(m => m.key === metricKey);
-                    const history = historyData[metricKey];
-                    
-                    if (!metric || !history || !history.entity1?.length || !history.entity2?.length) {
-                      return null;
-                    }
-                    
-                    // Format data for chart
-                    const trendData = history.entity1.map((item: any, index: number) => {
-                      const entity2Item = history.entity2[index] || {};
-                      return {
-                        date: new Date(item.timestamp).toLocaleDateString(),
-                        [entityOne]: item.value || 0,
-                        [entityTwo]: entity2Item.value || 0
-                      };
-                    });
-                    
-                    return (
-                      <div key={metricKey} className="mb-8">
-                        <h3 className="text-lg font-semibold mb-4">{metric.label} Over Time</h3>
-                        <div className="h-64">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={trendData}>
-                              <XAxis dataKey="date" stroke="#9CA3AF" />
-                              <YAxis stroke="#9CA3AF" />
-                              <Tooltip content={({ active, payload, label }) => {
-                                if (active && payload && payload.length) {
-                                  return (
-                                    <div className="bg-gray-800 p-4 border border-gray-700 rounded-lg shadow-lg">
-                                      <p className="font-medium text-white mb-2">{label}</p>
-                                      {payload.map((entry, index) => (
-                                        <p key={index} className="text-sm flex items-center">
-                                          <span 
-                                            className="w-3 h-3 rounded-full mr-2" 
-                                            style={{ backgroundColor: entry.color as string }}
-                                          />
-                                          <span className="font-medium">{entry.name}: </span>
-                                          <span className="ml-1 text-gray-300">
-                                            {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-                                          </span>
-                                        </p>
-                                      ))}
-                                    </div>
-                                  );
-                                }
-                                return null;
-                              }} />
-                              <Legend />
-                              <Line 
-                                type="monotone" 
-                                dataKey={entityOne} 
-                                name={entityOne} 
-                                stroke="#f97316" 
-                                dot={true} 
-                                activeDot={{ r: 8 }}
-                              />
-                              <Line 
-                                type="monotone" 
-                                dataKey={entityTwo} 
-                                name={entityTwo} 
-                                stroke="#3b82f6" 
-                                dot={true} 
-                                activeDot={{ r: 8 }}
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
+              {/* Metrics Detail Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {selectedMetrics.map((metricKey, index) => {
+                  const metric = METRICS.find(m => m.key === metricKey);
+                  if (!metric) return null;
+                  
+                  // Ensure we're working with number values
+                  const entity1Value = typeof comparisonData.entities[entityOne]?.[metricKey] === 'number'
+                    ? comparisonData.entities[entityOne]?.[metricKey] as number
+                    : 0;
+                  
+                  const entity2Value = typeof comparisonData.entities[entityTwo]?.[metricKey] === 'number'
+                    ? comparisonData.entities[entityTwo]?.[metricKey] as number
+                    : 0;
+                  
+                  const difference = entity1Value - entity2Value;
+                  const percentDiff = entity2Value !== 0
+                    ? (difference / Math.abs(entity2Value)) * 100
+                    : difference * 100;
+                  
+                  return (
+                    <div key={`${metricKey}-${index}`} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-lg font-semibold">{metric.label}</h3>
+                        <div className="bg-gray-700 p-1 rounded-md text-xs text-gray-300 flex items-center gap-1">
+                          <HelpCircle size={12} />
+                          <span>{metric.description}</span>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-orange-900/10 border border-orange-900/30 rounded-lg p-4">
+                          <p className="text-sm text-gray-400">{entityOne}</p>
+                          <p className="text-2xl font-bold">{entity1Value.toFixed(2)}</p>
+                        </div>
+                        
+                        <div className="bg-blue-900/10 border border-blue-900/30 rounded-lg p-4">
+                          <p className="text-sm text-gray-400">{entityTwo}</p>
+                          <p className="text-2xl font-bold">{entity2Value.toFixed(2)}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 text-center">
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                          difference > 0 
+                            ? 'bg-green-900/20 text-green-400' 
+                            : difference < 0 
+                              ? 'bg-red-900/20 text-red-400'
+                              : 'bg-gray-700 text-gray-400'
+                        }`}>
+                          {difference > 0 ? (
+                            <>
+                              <TrendingUp size={14} className="mr-1" />
+                              {entityOne} leads by {Math.abs(difference).toFixed(2)} ({Math.abs(percentDiff).toFixed(1)}%)
+                            </>
+                          ) : difference < 0 ? (
+                            <>
+                              <TrendingUp size={14} className="mr-1" />
+                              {entityTwo} leads by {Math.abs(difference).toFixed(2)} ({Math.abs(percentDiff).toFixed(1)}%)
+                            </>
+                          ) : (
+                            <>Identical values</>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </motion.div>
-        )
-      )}
+              
+              {/* Historical Charts Section */}
+              {includeHistory && Object.keys(historyData).length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Historical Comparison</h2>
+                  <div className="grid grid-cols-1 gap-6">
+                    {Object.entries(historyData).map(([metric, data]) => {
+                      const metricInfo = METRICS.find(m => m.key === metric);
+                      if (!metricInfo) return null;
+                      
+                      // Prepare data for the line chart
+                      const historyChartData = [];
+                      
+                      // Find all unique timestamps across both entities
+                      const allTimestamps = new Set([
+                        ...data.entity1.map(item => item.timestamp),
+                        ...data.entity2.map(item => item.timestamp)
+                      ]);
+                      
+                      // Convert timestamps to Date objects for sorting
+                      const sortedTimestamps = Array.from(allTimestamps)
+                        .map(ts => new Date(ts))
+                        .sort((a, b) => a.getTime() - b.getTime())
+                        .map(date => date.toISOString());
+                      
+                      // Create a map for quick lookups
+                      const entity1Map = Object.fromEntries(
+                        data.entity1.map(item => [item.timestamp, item.value])
+                      );
+                      const entity2Map = Object.fromEntries(
+                        data.entity2.map(item => [item.timestamp, item.value])
+                      );
+                      
+                      // Create chart data points
+                      sortedTimestamps.forEach(timestamp => {
+                        historyChartData.push({
+                          timestamp: new Date(timestamp).toLocaleDateString(),
+                          [entityOne]: entity1Map[timestamp] || null,
+                          [entityTwo]: entity2Map[timestamp] || null
+                        });
+                      });
+                      
+                      return (
+                        <div key={metric} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+                          <h3 className="text-lg font-semibold mb-4">{metricInfo.label} Over Time</h3>
+                          <div className="h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <LineChart data={historyChartData}>
+                                <XAxis dataKey="timestamp" stroke="#9CA3AF" />
+                                <YAxis stroke="#9CA3AF" />
+                                <Tooltip content={<CustomTooltip />} />
+                                <Legend />
+                                <Line
+                                  type="monotone"
+                                  dataKey={entityOne}
+                                  name={entityOne}
+                                  stroke="#f97316"
+                                  strokeWidth={2}
+                                  dot={{ r: 4 }}
+                                  activeDot={{ r: 6 }}
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey={entityTwo}
+                                  name={entityTwo}
+                                  stroke="#3b82f6"
+                                  strokeWidth={2}
+                                  dot={{ r: 4 }}
+                                  activeDot={{ r: 6 }}
+                                />
+                              </LineChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 }
