@@ -63,12 +63,22 @@ interface HistoryData {
 }
 
 interface EntityData {
-  [metric: string]: number | any[];
-history?: {
-    [metric: string]: HistoryItem[];
-  };
-}
-
+    [key: string]: 
+      | number 
+      | number[] 
+      | { [metric: string]: HistoryItem[] } 
+      | undefined;
+    hype_score?: number;
+    mentions?: number;
+    talk_time?: number;
+    sentiment?: number[];
+    rodmn_score?: number;
+    google_trends?: number;
+    wikipedia_views?: number;
+    reddit_mentions?: number;
+    history?: Record<string, HistoryItem[]>;
+  }
+  
 interface ComparisonData {
   entities: {
     [key: string]: EntityData;
@@ -833,7 +843,11 @@ export default function EnhancedComparison() {
                       if (!metricInfo) return null;
                       
                       // Prepare data for the line chart
-                      const historyChartData = [];
+                      const historyChartData: Array<{
+                        timestamp: string;
+                        [entityOne]: number | null;
+                        [entityTwo]: number | null;
+                      }> = [];
                       
                       // Find all unique timestamps across both entities
                       const allTimestamps = new Set([
