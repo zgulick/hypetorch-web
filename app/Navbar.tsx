@@ -192,6 +192,13 @@ export default function Navbar() {
               </Link>
 
               <Link
+                href="/compare/enhanced"
+                className="text-gray-300 hover:text-orange-400 transition-colors font-medium"
+              >
+                Enhanced Compare
+              </Link>
+
+              <Link
                 href="/about"
                 className="text-white hover:text-orange-400 transition-colors w-full text-center py-3"
                 onClick={() => setMobileMenuOpen(false)}

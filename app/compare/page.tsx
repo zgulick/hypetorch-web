@@ -8,7 +8,7 @@ import ComparisonChart from "@/components/comparisonchart";
 import api, { API_KEY }  from '@/lib/api';
 import { motion } from "framer-motion";
 import { BarChart2, Activity, Globe } from "lucide-react";
-
+import Link from "next/link"
 
 interface EntityData {
   name: string;
@@ -340,7 +340,21 @@ export default function ComparePage() {
                     </p>
                   </div>
                 </div>
-                
+                <div className="bg-orange-900/20 p-4 rounded-lg mb-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-orange-400">Try our enhanced comparison</h3>
+                      <p className="text-sm text-gray-300">
+                        Explore our new interactive comparison dashboard with advanced filters and visualizations
+                      </p>
+                    </div>
+                    <Link href="/compare/enhanced">
+                      <button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white">
+                        Try it now
+                      </button>
+                    </Link>
+                  </div>
+                </div>
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-full bg-green-500/10 mt-1">
                     <Globe size={20} className="text-green-500" />
