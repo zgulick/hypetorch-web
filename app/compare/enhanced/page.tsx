@@ -55,6 +55,11 @@ interface HistoryItem {
   time_period?: string;
 }
 
+interface HistoryChartDataPoint {
+    timestamp: string;
+    [key: string]: number | string;
+  }
+
 interface HistoryData {
   [metric: string]: {
     entity1: HistoryItem[];
@@ -78,7 +83,7 @@ interface EntityData {
     reddit_mentions?: number;
     history?: Record<string, HistoryItem[]>;
   }
-  
+
 interface ComparisonData {
   entities: {
     [key: string]: EntityData;
@@ -839,45 +844,41 @@ export default function EnhancedComparison() {
                   <h2 className="text-xl font-semibold mb-4">Historical Comparison</h2>
                   <div className="grid grid-cols-1 gap-6">
                     {Object.entries(historyData).map(([metric, data]) => {
-                      const metricInfo = METRICS.find(m => m.key === metric);
-                      if (!metricInfo) return null;
-                      
-                      // Prepare data for the line chart
-                      const historyChartData: Array<{
-                        timestamp: string;
-                        [entityOne]: number | null;
-                        [entityTwo]: number | null;
-                      }> = [];
-                      
-                      // Find all unique timestamps across both entities
-                      const allTimestamps = new Set([
+                        const metricInfo = METRICS.find(m => m.key === metric);
+                        if (!metricInfo) return null;
+    
+                        const historyChartData: HistoryChartDataPoint[] = [];
+    
+                        // Create a map for quick lookups
+                        const entity1Map = Object.fromEntries(
+                        data.entity1.map(item => [item.timestamp, item.value])
+                        );
+                        const entity2Map = Object.fromEntries(
+                        data.entity2.map(item => [item.timestamp, item.value])
+                        );
+    
+                        // Prepare data for the line chart
+                        const allTimestamps = new Set([
                         ...data.entity1.map(item => item.timestamp),
                         ...data.entity2.map(item => item.timestamp)
-                      ]);
-                      
-                      // Convert timestamps to Date objects for sorting
-                      const sortedTimestamps = Array.from(allTimestamps)
+                        ]);
+
+                        const sortedTimestamps = Array.from(allTimestamps)
                         .map(ts => new Date(ts))
                         .sort((a, b) => a.getTime() - b.getTime())
                         .map(date => date.toISOString());
-                      
-                      // Create a map for quick lookups
-                      const entity1Map = Object.fromEntries(
-                        data.entity1.map(item => [item.timestamp, item.value])
-                      );
-                      const entity2Map = Object.fromEntries(
-                        data.entity2.map(item => [item.timestamp, item.value])
-                      );
-                      
-                      // Create chart data points
-                      sortedTimestamps.forEach(timestamp => {
-                        historyChartData.push({
-                          timestamp: new Date(timestamp).toLocaleDateString(),
-                          [entityOne]: entity1Map[timestamp] || null,
-                          [entityTwo]: entity2Map[timestamp] || null
-                        });
-                      });
-                      
+
+                        // Then create the chart data
+                        sortedTimestamps.forEach(timestamp => {
+                        const dataPoint: HistoryChartDataPoint = {
+                            timestamp: new Date(timestamp).toLocaleDateString(),
+                        };
+
+                        dataPoint[entityOne] = entity1Map[timestamp] ?? null;
+                        dataPoint[entityTwo] = entity2Map[timestamp] ?? null;
+
+                        historyChartData.push(dataPoint);
+                      });                      
                       return (
                         <div key={metric} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
                           <h3 className="text-lg font-semibold mb-4">{metricInfo.label} Over Time</h3>
