@@ -24,7 +24,6 @@ import {
   Radar, AreaChart, Area
 } from "recharts";
 import { TooltipProps } from "recharts";
-import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 
 // Time period options for the UI
 const TIME_PERIODS = [
