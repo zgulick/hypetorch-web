@@ -61,7 +61,7 @@ export default function ComparePage() {
         let entityTwoResponse, entityTwoTrending;
         
         try {
-          entityOneResponse = await api.get(`/entities/${encodeURIComponent(entityOne)}`);
+          entityOneResponse = await api.get(`/v1/entities/${encodeURIComponent(entityOne)}`);
           console.log('✅ Entity One Response:', entityOneResponse);
         } catch (specificError) {
           console.error('❌ Entity One Fetch Error:', {
@@ -73,7 +73,7 @@ export default function ComparePage() {
         }
   
         try {
-          entityOneTrending = await api.get(`/entities/${encodeURIComponent(entityOne)}/trending`);
+          entityOneTrending = await api.get(`/v1/entities/${encodeURIComponent(entityOne)}/trending`);
           console.log('✅ Entity One Trending Response:', entityOneTrending);
         } catch (specificError) {
           console.error('❌ Entity One Trending Error:', {
@@ -84,7 +84,7 @@ export default function ComparePage() {
           throw specificError;
         }
         try {
-          entityTwoResponse = await api.get(`/entities/${encodeURIComponent(entityTwo)}`);
+          entityTwoResponse = await api.get(`/v1/entities/${encodeURIComponent(entityTwo)}`);
           console.log('✅ Entity Two Response:', entityTwoResponse);
         } catch (specificError) {
           console.error('❌ Entity Two Fetch Error:', {
@@ -96,7 +96,7 @@ export default function ComparePage() {
         }
   
         try {
-          entityTwoTrending = await api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`);
+          entityTwoTrending = await api.get(`/v1/entities/${encodeURIComponent(entityTwo)}/trending`);
           console.log('✅ Entity Two Trending Response:', entityTwoTrending);
         } catch (specificError) {
           console.error('❌ Entity Two Trending Error:', {

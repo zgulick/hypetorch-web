@@ -149,7 +149,7 @@ export default function EnhancedComparisonComponent() {
   useEffect(() => {
     async function fetchEntities() {
       try {
-        const response = await api.get('/entities');
+        const response = await api.get('/v1/entities');
         setAllEntities(response.data);
         
         // Load favorites from localStorage
@@ -208,14 +208,14 @@ export default function EnhancedComparisonComponent() {
       try {
         // Fetch data for each entity separately
         const [entity1Data, entity2Data] = await Promise.all([
-          api.get(`/entities/${encodeURIComponent(entityOne)}`),
-          api.get(`/entities/${encodeURIComponent(entityTwo)}`)
+          api.get(`/v1/entities/${encodeURIComponent(entityOne)}`),
+          api.get(`/v1/entities/${encodeURIComponent(entityTwo)}`)
         ]);
         
         // Fetch trending data for each entity
         const [entity1Trending, entity2Trending] = await Promise.all([
-          api.get(`/entities/${encodeURIComponent(entityOne)}/trending`),
-          api.get(`/entities/${encodeURIComponent(entityTwo)}/trending`)
+          api.get(`/v1/entities/${encodeURIComponent(entityOne)}/trending`),
+          api.get(`/v1/entities/${encodeURIComponent(entityTwo)}/trending`)
         ]);
         
         // Combine into the format expected by the component
@@ -243,8 +243,8 @@ export default function EnhancedComparisonComponent() {
         if (includeHistory) {
           try {
             const [entity1History, entity2History] = await Promise.all([
-              api.get(`/entities/${encodeURIComponent(entityOne)}/history`),
-              api.get(`/entities/${encodeURIComponent(entityTwo)}/history`)
+              api.get(`/v1/entities/${encodeURIComponent(entityOne)}/history`),
+              api.get(`/v1/entities/${encodeURIComponent(entityTwo)}/history`)
             ]);
             
             // Add history data

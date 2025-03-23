@@ -145,7 +145,7 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         const promises = Object.keys(hypeScores).map(async (entity) => {
           try {
             const metricsResponse = await api.get(
-              `/entities/${encodeURIComponent(entity)}/metrics`
+              `/v1/entities/${encodeURIComponent(entity)}/metrics`
             );
             
             // [NEW] Use type-safe object assignment

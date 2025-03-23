@@ -36,12 +36,12 @@ export default function EntitiesPage() {
     const fetchEntities = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/entities');
+        const response = await api.get('/v1/entities');
         console.log("🔍 Fetched Entity Names:", response.data);
         
         const entityDetailsPromises = response.data.map(async (name: string) => {
           try {
-            const detailsResponse = await api.get(`/entities/${encodeURIComponent(name)}`);
+            const detailsResponse = await api.get(`/v1/entities/${encodeURIComponent(name)}`);
             console.log(`🔍 Details for ${name}:`, detailsResponse.data);
             
             return {
@@ -87,7 +87,7 @@ export default function EntitiesPage() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this entity?')) {
       try {
-        await api.delete(`/entities/${encodeURIComponent(id)}`);
+        await api.delete(`/v1/entities/${encodeURIComponent(id)}`);
         
         setEntities(entities.filter(e => e.id !== id));
         
@@ -112,7 +112,7 @@ export default function EntitiesPage() {
       type: formData.type
     };
     
-    await api.put(`/entities/${encodeURIComponent(id)}`, entityData);
+    await api.put(`/v1/entities/${encodeURIComponent(id)}`, entityData);
     
     setEntities(entities.map(e => 
       e.id === id ? { ...e, ...formData } : e
@@ -136,7 +136,7 @@ const handleAdd = async () => {
       type: formData.type
     };
     
-    await api.post("/entities", entityData);
+    await api.post("/v1/entities", entityData);
     
     const newEntity = {
       id: formData.name,

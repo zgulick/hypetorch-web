@@ -31,10 +31,10 @@ export default function ApiDocs() {
       id: "entities-list",
       name: "List All Entities",
       method: "GET",
-      path: "/entities",
+      path: "/v1/entities",
       description: "Returns a list of all tracked entities (players, teams, organizations, etc.).",
       response: `["Breanna Stewart", "Caitlin Clark", "Angel Reese", "Sabrina Ionescu", ...]`,
-      code: `fetch("${baseUrl}/entities", {
+      code: `fetch("${baseUrl}/v1/entities", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
@@ -47,7 +47,7 @@ export default function ApiDocs() {
       id: "entity-details",
       name: "Get Entity Details",
       method: "GET",
-      path: "/entities/{entity_id}",
+      path: "/v1/entities/{entity_id}",
       description: "Returns detailed information for a specific entity, including HYPE (JORDN™) and RODMN™ scores.",
       params: [
         {
@@ -67,7 +67,7 @@ export default function ApiDocs() {
   "talk_time": 42.5,
   "sentiment": [0.28, 0.42, 0.36, ...]
 }`,
-      code: `fetch("${baseUrl}/entities/Caitlin%20Clark", {
+      code: `fetch("${baseUrl}/v1/entities/Caitlin%20Clark", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
@@ -122,7 +122,7 @@ export default function ApiDocs() {
       id: "entity-metrics",
       name: "Get Entity Metrics",
       method: "GET",
-      path: "/entities/{entity_id}/metrics",
+      path: "/v1/entities/{entity_id}/metrics",
       description: "Returns engagement metrics for a specific entity (mentions, talk time, sentiment).",
       params: [
         {
@@ -137,7 +137,7 @@ export default function ApiDocs() {
   "sentiment": [0.28, 0.42, 0.36, ...],
   "rodmn_score": 8.4
 }`,
-      code: `fetch("${baseUrl}/entities/Caitlin%20Clark/metrics", {
+      code: `fetch("${baseUrl}/v1/entities/Caitlin%20Clark/metrics", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
@@ -150,7 +150,7 @@ export default function ApiDocs() {
       id: "entity-trending",
       name: "Get Entity Trending Data",
       method: "GET",
-      path: "/entities/{entity_id}/trending",
+      path: "/v1/entities/{entity_id}/trending",
       description: "Returns trending data from external platforms for a specific entity.",
       params: [
         {
@@ -165,7 +165,7 @@ export default function ApiDocs() {
   "reddit_mentions": 437,
   "google_news_mentions": 324
 }`,
-      code: `fetch("${baseUrl}/entities/Caitlin%20Clark/trending", {
+      code: `fetch("${baseUrl}/v1/entities/Caitlin%20Clark/trending", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
@@ -205,7 +205,7 @@ export default function ApiDocs() {
       id: "entity-history",
       name: "Get Entity History",
       method: "GET",
-      path: "/entities/{entity_id}/history",
+      path: "/v1/entities/{entity_id}/history",
       description: "Returns historical JORDN™ score data for a specific entity.",
       params: [
         {
@@ -230,7 +230,7 @@ export default function ApiDocs() {
     ...
   ]
 }`,
-      code: `fetch("${baseUrl}/entities/Caitlin%20Clark/history?limit=10", {
+      code: `fetch("${baseUrl}/v1/entities/Caitlin%20Clark/history?limit=10", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
@@ -243,7 +243,7 @@ export default function ApiDocs() {
       id: "entity-metric-history",
       name: "Get Entity Metric History",
       method: "GET",
-      path: "/entities/{entity_id}/metrics/{metric_type}/history",
+      path: "/v1/entities/{entity_id}/metrics/{metric_type}/history",
       description: "Returns historical metric data for a specific entity and metric type.",
       params: [
         {
@@ -274,7 +274,7 @@ export default function ApiDocs() {
     ...
   ]
 }`,
-      code: `fetch("${baseUrl}/entities/Caitlin%20Clark/metrics/talk_time_counts/history", {
+      code: `fetch("${baseUrl}/v1/entities/Caitlin%20Clark/metrics/talk_time_counts/history", {
   headers: {
     "X-API-Key": "YOUR_API_KEY"
   }
