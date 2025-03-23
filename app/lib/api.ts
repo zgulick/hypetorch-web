@@ -16,12 +16,14 @@ const api = axios.create({
 // Add this after your axios.create() call
 api.interceptors.response.use(
   (response) => {
-    // If API response has the standard format with status and data
+    // Check for standardized format
     if (response.data && response.data.status === "success" && response.data.data !== undefined) {
-      console.log("Unwrapping API response from standard format");
+      // Log that unwrapping is happening
+      console.log("Unwrapping API response from standard format", response.data);
       // Return a modified response with data extracted from the wrapper
       return {...response, data: response.data.data};
     }
+    // Return original response for non-standard responses
     return response;
   },
   (error) => {

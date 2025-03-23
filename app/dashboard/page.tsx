@@ -134,8 +134,9 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         // Fetch Hype Scores
         const hypeResponse = await api.get("/hype_scores");
         console.log("Full hype response:", hypeResponse);
+        // Get the data from the response - handle both wrapped and unwrapped formats
         const hypeScores = hypeResponse.data;
-        console.log("Raw HYPE scores:", hypeScores);
+        console.log("Processed HYPE scores:", hypeScores);
 
         // Check if hypeScores is what you expect or if it's wrapped
         console.log("Direct hypeScores:", hypeScores);
@@ -157,16 +158,17 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
               `/v1/entities/${encodeURIComponent(entity)}/metrics`
             );
             
-            // [NEW] Use type-safe object assignment
-          // HIGHLIGHT START
-          newMentions[entity] = metricsResponse.data.mentions || 0;
-          newTalkTime[entity] = metricsResponse.data.talk_time || 0;
+            // Directly access the metrics data
+            const metrics = metricsResponse.data;
+            // HIGHLIGHT START
+            newMentions[entity] = metricsResponse.data.mentions || 0;
+            newTalkTime[entity] = metricsResponse.data.talk_time || 0;
           
-          // Calculate average sentiment if sentiment data exists
-          if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-            newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
-              // [NEW] Add type assertion to resolve reduce method typing
-              (a: number, b: number) => a + b, 0
+            // Calculate average sentiment if sentiment data exists
+            if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
+              newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
+                // [NEW] Add type assertion to resolve reduce method typing
+                (a: number, b: number) => a + b, 0
             ) / metricsResponse.data.sentiment.length;
           } else {
             newSentimentScores[entity] = 0;
@@ -178,10 +180,10 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
             
             // Calculate average sentiment if sentiment data exists
             // Calculate average sentiment if sentiment data exists
-            if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-              newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
+            if (metrics.sentiment && metrics.sentiment.length > 0) {
+              newSentimentScores[entity] = metrics.sentiment.reduce(
                 (a: number, b: number) => a + b, 0
-              ) / metricsResponse.data.sentiment.length;
+              ) / metrics.sentiment.length;
             } else {
               newSentimentScores[entity] = 0;
             }
@@ -221,8 +223,8 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         const processedData = Object.keys(hypeScores)
           .map((name) => ({
             name: formatName(name),
-            // Use exact names from your API response
-            hypeScore: hypeScores[name].hype_score || 0,
+            // Use direct property access since we've standardized it
+            hypeScore: hypeScores[name] || 0, // May need to adjust based on actual structure
             mentions: newMentions[name] || 0,
             sentiment: newSentimentScores[name] || 0,
             talkTime: newTalkTime[name] || 0,

@@ -4,14 +4,24 @@ import { useState, useEffect } from "react";
 import api from '@/lib/api';  // Import your configured API instance
 import { Search } from "lucide-react";
 
+// Define the entity interface based on your API response
+interface Entity {
+  id: number;
+  name: string;
+  type: string;
+  category: string;
+  subcategory: string;
+}
+
 interface EntitySelectorProps {
   selectedEntity: string | null;
   onSelectEntity: (entity: string) => void;
 }
 
 export default function EntitySelector({ selectedEntity, onSelectEntity }: EntitySelectorProps) {
-  const [entities, setEntities] = useState<string[]>([]);
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   
@@ -19,17 +29,33 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
     async function fetchEntities() {
       try {
         setIsLoading(true);
-        console.log('🔍 Fetching Entities with API Key:', process.env.NEXT_PUBLIC_API_KEY);
+        setError(null);
+        console.log('🔍 EntitySelector: Fetching entities...');
         
-        const response = await api.get("/v1/entities");  // Use api instead of axios.get
-        console.log('Response structure:', response);
-        setEntities(Array.isArray(response.data) ? response.data : response.data.data || []);
-        console.log('✅ Entities Fetched:', response.data);
+        const response = await api.get("/v1/entities");
+        console.log('🔍 EntitySelector: Raw API response:', response);
         
-        setEntities(response.data);
+        // Extract entities from the response
+        let entitiesList: Entity[] = [];
+        
+        if (response.data && Array.isArray(response.data)) {
+          // If response.data is an array of entities
+          entitiesList = response.data;
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // If entities are in a nested data property
+          entitiesList = response.data.data;
+        } else {
+          console.error("Unexpected API response format:", response.data);
+          throw new Error("Unexpected API response format");
+        }
+        
+        console.log('✅ EntitySelector: Entities extracted:', entitiesList.length);
+        setEntities(entitiesList);
       } catch (error) {
-        console.error("Error fetching entities:", error);
-      } finally{
+        console.error("❌ EntitySelector: Error fetching entities:", error);
+        setError("Failed to load entities. Please try again.");
+        setEntities([]); // Reset to empty array on error
+      } finally {
         setIsLoading(false);
       }
     }
@@ -37,11 +63,10 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
     fetchEntities();
   }, []);
   
-  const filteredEntities = Array.isArray(entities)
-  ? entities.filter(entity =>
-      entity.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  : [];
+  // Filter entities by name
+  const filteredEntities = entities.filter(entity => 
+    entity.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="relative">
@@ -73,23 +98,25 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
           
           {isLoading ? (
             <div className="p-4 text-center text-gray-400">Loading entities...</div>
+          ) : error ? (
+            <div className="p-4 text-center text-red-400">{error}</div>
           ) : filteredEntities.length === 0 ? (
             <div className="p-4 text-center text-gray-400">No entities found</div>
           ) : (
             <div>
               {filteredEntities.map((entity) => (
                 <div
-                  key={entity}
+                  key={entity.id}
                   className={`p-2 hover:bg-gray-700 cursor-pointer ${
-                    selectedEntity === entity ? "bg-orange-500/20 text-orange-400" : ""
+                    selectedEntity === entity.name ? "bg-orange-500/20 text-orange-400" : ""
                   }`}
                   onClick={() => {
-                    onSelectEntity(entity);
+                    onSelectEntity(entity.name);
                     setIsOpen(false);
                     setSearchTerm("");
                   }}
                 >
-                  {entity}
+                  {entity.name}
                 </div>
               ))}
             </div>
