@@ -222,12 +222,24 @@ export default function EnhancedComparisonComponent() {
         const data: ComparisonData = {
           entities: {
             [entityOne]: {
-              ...entity1Data.data,
-              ...entity1Trending.data
+              hype_score: entity1Data.data.hype_score || 0,
+              mentions: entity1Data.data.mentions || 0,
+              talk_time: entity1Data.data.talk_time || 0,
+              sentiment: entity1Data.data.sentiment || [],
+              rodmn_score: entity1Data.data.rodmn_score || 0,
+              wikipedia_views: entity1Trending.data.wikipedia_views || 0,
+              reddit_mentions: entity1Trending.data.reddit_mentions || 0,
+              google_trends: entity1Trending.data.google_trends || 0
             },
             [entityTwo]: {
-              ...entity2Data.data,
-              ...entity2Trending.data
+              hype_score: entity2Data.data.hype_score || 0,
+              mentions: entity2Data.data.mentions || 0,
+              talk_time: entity2Data.data.talk_time || 0,
+              sentiment: entity2Data.data.sentiment || [],
+              rodmn_score: entity2Data.data.rodmn_score || 0,
+              wikipedia_views: entity2Trending.data.wikipedia_views || 0,
+              reddit_mentions: entity2Trending.data.reddit_mentions || 0,
+              google_trends: entity2Trending.data.google_trends || 0
             }
           },
           metadata: {

@@ -109,13 +109,28 @@ export default function ComparePage() {
         
         // Combine the data
         setEntityOneData({
-          ...entityOneResponse.data,
-          ...entityOneTrending.data
+          name: entityOne,
+          hype_score: entityOneResponse.data.hype_score || 0,
+          mentions: entityOneResponse.data.mentions || 0,
+          talk_time: entityOneResponse.data.talk_time || 0,
+          sentiment: entityOneResponse.data.sentiment || [],
+          rodmn_score: entityOneResponse.data.rodmn_score || 0,
+          wikipedia_views: entityOneTrending.data.wikipedia_views || 0,
+          reddit_mentions: entityOneTrending.data.reddit_mentions || 0,
+          google_trends: entityOneTrending.data.google_trends || 0
         });
         
+        // Do the same for entity two
         setEntityTwoData({
-          ...entityTwoResponse.data,
-          ...entityTwoTrending.data
+          name: entityTwo,
+          hype_score: entityTwoResponse.data.hype_score || 0,
+          mentions: entityTwoResponse.data.mentions || 0,
+          talk_time: entityTwoResponse.data.talk_time || 0,
+          sentiment: entityTwoResponse.data.sentiment || [],
+          rodmn_score: entityTwoResponse.data.rodmn_score || 0,
+          wikipedia_views: entityTwoTrending.data.wikipedia_views || 0,
+          reddit_mentions: entityTwoTrending.data.reddit_mentions || 0,
+          google_trends: entityTwoTrending.data.google_trends || 0
         });
               
       } catch (error: unknown) {

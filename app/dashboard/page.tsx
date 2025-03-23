@@ -168,18 +168,19 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
             talkTime[entity] = metricsResponse.data.talk_time || 0;
             
             // Calculate average sentiment if sentiment data exists
+            // Calculate average sentiment if sentiment data exists
             if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-                newSentimentScores[entity] = metricsResponse.data.sentiment.reduce((a: number, b: number) => a + b, 0) / metricsResponse.data.sentiment.length;
+              newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
+                (a: number, b: number) => a + b, 0
+              ) / metricsResponse.data.sentiment.length;
             } else {
-              sentimentScores[entity] = 0;
+              newSentimentScores[entity] = 0;
             }
           } catch (err) {
             console.warn(`Could not fetch metrics for ${entity}:`, err);
-            // HIGHLIGHT START
             newMentions[entity] = 0;
             newTalkTime[entity] = 0;
             newSentimentScores[entity] = 0;
-            // HIGHLIGHT END
           }
         });
 
@@ -207,17 +208,14 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
                 .join(" ");
 
         // Process data for display
+        // Process data for display
         const processedData = Object.keys(hypeScores)
           .map((name) => ({
             name: formatName(name),
             hypeScore: hypeScores[name] || 0,
-            // [NEW] Use new objects for metrics
-            // HIGHLIGHT START
             mentions: newMentions[name] || 0,
             sentiment: newSentimentScores[name] || 0,
             talkTime: newTalkTime[name] || 0,
-            // HIGHLIGHT END
-            // Add some variation with random change percentages for UI (can be removed when you have real data)
             changePercent: Math.random() > 0.3 ? Math.random() * 15 : -Math.random() * 10
           }))
           .filter((item) => item.hypeScore > 0);
