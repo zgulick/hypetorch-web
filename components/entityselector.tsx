@@ -21,7 +21,9 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
         setIsLoading(true);
         console.log('🔍 Fetching Entities with API Key:', process.env.NEXT_PUBLIC_API_KEY);
         
-        const response = await api.get("/entities");  // Use api instead of axios.get
+        const response = await api.get("/v1/entities");  // Use api instead of axios.get
+        console.log('Response structure:', response);
+        setEntities(Array.isArray(response.data) ? response.data : response.data.data || []);
         console.log('✅ Entities Fetched:', response.data);
         
         setEntities(response.data);

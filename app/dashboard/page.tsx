@@ -133,8 +133,17 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
           }
         // Fetch Hype Scores
         const hypeResponse = await api.get("/hype_scores");
+        console.log("Full hype response:", hypeResponse);
         const hypeScores = hypeResponse.data;
         console.log("Raw HYPE scores:", hypeScores);
+
+        // Check if hypeScores is what you expect or if it's wrapped
+        console.log("Direct hypeScores:", hypeScores);
+        console.log("Nested data check:", hypeResponse.data.data);
+
+        // Try using the right access pattern
+        const actualHypeScores = hypeResponse.data.data || hypeResponse.data;
+        console.log("Actual hype scores being used:", actualHypeScores);
 
         // Prepare to collect metrics for each entity
         const newMentions: { [key: string]: number } = {};
@@ -212,10 +221,12 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         const processedData = Object.keys(hypeScores)
           .map((name) => ({
             name: formatName(name),
-            hypeScore: hypeScores[name] || 0,
+            // Use exact names from your API response
+            hypeScore: hypeScores[name].hype_score || 0,
             mentions: newMentions[name] || 0,
             sentiment: newSentimentScores[name] || 0,
             talkTime: newTalkTime[name] || 0,
+            // Add some variation with random change percentages for UI
             changePercent: Math.random() > 0.3 ? Math.random() * 15 : -Math.random() * 10
           }))
           .filter((item) => item.hypeScore > 0);
