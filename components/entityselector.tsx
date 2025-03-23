@@ -35,10 +35,12 @@ export default function EntitySelector({ selectedEntity, onSelectEntity }: Entit
     fetchEntities();
   }, []);
   
-  const filteredEntities = entities.filter(entity => 
-    entity.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
+  const filteredEntities = Array.isArray(entities)
+  ? entities.filter(entity =>
+      entity.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : [];
+
   return (
     <div className="relative">
       <div 
