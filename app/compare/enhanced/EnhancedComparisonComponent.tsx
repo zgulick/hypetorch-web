@@ -490,7 +490,7 @@ export default function EnhancedComparisonComponent() {
                 
                 <div className="mt-2 max-h-40 overflow-y-auto bg-gray-700 rounded-lg">
                   {filteredEntities.length > 0 ? (
-                    filteredEntities.map(entity => (
+                    filteredEntities.map((entity: string) => (
                       <div
                         key={entity}
                         className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
@@ -516,7 +516,7 @@ export default function EnhancedComparisonComponent() {
                     ))
                   ) : (
                     <div className="p-4 text-center text-gray-400">No entities found</div>
-                  )}
+                )}) : (
                 </div>
               </div>
               
@@ -535,7 +535,7 @@ export default function EnhancedComparisonComponent() {
                 
                 <div className="mt-2 max-h-40 overflow-y-auto bg-gray-700 rounded-lg">
                   {filteredEntities.length > 0 ? (
-                    filteredEntities.map(entity => (
+                    filteredEntities.map((entity: string) => (
                       <div
                         key={entity}
                         className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
