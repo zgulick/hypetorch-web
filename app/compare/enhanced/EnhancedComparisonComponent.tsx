@@ -391,22 +391,30 @@ export default function EnhancedComparisonComponent() {
   }, [comparisonData, entityOne, entityTwo, selectedMetrics]);
   
   // Get history data for line charts
+  // Get history data for line charts
   const historyData = useMemo<HistoryData>(() => {
     if (!comparisonData || !entityOne || !entityTwo || !includeHistory) return {} as HistoryData;
-    
+  
     const result: HistoryData = {};
-    
+  
     selectedMetrics.forEach(metric => {
-      // Safe access to potentially undefined nested properties
+      // Initialize the structure we need
+      result[metric] = {
+        entity1: [],
+        entity2: []
+      };
+    
+      // Safety checks for nested properties
       const entity1History = comparisonData.entities[entityOne]?.history?.[metric] || [];
       const entity2History = comparisonData.entities[entityTwo]?.history?.[metric] || [];
-      
-      result[metric] = {
-        entity1: entity1History,
-        entity2: entity2History
-      };
-    });
     
+      // Set the data safely
+      result[metric].entity1 = Array.isArray(entity1History) ? entity1History : [];
+      result[metric].entity2 = Array.isArray(entity2History) ? entity2History : [];
+    
+      console.log(`History data for ${metric}:`, result[metric]);
+    });
+  
     return result;
   }, [comparisonData, entityOne, entityTwo, includeHistory, selectedMetrics]);
   
@@ -858,43 +866,79 @@ export default function EnhancedComparisonComponent() {
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold mb-4">Historical Comparison</h2>
                   <div className="grid grid-cols-1 gap-6">
-                    {Object.entries(historyData).map(([metric, data]) => {
-                        const metricInfo = METRICS.find(m => m.key === metric);
-                        if (!metricInfo) return null;
-    
-                        const historyChartData: HistoryChartDataPoint[] = [];
-    
-                        // Create a map for quick lookups
-                        const entity1Map = Object.fromEntries(
-                        data.entity1.map(item => [item.timestamp, item.value])
+                  {Object.entries(historyData).map(([metric, data]) => {
+                      const metricInfo = METRICS.find(m => m.key === metric);
+                      if (!metricInfo) return null;
+  
+                      // Make sure we have data to display
+                      if (!data.entity1.length && !data.entity2.length) {
+                        return (
+                          <div key={metric} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+                            <h3 className="text-lg font-semibold mb-4">{metricInfo.label} Over Time</h3>
+                            <div className="h-80 flex items-center justify-center">
+                              <p className="text-gray-400">No historical data available</p>
+                            </div>
+                          </div>
                         );
-                        const entity2Map = Object.fromEntries(
-                        data.entity2.map(item => [item.timestamp, item.value])
-                        );
-    
-                        // Prepare data for the line chart
-                        const allTimestamps = new Set([
-                        ...data.entity1.map(item => item.timestamp),
-                        ...data.entity2.map(item => item.timestamp)
-                        ]);
+                      }
 
-                        const sortedTimestamps = Array.from(allTimestamps)
+                      const historyChartData: HistoryChartDataPoint[] = [];
+  
+                      // Safely process timestamps
+                      const allTimestamps = new Set<string>();
+  
+                      // Add timestamps from both entities
+                      if (Array.isArray(data.entity1)) {
+                        data.entity1.forEach(item => {
+                          if (item && item.timestamp) allTimestamps.add(item.timestamp);
+                        });
+                      }
+  
+                      if (Array.isArray(data.entity2)) {
+                        data.entity2.forEach(item => {
+                          if (item && item.timestamp) allTimestamps.add(item.timestamp);
+                        });
+                      }
+  
+                      // Create lookup maps for both entities
+                      const entity1Map: Record<string, number> = {};
+                      const entity2Map: Record<string, number> = {};
+  
+                      if (Array.isArray(data.entity1)) {
+                        data.entity1.forEach(item => {
+                          if (item && item.timestamp && item.value !== undefined) {
+                            entity1Map[item.timestamp] = item.value;
+                          }
+                        });
+                      }
+  
+                      if (Array.isArray(data.entity2)) {
+                        data.entity2.forEach(item => {
+                          if (item && item.timestamp && item.value !== undefined) {
+                            entity2Map[item.timestamp] = item.value;
+                          }
+                        });
+                      }
+  
+                      // Sort timestamps chronologically
+                      const sortedTimestamps = Array.from(allTimestamps)
                         .map(ts => new Date(ts))
                         .sort((a, b) => a.getTime() - b.getTime())
                         .map(date => date.toISOString());
-
-                        // Then create the chart data
-                        sortedTimestamps.forEach(timestamp => {
+  
+                      // Build chart data
+                      sortedTimestamps.forEach(timestamp => {
                         const dataPoint: HistoryChartDataPoint = {
-                            timestamp: new Date(timestamp).toLocaleDateString(),
+                          timestamp: new Date(timestamp).toLocaleDateString(),
                         };
-
-                        dataPoint[entityOne] = entity1Map[timestamp] ?? null;
-                        dataPoint[entityTwo] = entity2Map[timestamp] ?? null;
-
+    
+                        // Safely assign values
+                        dataPoint[entityOne] = entity1Map[timestamp] !== undefined ? entity1Map[timestamp] : null;
+                        dataPoint[entityTwo] = entity2Map[timestamp] !== undefined ? entity2Map[timestamp] : null;
+    
                         historyChartData.push(dataPoint);
                       });
-                      
+  
                       return (
                         <div key={metric} className="bg-gray-800 border border-gray-700 rounded-xl p-6">
                           <h3 className="text-lg font-semibold mb-4">{metricInfo.label} Over Time</h3>
@@ -923,7 +967,7 @@ export default function EnhancedComparisonComponent() {
                                   dot={{ r: 4 }}
                                   activeDot={{ r: 6 }}
                                 />
-                              </LineChart>
+                             </LineChart>
                             </ResponsiveContainer>
                           </div>
                         </div>

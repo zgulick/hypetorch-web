@@ -1,55 +1,49 @@
-// lib/api.ts
 import axios from 'axios';
 
-// Define the API key
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
-
-// Create a pre-configured axios instance
+// Base API config
 const api = axios.create({
-    baseURL: 'https://hypetorch-api.onrender.com/api',
-    headers: {
-      'X-API-Key': API_KEY,
-      'Content-Type': 'application/json'
-    }
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://hypetorch-api.onrender.com/api',
+  timeout: 30000, // 30 seconds
 });
 
-// Add this after your axios.create() call
-api.interceptors.response.use(
-  (response) => {
-    // Check for standardized format
-    if (response.data && response.data.status === "success" && response.data.data !== undefined) {
-      // Log that unwrapping is happening
-      console.log("Unwrapping API response from standard format", response.data);
-      // Return a modified response with data extracted from the wrapper
-      return {...response, data: response.data.data};
-    }
-    // Return original response for non-standard responses
-    return response;
+// Export your API key for debugging purposes only - remove in production
+export const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'your-fallback-api-key';
+
+// Add a request interceptor to include the API key in all requests
+api.interceptors.request.use(
+  (config) => {
+    // Always add the API key to the headers
+    config.headers['X-API-Key'] = API_KEY;
+    return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-export const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET;
-
-// Add a request interceptor for admin routes
-api.interceptors.request.use(
-  config => {
-    // Check if this is an admin route
-    if (config.url?.includes('/admin/')) {
-      // Add admin_key parameter to all admin routes
-      config.params = {
-        ...config.params,
-        admin_key: ADMIN_SECRET
+// Add a response interceptor to handle errors consistently
+api.interceptors.response.use(
+  (response) => {
+    // Check if the response has a data property
+    if (response.data && response.data.status === 'success' && response.data.data) {
+      // If the response is wrapped in a data property, return just the data
+      return {
+        ...response,
+        data: response.data.data
       };
     }
-    return config;
+    return response;
   },
-  error => {
+  (error) => {
+    // Handle 402 Payment Required specifically
+    if (error.response && error.response.status === 402) {
+      console.error('API Token Error:', error.response.data);
+      // You could add custom handling here, like redirecting to a subscription page
+    }
+    
     return Promise.reject(error);
   }
 );
 
-export { API_KEY };  
+
 export default api;
