@@ -1,32 +1,23 @@
 import axios from 'axios';
 
-// Base API config
+// API configuration
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hypetorch-api.onrender.com/api';
+export const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
+
+// Create a configured axios instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://hypetorch-api.onrender.com/api',
+  baseURL: API_URL,
   timeout: 30000, // 30 seconds
+  headers: {
+    'X-API-Key': API_KEY
+  }
 });
 
-// Export your API key for debugging purposes only - remove in production
-export const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'your-fallback-api-key';
-
-// Add a request interceptor to include the API key in all requests
-api.interceptors.request.use(
-  (config) => {
-    // Always add the API key to the headers
-    config.headers['X-API-Key'] = API_KEY;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Add a response interceptor to handle errors consistently
+// Add response interceptor to normalize data structure
 api.interceptors.response.use(
   (response) => {
-    // Check if the response has a data property
-    if (response.data && response.data.status === 'success' && response.data.data) {
-      // If the response is wrapped in a data property, return just the data
+    // If response is wrapped in success/data structure, unwrap it
+    if (response.data && typeof response.data === 'object' && 'status' in response.data && response.data.status === 'success' && 'data' in response.data) {
       return {
         ...response,
         data: response.data.data
@@ -35,15 +26,18 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle 402 Payment Required specifically
+    // Handle 402 Payment Required (token issue)
     if (error.response && error.response.status === 402) {
       console.error('API Token Error:', error.response.data);
-      // You could add custom handling here, like redirecting to a subscription page
+      // You could redirect to a subscription page or show a message
     }
     
     return Promise.reject(error);
   }
 );
 
+// Debug info
+console.log('API URL:', API_URL);
+console.log('API Key configured:', API_KEY ? 'Yes' : 'No');
 
 export default api;
