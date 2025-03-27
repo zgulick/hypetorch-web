@@ -70,6 +70,14 @@ interface HistoryData {
   };
 }
 
+interface EntityItem {
+  id?: number | string;
+  name: string;
+  type?: string;
+  category?: string;
+  subcategory?: string;
+}
+
 interface EntityData {
   [key: string]: 
     | number 
@@ -134,7 +142,7 @@ export default function EnhancedComparisonComponent() {
   // State variables
   const [entityOne, setEntityOne] = useState<string | null>(null);
   const [entityTwo, setEntityTwo] = useState<string | null>(null);
-  const [allEntities, setAllEntities] = useState<string[]>([]);
+  const [allEntities, setAllEntities] = useState<(string | EntityItem)[]>([]);  
   const [comparisonData, setComparisonData] = useState<ComparisonData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -150,7 +158,18 @@ export default function EnhancedComparisonComponent() {
     async function fetchEntities() {
       try {
         const response = await api.get('/v1/entities');
-        setAllEntities(response.data);
+        
+        // Handle both array of objects and array of strings
+        const entities = Array.isArray(response.data) 
+          ? response.data.map(entity => {
+              if (typeof entity === 'object' && entity !== null && 'name' in entity) {
+                return (entity as EntityItem).name; // Extract name from object
+              }
+              return String(entity); // Ensure strings
+            })
+          : [];
+        
+        setAllEntities(entities);
         
         // Load favorites from localStorage
         const savedFavorites = localStorage.getItem('favoriteEntities');
@@ -321,24 +340,35 @@ export default function EnhancedComparisonComponent() {
   };
   
   // Random entity selection
+// Random entity selection
   const selectRandomEntities = () => {
     if (allEntities.length < 2) return;
-    
+  
     const availableEntities = allEntities.filter(e => 
       (!entityOne || e !== entityOne) && (!entityTwo || e !== entityTwo)
     );
-    
+  
     if (availableEntities.length === 0) return;
-    
+  
     const randomIndex1 = Math.floor(Math.random() * availableEntities.length);
-    const randomEntity1 = availableEntities[randomIndex1];
-    
-    const filteredEntities = availableEntities.filter(e => e !== randomEntity1);
+    const randomEntity1Raw = availableEntities[randomIndex1];
+  
+    // Extract name from entity (if it's an object)
+    const randomEntity1Name = typeof randomEntity1Raw === 'object' && randomEntity1Raw !== null && 'name' in randomEntity1Raw
+      ? randomEntity1Raw.name
+      : String(randomEntity1Raw);
+  
+    const filteredEntities = availableEntities.filter(e => e !== randomEntity1Raw);
     const randomIndex2 = Math.floor(Math.random() * filteredEntities.length);
-    const randomEntity2 = filteredEntities[randomIndex2];
-    
-    setEntityOne(randomEntity1);
-    setEntityTwo(randomEntity2);
+    const randomEntity2Raw = filteredEntities[randomIndex2];
+  
+    // Extract name from entity (if it's an object)
+    const randomEntity2Name = typeof randomEntity2Raw === 'object' && randomEntity2Raw !== null && 'name' in randomEntity2Raw
+      ? randomEntity2Raw.name
+      : String(randomEntity2Raw);
+  
+    setEntityOne(randomEntity1Name);
+    setEntityTwo(randomEntity2Name);
   };
   
   // Toggle metric selection
@@ -358,9 +388,15 @@ export default function EnhancedComparisonComponent() {
     if (!searchTerm.trim()) {
       return allEntities;
     }
-    return allEntities.filter(entity => 
-      entity.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    
+    const term = searchTerm.toLowerCase();
+    return allEntities.filter(entity => {
+      const entityName = typeof entity === 'object' && entity !== null && 'name' in entity
+        ? (entity as EntityItem).name
+        : String(entity);
+      
+      return entityName.toLowerCase().includes(term);
+    });
   }, [allEntities, searchTerm]);
   
   // Prepare comparison data for charts
@@ -498,36 +534,42 @@ export default function EnhancedComparisonComponent() {
                 
                 <div className="mt-2 max-h-40 overflow-y-auto bg-gray-700 rounded-lg">
                   {filteredEntities.length > 0 ? (
-                    filteredEntities.map((entity: string) => (
-                      <div
-                        key={entity}
-                        className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
-                          entity === entityOne ? 'bg-orange-900/30 text-orange-300' : ''
-                        }`}
-                        onClick={() => setEntityOne(entity)}
-                      >
-                        <span>{entity}</span>
-                        <button
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation();
-                            toggleFavorite(entity);
-                          }}
-                          className="text-gray-400 hover:text-yellow-400"
+                    filteredEntities.map((entity) => {
+                      // Handle both object and string entities
+                      const entityName = typeof entity === 'object' && entity !== null && 'name' in entity
+                        ? (entity as EntityItem).name 
+                        : String(entity);
+      
+                      return (
+                        <div
+                          key={entityName}
+                          className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
+                            entityName === entityOne ? 'bg-orange-900/30 text-orange-300' : ''
+                          }`}
+                          onClick={() => setEntityOne(entityName)}
                         >
-                          <Bookmark 
-                            size={16}
-                            fill={favoriteEntities.includes(entity) ? "#facc15" : "none"}
-                            color={favoriteEntities.includes(entity) ? "#facc15" : "currentColor"}
-                          />
-                        </button>
-                      </div>
-                    ))
+                          <span>{entityName}</span>
+                          <button
+                            onClick={(e: React.MouseEvent) => {
+                              e.stopPropagation();
+                              toggleFavorite(entityName);
+                            }}
+                            className="text-gray-400 hover:text-yellow-400"
+                          >
+                            <Bookmark 
+                              size={16}
+                              fill={favoriteEntities.includes(entityName) ? "#facc15" : "none"}
+                              color={favoriteEntities.includes(entityName) ? "#facc15" : "currentColor"}
+                            />
+                          </button>
+                        </div>
+                      );
+                    })
                   ) : (
                     <div className="p-4 text-center text-gray-400">No entities found</div>
-                )}) : (
+                  )}
                 </div>
               </div>
-              
               <div>
                 <label className="block text-sm font-medium mb-2">Entity 2</label>
                 <div className="relative">
@@ -540,33 +582,39 @@ export default function EnhancedComparisonComponent() {
                   />
                   <Filter size={16} className="absolute left-2.5 top-3 text-gray-400" />
                 </div>
-                
                 <div className="mt-2 max-h-40 overflow-y-auto bg-gray-700 rounded-lg">
                   {filteredEntities.length > 0 ? (
-                    filteredEntities.map((entity: string) => (
-                      <div
-                        key={entity}
-                        className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
-                          entity === entityTwo ? 'bg-blue-900/30 text-blue-300' : ''
-                        }`}
-                        onClick={() => setEntityTwo(entity)}
-                      >
-                        <span>{entity}</span>
-                        <button
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation();
-                            toggleFavorite(entity);
-                          }}
-                          className="text-gray-400 hover:text-yellow-400"
+                    filteredEntities.map((entity) => {
+                      // Handle both object and string entities
+                      const entityName = typeof entity === 'object' && entity !== null && 'name' in entity
+                        ? (entity as EntityItem).name 
+                        : String(entity);
+      
+                      return (
+                        <div
+                          key={entityName}
+                          className={`p-2 hover:bg-gray-600 cursor-pointer flex justify-between items-center ${
+                            entityName === entityTwo ? 'bg-orange-900/30 text-orange-300' : ''
+                          }`}
+                          onClick={() => setEntityTwo(entityName)}
                         >
-                          <Bookmark 
-                            size={16}
-                            fill={favoriteEntities.includes(entity) ? "#facc15" : "none"}
-                            color={favoriteEntities.includes(entity) ? "#facc15" : "currentColor"}
-                          />
-                        </button>
-                      </div>
-                    ))
+                          <span>{entityName}</span>
+                          <button
+                            onClick={(e: React.MouseEvent) => {
+                              e.stopPropagation();
+                              toggleFavorite(entityName);
+                            }}
+                            className="text-gray-400 hover:text-yellow-400"
+                          >
+                            <Bookmark 
+                              size={16}
+                              fill={favoriteEntities.includes(entityName) ? "#facc15" : "none"}
+                              color={favoriteEntities.includes(entityName) ? "#facc15" : "currentColor"}
+                            />
+                          </button>
+                        </div>
+                      );
+                    })
                   ) : (
                     <div className="p-4 text-center text-gray-400">No entities found</div>
                   )}
