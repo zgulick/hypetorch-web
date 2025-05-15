@@ -6,7 +6,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   //LineChart, Line, , Legend
 } from "recharts";
-import api from "@/lib/api";
+import apiV2 from "@/lib/api_v2";
+import { getEntities, getHypeMetrics } from "@/lib/dataService_v2";
 import { motion } from "framer-motion";
 import { 
   ArrowUpRight, ArrowDownRight, TrendingUp, 
@@ -115,133 +116,50 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
 };
 
 // Add these state declarations at the top of your component, before useEffect
-const [mentions, setMentions] = useState<{ [key: string]: number }>({});
-const [talkTime, setTalkTime] = useState<{ [key: string]: number }>({});
-const [sentimentScores, setSentimentScores] = useState<{ [key: string]: number }>({});
 const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-        // Add this after setIsLoading(true);
-        try {
-          // Get last updated timestamp
-          const timestampResponse = await api.get("/last_updated");
-          if (timestampResponse.data.last_updated) {
-            setLastUpdated(new Date(timestampResponse.data.last_updated * 1000));
-          }
-        // Fetch Hype Scores
-        const hypeResponse = await api.get("/hype_scores");
-        console.log("Full hype response:", hypeResponse);
-        // Get the data from the response - handle both wrapped and unwrapped formats
-        const hypeScores = hypeResponse.data;
-        console.log("Processed HYPE scores:", hypeScores);
-
-        // Check if hypeScores is what you expect or if it's wrapped
-        console.log("Direct hypeScores:", hypeScores);
-        console.log("Nested data check:", hypeResponse.data.data);
-
-        // Try using the right access pattern
-        const actualHypeScores = hypeResponse.data.data || hypeResponse.data;
-        console.log("Actual hype scores being used:", actualHypeScores);
-
-        // Prepare to collect metrics for each entity
-        const newMentions: { [key: string]: number } = {};
-        const newSentimentScores: { [key: string]: number } = {};
-        const newTalkTime: { [key: string]: number } = {};
-        
-        // Create a list of promises to fetch data for each entity
-        const promises = Object.keys(hypeScores).map(async (entity) => {
-          try {
-            const metricsResponse = await api.get(
-              `/v1/entities/${encodeURIComponent(entity)}/metrics`
-            );
-            
-            // Directly access the metrics data
-            const metrics = metricsResponse.data;
-            // HIGHLIGHT START
-            newMentions[entity] = metricsResponse.data.mentions || 0;
-            newTalkTime[entity] = metricsResponse.data.talk_time || 0;
-          
-            // Calculate average sentiment if sentiment data exists
-            if (metricsResponse.data.sentiment && metricsResponse.data.sentiment.length > 0) {
-              newSentimentScores[entity] = metricsResponse.data.sentiment.reduce(
-                // [NEW] Add type assertion to resolve reduce method typing
-                (a: number, b: number) => a + b, 0
-            ) / metricsResponse.data.sentiment.length;
-          } else {
-            newSentimentScores[entity] = 0;
-          }
-          // HIGHLIGHT END
-
-            mentions[entity] = metricsResponse.data.mentions || 0;
-            talkTime[entity] = metricsResponse.data.talk_time || 0;
-            
-            // Calculate average sentiment if sentiment data exists
-            // Calculate average sentiment if sentiment data exists
-            if (metrics.sentiment && metrics.sentiment.length > 0) {
-              newSentimentScores[entity] = metrics.sentiment.reduce(
-                (a: number, b: number) => a + b, 0
-              ) / metrics.sentiment.length;
-            } else {
-              newSentimentScores[entity] = 0;
-            }
-          } catch (err) {
-            console.warn(`Could not fetch metrics for ${entity}:`, err);
-            newMentions[entity] = 0;
-            newTalkTime[entity] = 0;
-            newSentimentScores[entity] = 0;
-          }
+      try {
+        // First get the list of entity names
+        const entitiesResponse = await apiV2.get("/entities?page=1&page_size=100");
+        const entities = entitiesResponse.data;
+    
+        // Extract just the names
+        const entityNames = entities.map((entity: any) => entity.name);
+    
+        // Now use the bulk endpoint to get all metrics at once
+        const bulkResponse = await apiV2.post("/entities/bulk", {
+          entity_names: entityNames,
+          metrics: ["hype_score", "rodmn_score", "mentions", "talk_time", "sentiment"],
+          include_history: false
         });
-
-        // Wait for all API calls to complete
-        await Promise.all(promises);
-
-        // [NEW] Update state with the new objects
-        // HIGHLIGHT START
-        setMentions(newMentions);
-        setTalkTime(newTalkTime);
-        setSentimentScores(newSentimentScores);
-        // HIGHLIGHT END
-
-        console.log("Collected mentions:", mentions);
-        console.log("Collected talk time:", talkTime);
-        console.log("Collected sentiment scores:", sentimentScores);
-
-        // Format entity names consistently
-        const formatName = (name: string) =>
-          name.toUpperCase() === "WNBA" || name.toUpperCase() === "NBA"
-            ? name.toUpperCase()
-            : name
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join(" ");
-
-        // Process data for display
-        // Process data for display
-        const processedData = Object.keys(hypeScores)
-          .map((name) => ({
-            name: formatName(name),
-            // Use direct property access since we've standardized it
-            hypeScore: hypeScores[name] || 0, // May need to adjust based on actual structure
-            mentions: newMentions[name] || 0,
-            sentiment: newSentimentScores[name] || 0,
-            talkTime: newTalkTime[name] || 0,
-            // Add some variation with random change percentages for UI
+    
+        console.log("Bulk response:", bulkResponse.data);
+    
+        // Process the bulk data
+        const processedData: EntityData[] = bulkResponse.data
+          .filter((entity: any) => !entity.error)
+          .map((entity: any) => ({
+            name: entity.name,
+            hypeScore: entity.metrics?.hype_score || 0,
+            mentions: entity.metrics?.mentions || 0,
+            sentiment: entity.metrics?.sentiment || 0,
+            talkTime: entity.metrics?.talk_time || 0,
             changePercent: Math.random() > 0.3 ? Math.random() * 15 : -Math.random() * 10
-          }))
-          .filter((item) => item.hypeScore > 0);
-
+          }));
+    
         // Sort data for different metrics
         const topHyped = [...processedData]
           .sort((a, b) => b.hypeScore - a.hypeScore)
           .slice(0, 8);
-          
+      
         const topMentioned = [...processedData]
           .sort((a, b) => b.mentions - a.mentions)
           .slice(0, 8);
-          
+      
         const sentimentData = [...processedData]
           .sort((a, b) => b.sentiment - a.sentiment)
           .slice(0, 10);
@@ -250,12 +168,11 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
           .sort((a, b) => b.talkTime - a.talkTime)
           .slice(0, 8);
 
-        // Set summary metrics for top cards
+        // Set summary metrics
         setHighestHype(topHyped.length > 0 ? Number(topHyped[0].hypeScore.toFixed(2)) : 0);
         setTopMentions(topMentioned.length > 0 ? topMentioned[0].mentions : 0);
         setBestSentiment(sentimentData.length > 0 ? Number(sentimentData[0].sentiment.toFixed(2)) : 0);
 
-        // Set data for charts
         setData({
           hype: topHyped,
           mentions: topMentioned,
@@ -270,7 +187,6 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
         setIsLoading(false);
       }
     }
-
     fetchData();
   }, []);
 
