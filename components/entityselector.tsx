@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from '@/lib/api';  // Keep this import for your original API
+// API import removed - using getEntities from dataService_v2 instead
 import { getEntities } from '@/lib/dataService_v2'; // Add the V2 import
 import { Search } from "lucide-react";
 

@@ -1,7 +1,7 @@
 import apiV2 from './api_v2';
 
-// Interface for entity data
-interface EntityData {
+// Interface for entity data - exported for use in other components
+export interface EntityDataV2 {
   id: number;
   name: string;
   type: string;
@@ -31,8 +31,8 @@ interface EntityData {
   };
 }
 
-// Interface for trending data
-interface TrendingEntity {
+// Interface for trending data - exported for use in other components
+export interface TrendingEntity {
   entity_id: number;
   entity_name: string;
   current_value: number;
@@ -48,7 +48,7 @@ export async function getEntities(
   subcategory?: string
 ) {
   try {
-    const params: any = { page, page_size: pageSize };
+    const params: Record<string, string | number> = { page, page_size: pageSize };
     if (category) params.category = category;
     if (subcategory) params.subcategory = subcategory;
     
@@ -78,7 +78,7 @@ export async function getTrendingEntities(
   category?: string
 ) {
   try {
-    const params: any = { metric, limit };
+    const params: Record<string, string | number> = { metric, limit };
     if (category) params.category = category;
     
     const response = await apiV2.get('/trending', { params });

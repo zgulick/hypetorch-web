@@ -6,7 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   //LineChart, Line, , Legend
 } from "recharts";
-import { getEntities, getHypeMetrics, getEntityBulk } from "@/lib/dataService";
+import { getEntities, getEntityBulk } from "@/lib/dataService";
 import { motion } from "framer-motion";
 import { 
   ArrowUpRight, ArrowDownRight, TrendingUp, 
@@ -28,6 +28,23 @@ interface EntityData {
     sentiment: number;
     talkTime: number;
     changePercent: number;
+  }
+
+  interface EntityResponse {
+    name: string;
+    [key: string]: unknown;
+  }
+
+  interface BulkEntityResponse {
+    name: string;
+    error?: string;
+    metrics?: {
+      hype_score?: number;
+      mentions?: number;
+      sentiment?: number;
+      talk_time?: number;
+      [key: string]: unknown;
+    };
   }
 
   export default function Dashboard() {
@@ -117,7 +134,6 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
 // Add these state declarations at the top of your component, before useEffect
 const [lastUpdated] = useState<Date | null>(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -128,7 +144,7 @@ const [lastUpdated] = useState<Date | null>(null);
     
         // Extract just the names with better error handling
         const entityNames = Array.isArray(entities) 
-          ? entities.map((entity: any) => {
+          ? entities.map((entity: EntityResponse | string) => {
               // Check if entity is an object with a name property
               if (entity && typeof entity === 'object' && 'name' in entity) {
                 return entity.name;
@@ -152,9 +168,9 @@ const [lastUpdated] = useState<Date | null>(null);
         console.log("Bulk response:", bulkResponse);
     
         // Process the bulk data
-        const processedData: EntityData[] = bulkResponse
-          .filter((entity: any) => !entity.error)
-          .map((entity: any) => ({
+        const processedData: EntityData[] = (bulkResponse as BulkEntityResponse[])
+          .filter((entity: BulkEntityResponse) => !entity.error)
+          .map((entity: BulkEntityResponse) => ({
             name: entity.name,
             hypeScore: entity.metrics?.hype_score || 0,
             mentions: entity.metrics?.mentions || 0,

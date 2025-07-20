@@ -6,12 +6,9 @@ import { useState, useEffect } from "react";
 import Navbar from "@/app/Navbar";
 import EntitySelector from "@/components/entityselector";
 import ComparisonCard from "@/components/comparisoncard";
-import ComparisonChart from "@/components/comparisonchart";
-import { compareEntities, getEntity, getEntityTrending, getEntityHistory } from '@/lib/dataService';
+import { compareEntities } from '@/lib/dataService';
 
 import { motion } from "framer-motion";
-import { BarChart2, Activity, Globe } from "lucide-react";
-import Link from "next/link"
 
 interface EntityData {
   name: string;
@@ -31,7 +28,7 @@ export default function ComparePage() {
   const [entityOneData, setEntityOneData] = useState<EntityData | null>(null);
   const [entityTwoData, setEntityTwoData] = useState<EntityData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   // Load entities from URL parameters
   useEffect(() => {
@@ -109,11 +106,11 @@ export default function ComparePage() {
     fetchEntityData();
   }, [entityOne, entityTwo]);
 
-  // Calculate average sentiment
-  const getAverageSentiment = (sentimentArray: number[]) => {
-    if (!sentimentArray || sentimentArray.length === 0) return 0;
-    return sentimentArray.reduce((a, b) => a + b, 0) / sentimentArray.length;
-  };
+  // Calculate average sentiment - currently unused but kept for future use
+  // const getAverageSentiment = (sentimentArray: number[]) => {
+  //   if (!sentimentArray || sentimentArray.length === 0) return 0;
+  //   return sentimentArray.reduce((a, b) => a + b, 0) / sentimentArray.length;
+  // };
 
   // The rest of your component remains the same...
 

@@ -16,7 +16,7 @@ import {
   Filter
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getEntities, getEntity, getEntityTrending, getEntityHistory, compareEntities } from '@/lib/dataService';
+import { getEntities, getEntity, getEntityTrending, getEntityHistory } from '@/lib/dataService';
 import { 
   LineChart, Line, XAxis, YAxis, Tooltip, 
   Legend, ResponsiveContainer, BarChart, Bar,

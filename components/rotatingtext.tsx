@@ -19,7 +19,7 @@ const RotatingText = () => {
     }, 2000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [terms.length]);
   
   return (
     <span className="inline">

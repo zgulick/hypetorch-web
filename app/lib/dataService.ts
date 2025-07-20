@@ -45,7 +45,7 @@ export async function getEntities(
   subcategory?: string
 ) {
   try {
-    const params: any = { page, page_size: pageSize };
+    const params: Record<string, string | number> = { page, page_size: pageSize };
     if (category) params.category = category;
     if (subcategory) params.subcategory = subcategory;
     
@@ -117,7 +117,7 @@ export async function getTrendingEntities(
   subcategory?: string
 ) {
   try {
-    const params: any = { metric, limit };
+    const params: Record<string, string | number> = { metric, limit };
     if (timePeriod) params.time_period = timePeriod;
     if (category) params.category = category;
     if (subcategory) params.subcategory = subcategory;
@@ -151,7 +151,7 @@ export async function getEntityHistory(
   endDate?: string
 ) {
   try {
-    const params: any = { limit };
+    const params: Record<string, string | number> = { limit };
     if (startDate) params.start_date = startDate;
     if (endDate) params.end_date = endDate;
     
