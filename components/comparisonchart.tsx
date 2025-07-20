@@ -49,13 +49,31 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   return null;
 };
 
+// In hypetorch-web/app/compare/comparisonchart.tsx
+
 export default function ComparisonChart({ entityOne, entityTwo, metrics, title }: ComparisonChartProps) {
+  // Debug: Print the incoming data
+  console.log("ComparisonChart received:", { 
+    entity1: entityOne.name, 
+    entity1_data: entityOne.data,
+    entity2: entityTwo.name, 
+    entity2_data: entityTwo.data
+  });
+  
   // Format data for the chart
-  const chartData = metrics.map(metric => ({
-    name: metric.label,
-    [entityOne.name]: entityOne.data[metric.key] || 0,
-    [entityTwo.name]: entityTwo.data[metric.key] || 0,
-  }));
+  const chartData = metrics.map(metric => {
+    const entity1Value = entityOne.data[metric.key] || 0;
+    const entity2Value = entityTwo.data[metric.key] || 0;
+    
+    // Debug: Log individual metric data
+    console.log(`Metric ${metric.label}: ${entityOne.name}=${entity1Value}, ${entityTwo.name}=${entity2Value}`);
+    
+    return {
+      name: metric.label,
+      [entityOne.name]: entity1Value,
+      [entityTwo.name]: entity2Value,
+    };
+  });
 
   return (
     <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">

@@ -1,16 +1,19 @@
+// components/entityselector.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
-import api from '@/lib/api';  // Import your configured API instance
+import api from '@/lib/api';  // Keep this import for your original API
+import { getEntities } from '@/lib/dataService_v2'; // Add the V2 import
 import { Search } from "lucide-react";
 
 // Define the entity interface based on your API response
-interface Entity {
-  id: number;
+interface EntityItem {
+  id: number | string;
   name: string;
-  type: string;
-  category: string;
-  subcategory: string;
+  type?: string;
+  category?: string;
+  subcategory?: string;
 }
 
 interface EntitySelectorProps {
@@ -19,37 +22,47 @@ interface EntitySelectorProps {
 }
 
 export default function EntitySelector({ selectedEntity, onSelectEntity }: EntitySelectorProps) {
-  const [entities, setEntities] = useState<Entity[]>([]);
+  const [entities, setEntities] = useState<EntityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   
+  // Use this useEffect hook for fetching entities
   useEffect(() => {
     async function fetchEntities() {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('🔍 EntitySelector: Fetching entities...');
+        console.log('🔍 EntitySelector: Fetching entities with V2 API...');
         
-        const response = await api.get("/v1/entities");
-        console.log('🔍 EntitySelector: Raw API response:', response);
+        // Use V2 API service
+        const entitiesResponse = await getEntities(1, 100);
         
-        // Extract entities from the response
-        let entitiesList: Entity[] = [];
+        // Log the full response to see its structure
+        console.log('🔍 EntitySelector: Full response structure:', entitiesResponse);
         
-        if (response.data && Array.isArray(response.data)) {
-          // If response.data is an array of entities
-          entitiesList = response.data;
-        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          // If entities are in a nested data property
-          entitiesList = response.data.data;
+        // Extract entities based on the response structure
+        let entitiesList: EntityItem[] = [];
+        
+        // Check various possible data structures
+        if (entitiesResponse && entitiesResponse.data && Array.isArray(entitiesResponse.data)) {
+          console.log('📊 Found data array of length:', entitiesResponse.data.length);
+          entitiesList = entitiesResponse.data;
+        } else if (entitiesResponse && Array.isArray(entitiesResponse)) {
+          console.log('📊 Response itself is an array of length:', entitiesResponse.length);
+          entitiesList = entitiesResponse;
+        } else if (entitiesResponse && entitiesResponse.items && Array.isArray(entitiesResponse.items)) {
+          console.log('📊 Found items array of length:', entitiesResponse.items.length);
+          entitiesList = entitiesResponse.items;
+        } else if (entitiesResponse && entitiesResponse.results && Array.isArray(entitiesResponse.results)) {
+          console.log('📊 Found results array of length:', entitiesResponse.results.length);
+          entitiesList = entitiesResponse.results;
         } else {
-          console.error("Unexpected API response format:", response.data);
-          throw new Error("Unexpected API response format");
+          console.log('⚠️ Could not find entities array in response, full response:', entitiesResponse);
         }
         
-        console.log('✅ EntitySelector: Entities extracted:', entitiesList.length);
+        console.log('✅ EntitySelector: Entities loaded:', entitiesList.length);
         setEntities(entitiesList);
       } catch (error) {
         console.error("❌ EntitySelector: Error fetching entities:", error);

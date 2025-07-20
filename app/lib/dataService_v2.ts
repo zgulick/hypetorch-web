@@ -81,7 +81,7 @@ export async function getTrendingEntities(
     const params: any = { metric, limit };
     if (category) params.category = category;
     
-    const response = await apiV2.get('/entities/trending', { params });
+    const response = await apiV2.get('/trending', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching trending entities:', error);
@@ -92,11 +92,14 @@ export async function getTrendingEntities(
 // Compare multiple entities
 export async function compareEntities(
   entityNames: string[],
+  metrics?: string[],
   includeHistory: boolean = false
 ) {
   try {
-    const response = await apiV2.post('/compare', {
-      entities: entityNames,
+    // Match the expected BulkEntitiesRequest structure
+    const response = await apiV2.post('/metrics/compare', {
+      entity_names: entityNames,  // This is likely what your API expects
+      metrics: metrics || ["hype_score", "rodmn_score", "mentions", "talk_time"],
       include_history: includeHistory
     });
     return response.data;

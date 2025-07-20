@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" fill="none">
+  <!-- Flame Icon -->
+  <g transform="translate(10,10)">
+    <path d="M30 60c-5-15 5-25 5-35 0-10-8-15-8-25 0 0 18 10 18 30 0 5-2 10-2 10s7-4 7-14c0 0 14 12 2 30-6 10-10 18-10 24s4 10 4 10-22-5-16-30z"
+      fill="url(#flameGradient)" />
+  </g>
+
+  <!-- HypeTorch Text -->
+  <text x="80" y="65" font-family="Verdana, sans-serif" font-size="40" fill="#1F2937" letter-spacing="2">
+    Hype
+  </text>
+  <text x="180" y="65" font-family="Verdana, sans-serif" font-size="40" fill="url(#torchGradient)" letter-spacing="2">
+    Torch
+  </text>
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="flameGradient" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f59e0b" />
+      <stop offset="1" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="torchGradient" x1="0" y1="0" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f59e0b" />
+      <stop offset="1" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+</svg>

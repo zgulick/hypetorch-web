@@ -16,7 +16,7 @@ import {
   Filter
 } from "lucide-react";
 import { motion } from "framer-motion";
-import api from "@/lib/api";
+import { getEntities, getEntity, getEntityTrending, getEntityHistory, compareEntities } from '@/lib/dataService';
 import { 
   LineChart, Line, XAxis, YAxis, Tooltip, 
   Legend, ResponsiveContainer, BarChart, Bar,
@@ -157,20 +157,20 @@ export default function EnhancedComparisonComponent() {
   useEffect(() => {
     async function fetchEntities() {
       try {
-        const response = await api.get('/v1/entities');
-        
+        const entities = await getEntities(1, 100);
+    
         // Handle both array of objects and array of strings
-        const entities = Array.isArray(response.data) 
-          ? response.data.map(entity => {
+        const entityNames = Array.isArray(entities) 
+          ? entities.map(entity => {
               if (typeof entity === 'object' && entity !== null && 'name' in entity) {
                 return (entity as EntityItem).name; // Extract name from object
               }
               return String(entity); // Ensure strings
             })
           : [];
-        
-        setAllEntities(entities);
-        
+    
+        setAllEntities(entityNames);
+    
         // Load favorites from localStorage
         const savedFavorites = localStorage.getItem('favoriteEntities');
         if (savedFavorites) {
@@ -220,45 +220,47 @@ export default function EnhancedComparisonComponent() {
   useEffect(() => {
     async function fetchComparisonData() {
       if (!entityOne || !entityTwo) return;
-      
+  
       setIsLoading(true);
       setError(null);
-      
+  
       try {
-        // Fetch data for each entity separately
+        console.log("Using unified data service to fetch comparison data");
+    
+        // Option 1: Use separate entity data calls
         const [entity1Data, entity2Data] = await Promise.all([
-          api.get(`/v1/entities/${encodeURIComponent(entityOne)}`),
-          api.get(`/v1/entities/${encodeURIComponent(entityTwo)}`)
+          getEntity(entityOne),
+          getEntity(entityTwo)
         ]);
-        
+    
         // Fetch trending data for each entity
         const [entity1Trending, entity2Trending] = await Promise.all([
-          api.get(`/v1/entities/${encodeURIComponent(entityOne)}/trending`),
-          api.get(`/v1/entities/${encodeURIComponent(entityTwo)}/trending`)
+          getEntityTrending(entityOne),
+          getEntityTrending(entityTwo)
         ]);
-        
+    
         // Combine into the format expected by the component
         const data: ComparisonData = {
           entities: {
             [entityOne]: {
-              hype_score: entity1Data.data.hype_score || 0,
-              mentions: entity1Data.data.mentions || 0,
-              talk_time: entity1Data.data.talk_time || 0,
-              sentiment: entity1Data.data.sentiment || [],
-              rodmn_score: entity1Data.data.rodmn_score || 0,
-              wikipedia_views: entity1Trending.data.wikipedia_views || 0,
-              reddit_mentions: entity1Trending.data.reddit_mentions || 0,
-              google_trends: entity1Trending.data.google_trends || 0
+              hype_score: entity1Data.hype_score || 0,
+              mentions: entity1Data.mentions || 0,
+              talk_time: entity1Data.talk_time || 0,
+              sentiment: entity1Data.sentiment || [],
+              rodmn_score: entity1Data.rodmn_score || 0,
+              wikipedia_views: entity1Trending.wikipedia_views || 0,
+              reddit_mentions: entity1Trending.reddit_mentions || 0,
+              google_trends: entity1Trending.google_trends || 0
             },
             [entityTwo]: {
-              hype_score: entity2Data.data.hype_score || 0,
-              mentions: entity2Data.data.mentions || 0,
-              talk_time: entity2Data.data.talk_time || 0,
-              sentiment: entity2Data.data.sentiment || [],
-              rodmn_score: entity2Data.data.rodmn_score || 0,
-              wikipedia_views: entity2Trending.data.wikipedia_views || 0,
-              reddit_mentions: entity2Trending.data.reddit_mentions || 0,
-              google_trends: entity2Trending.data.google_trends || 0
+              hype_score: entity2Data.hype_score || 0,
+              mentions: entity2Data.mentions || 0,
+              talk_time: entity2Data.talk_time || 0,
+              sentiment: entity2Data.sentiment || [],
+              rodmn_score: entity2Data.rodmn_score || 0,
+              wikipedia_views: entity2Trending.wikipedia_views || 0,
+              reddit_mentions: entity2Trending.reddit_mentions || 0,
+              google_trends: entity2Trending.google_trends || 0
             }
           },
           metadata: {
@@ -269,37 +271,37 @@ export default function EnhancedComparisonComponent() {
             }
           }
         };
-        
+    
         // If history is requested, fetch it
         if (includeHistory) {
           try {
             const [entity1History, entity2History] = await Promise.all([
-              api.get(`/v1/entities/${encodeURIComponent(entityOne)}/history`),
-              api.get(`/v1/entities/${encodeURIComponent(entityTwo)}/history`)
+              getEntityHistory(entityOne),
+              getEntityHistory(entityTwo)
             ]);
-            
+        
             // Add history data
             if (!data.entities[entityOne].history) {
               data.entities[entityOne].history = {};
             }
-            
+        
             if (!data.entities[entityTwo].history) {
               data.entities[entityTwo].history = {};
             }
-            
+        
             if (data.entities[entityOne].history) {
-              data.entities[entityOne].history["hype_score"] = entity1History.data.history || [];
+              data.entities[entityOne].history["hype_score"] = entity1History.history || [];
             }
-            
+        
             if (data.entities[entityTwo].history) {
-              data.entities[entityTwo].history["hype_score"] = entity2History.data.history || [];
+              data.entities[entityTwo].history["hype_score"] = entity2History.history || [];
             }
           } catch (historyErr) {
             console.error("Error fetching history data:", historyErr);
             // Continue without history data
           }
         }
-        
+    
         console.log("Comparison data received:", data);
         setComparisonData(data);
       } catch (err) {

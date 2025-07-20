@@ -6,8 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   //LineChart, Line, , Legend
 } from "recharts";
-import apiV2 from "@/lib/api_v2";
-import { getEntities, getHypeMetrics } from "@/lib/dataService_v2";
+import { getEntities, getHypeMetrics, getEntityBulk } from "@/lib/dataService";
 import { motion } from "framer-motion";
 import { 
   ArrowUpRight, ArrowDownRight, TrendingUp, 
@@ -116,7 +115,7 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
 };
 
 // Add these state declarations at the top of your component, before useEffect
-const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+const [lastUpdated] = useState<Date | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -124,23 +123,36 @@ const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
       setIsLoading(true);
       try {
         // First get the list of entity names
-        const entitiesResponse = await apiV2.get("/entities?page=1&page_size=100");
-        const entities = entitiesResponse.data;
+        const entitiesResponse = await getEntities(1, 100);
+        const entities = entitiesResponse;
     
-        // Extract just the names
-        const entityNames = entities.map((entity: any) => entity.name);
+        // Extract just the names with better error handling
+        const entityNames = Array.isArray(entities) 
+          ? entities.map((entity: any) => {
+              // Check if entity is an object with a name property
+              if (entity && typeof entity === 'object' && 'name' in entity) {
+                return entity.name;
+              }
+              // If entity is a string itself
+              else if (typeof entity === 'string') {
+                return entity;
+              }
+              // Fallback
+              return String(entity);
+            })
+          : [];
     
         // Now use the bulk endpoint to get all metrics at once
-        const bulkResponse = await apiV2.post("/entities/bulk", {
-          entity_names: entityNames,
-          metrics: ["hype_score", "rodmn_score", "mentions", "talk_time", "sentiment"],
-          include_history: false
-        });
+        const bulkResponse = await getEntityBulk(
+          entityNames,
+          ["hype_score", "rodmn_score", "mentions", "talk_time", "sentiment"],
+          false
+        );
     
-        console.log("Bulk response:", bulkResponse.data);
+        console.log("Bulk response:", bulkResponse);
     
         // Process the bulk data
-        const processedData: EntityData[] = bulkResponse.data
+        const processedData: EntityData[] = bulkResponse
           .filter((entity: any) => !entity.error)
           .map((entity: any) => ({
             name: entity.name,
