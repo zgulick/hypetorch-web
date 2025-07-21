@@ -28,7 +28,7 @@ export default function ComparePage() {
   const [entityOneData, setEntityOneData] = useState<EntityData | null>(null);
   const [entityTwoData, setEntityTwoData] = useState<EntityData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Load entities from URL parameters
   useEffect(() => {
@@ -65,8 +65,17 @@ export default function ComparePage() {
         console.log('✅ Comparison Data:', comparisonData);
 
         // Extract entity data from the comparison result
-        const entity1Data = comparisonData.entities[entityOne];
-        const entity2Data = comparisonData.entities[entityTwo];
+        const entity1Data = comparisonData.entities?.[entityOne];
+        const entity2Data = comparisonData.entities?.[entityTwo];
+
+        console.log('🔍 Entity1 data extracted:', entity1Data);
+        console.log('🔍 Entity2 data extracted:', entity2Data);
+
+        if (!entity1Data || !entity2Data) {
+          console.error('❌ Missing entity data in response');
+          setError("Entity data not found in the response. Please try different entities.");
+          return;
+        }
 
         // Set the data
         setEntityOneData({
@@ -140,7 +149,12 @@ export default function ComparePage() {
           </div>
         </div>
 
-        {isLoading ? (
+        {error ? (
+          <div className="text-center text-red-400 p-12 border border-red-800 rounded-xl bg-red-900/10">
+            <p className="text-lg font-semibold mb-2">Error Loading Data</p>
+            <p>{error}</p>
+          </div>
+        ) : isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="w-12 h-12 rounded-full border-t-4 border-orange-500 border-r-4 border-gray-300 animate-spin"></div>
           </div>

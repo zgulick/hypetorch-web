@@ -95,15 +95,22 @@ export async function compareEntities(
       }
     };
     
+    // Debug the actual response structure
+    console.log('🔍 Raw API Response:', response.data);
+    
     // Transform API v2 response format to expected format
-    if (response.data.data?.metrics) {
+    const apiData = response.data.data || response.data;
+    
+    if (apiData?.metrics) {
+      result.metadata.metrics_included = Object.keys(apiData.metrics);
+      
       for (const entityName of entityNames) {
         result.entities[entityName] = {
           name: entityName,
         };
         
         // Extract metrics for each entity
-        for (const [metricName, metricData] of Object.entries(response.data.data.metrics)) {
+        for (const [metricName, metricData] of Object.entries(apiData.metrics)) {
           if (typeof metricData === 'object' && metricData !== null) {
             const entityValue = (metricData as Record<string, number>)[entityName] || 0;
             // Type-safe assignment based on metric name
@@ -127,6 +134,9 @@ export async function compareEntities(
           }
         }
       }
+    } else {
+      console.error('❌ No metrics found in API response');
+      console.error('📋 Available keys:', Object.keys(apiData || {}));
     }
     
     return result;
