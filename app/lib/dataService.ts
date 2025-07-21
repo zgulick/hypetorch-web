@@ -76,13 +76,60 @@ export async function compareEntities(
   metrics?: string[]
 ) {
   try {
-    const response = await apiV2.post('/compare', {
-      entities: entityNames,
+    const response = await apiV2.post('/metrics/compare', {
+      entity_names: entityNames,
       include_history: includeHistory,
       time_period: timePeriod,
-      metrics: metrics
+      metrics: metrics || ["hype_score", "rodmn_score", "mentions", "talk_time", "sentiment", "wikipedia_views", "reddit_mentions", "google_trends"]
     });
-    return response.data;
+    
+    // Transform the response to match expected format
+    const result: ComparisonResult = {
+      entities: {},
+      metadata: {
+        timestamp: new Date().toISOString(),
+        metrics_included: response.data.data?.metrics ? Object.keys(response.data.data.metrics) : [],
+        filters: {
+          time_period: timePeriod
+        }
+      }
+    };
+    
+    // Transform API v2 response format to expected format
+    if (response.data.data?.metrics) {
+      for (const entityName of entityNames) {
+        result.entities[entityName] = {
+          name: entityName,
+        };
+        
+        // Extract metrics for each entity
+        for (const [metricName, metricData] of Object.entries(response.data.data.metrics)) {
+          if (typeof metricData === 'object' && metricData !== null) {
+            const entityValue = (metricData as Record<string, number>)[entityName] || 0;
+            // Type-safe assignment based on metric name
+            if (metricName === 'hype_score') {
+              result.entities[entityName].hype_score = entityValue;
+            } else if (metricName === 'rodmn_score') {
+              result.entities[entityName].rodmn_score = entityValue;
+            } else if (metricName === 'mentions') {
+              result.entities[entityName].mentions = entityValue;
+            } else if (metricName === 'talk_time') {
+              result.entities[entityName].talk_time = entityValue;
+            } else if (metricName === 'wikipedia_views') {
+              result.entities[entityName].wikipedia_views = entityValue;
+            } else if (metricName === 'reddit_mentions') {
+              result.entities[entityName].reddit_mentions = entityValue;
+            } else if (metricName === 'google_trends') {
+              result.entities[entityName].google_trends = entityValue;
+            } else if (metricName === 'sentiment') {
+              result.entities[entityName].sentiment = [entityValue];
+            }
+          }
+        }
+      }
+    }
+    
+    return result;
   } catch (error) {
     console.error('Error comparing entities:', error);
     throw error;

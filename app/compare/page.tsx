@@ -154,7 +154,7 @@ export default function ComparePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {/* The rest of your comparison UI stays the same */}
+            {/* Main Metrics Comparison */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <ComparisonCard
                 title="JORDN™ Score"
@@ -167,12 +167,137 @@ export default function ComparePage() {
                   value: entityTwoData.hype_score || 0
                 }}
                 higherIsBetter={true}
+                formatValue={(value) => value.toFixed(1)}
               />
 
-              {/* ... other comparison cards ... */}
+              <ComparisonCard
+                title="RODMN™ Score"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.rodmn_score || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.rodmn_score || 0
+                }}
+                higherIsBetter={false}
+                formatValue={(value) => value.toFixed(1)}
+              />
+
+              <ComparisonCard
+                title="Mentions"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.mentions || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.mentions || 0
+                }}
+                higherIsBetter={true}
+                formatValue={(value) => value.toLocaleString()}
+              />
+
+              <ComparisonCard
+                title="Talk Time (minutes)"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.talk_time || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.talk_time || 0
+                }}
+                higherIsBetter={true}
+                formatValue={(value) => `${value.toFixed(1)}min`}
+              />
             </div>
 
-            {/* ... rest of your UI ... */}
+            {/* Secondary Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <ComparisonCard
+                title="Wikipedia Views"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.wikipedia_views || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.wikipedia_views || 0
+                }}
+                higherIsBetter={true}
+                formatValue={(value) => value.toLocaleString()}
+              />
+
+              <ComparisonCard
+                title="Reddit Mentions"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.reddit_mentions || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.reddit_mentions || 0
+                }}
+                higherIsBetter={true}
+                formatValue={(value) => value.toLocaleString()}
+              />
+
+              <ComparisonCard
+                title="Google Trends"
+                entityOne={{
+                  name: entityOne,
+                  value: entityOneData.google_trends || 0
+                }}
+                entityTwo={{
+                  name: entityTwo,
+                  value: entityTwoData.google_trends || 0
+                }}
+                higherIsBetter={true}
+                formatValue={(value) => value.toFixed(1)}
+              />
+            </div>
+
+            {/* Summary Section */}
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+              <h3 className="text-xl font-medium mb-4 text-orange-400">Analysis Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">{entityOne}</h4>
+                  <div className="space-y-2 text-sm text-gray-300">
+                    <p><span className="text-orange-400">JORDN™:</span> {(entityOneData.hype_score || 0).toFixed(1)}</p>
+                    <p><span className="text-red-400">RODMN™:</span> {(entityOneData.rodmn_score || 0).toFixed(1)}</p>
+                    <p><span className="text-blue-400">Activity:</span> {(entityOneData.mentions || 0).toLocaleString()} mentions, {(entityOneData.talk_time || 0).toFixed(1)} min talk time</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">{entityTwo}</h4>
+                  <div className="space-y-2 text-sm text-gray-300">
+                    <p><span className="text-orange-400">JORDN™:</span> {(entityTwoData.hype_score || 0).toFixed(1)}</p>
+                    <p><span className="text-red-400">RODMN™:</span> {(entityTwoData.rodmn_score || 0).toFixed(1)}</p>
+                    <p><span className="text-blue-400">Activity:</span> {(entityTwoData.mentions || 0).toLocaleString()} mentions, {(entityTwoData.talk_time || 0).toFixed(1)} min talk time</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-gray-700">
+                <div className="flex flex-wrap gap-4 justify-center">
+                  {(entityOneData.hype_score || 0) > (entityTwoData.hype_score || 0) ? (
+                    <div className="text-center">
+                      <span className="text-green-400 font-semibold">{entityOne}</span> leads in JORDN™ influence
+                    </div>
+                  ) : (entityTwoData.hype_score || 0) > (entityOneData.hype_score || 0) ? (
+                    <div className="text-center">
+                      <span className="text-green-400 font-semibold">{entityTwo}</span> leads in JORDN™ influence
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <span className="text-gray-400">Equal JORDN™ influence</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </div>

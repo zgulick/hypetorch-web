@@ -211,7 +211,7 @@ export default function Home() {
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
                 <Image 
-                  src="/logo.png" 
+                  src="/logo-icon.svg" 
                   alt="HypeTorch Logo" 
                   width={40} 
                   height={40} 
