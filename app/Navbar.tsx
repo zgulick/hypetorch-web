@@ -37,10 +37,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <Image
-              src="/logo-icon.svg"
+              src="/logo-new-design.svg"
               alt="HypeTorch Logo"
-              width={36}
-              height={36}
+              width={90}
+              height={30}
               className="transition-transform duration-200 group-hover:scale-105"
               priority
             />
