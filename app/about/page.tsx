@@ -23,10 +23,10 @@ export default function About() {
             transition={{ duration: 0.8 }}
           >
             <Image 
-              src="/logo.png" 
+              src="/logo-new-design.svg" 
               alt="HypeTorch Logo" 
-              width={90} 
-              height={90} 
+              width={120} 
+              height={40} 
               className="mx-auto mb-6"
             />
           </motion.div>
@@ -261,10 +261,10 @@ export default function About() {
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
                 <Image 
-                  src="/logo.png" 
+                  src="/logo-new-design.svg" 
                   alt="HypeTorch Logo" 
-                  width={40} 
-                  height={40} 
+                  width={80} 
+                  height={27} 
                   className="mr-3"
                 />
                 <span className="text-xl font-bold text-white">HypeTorch</span>
