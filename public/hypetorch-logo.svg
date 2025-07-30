@@ -1,29 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
     <linearGradient id="flameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f97316"/>
-      <stop offset="100%" stop-color="#ef4444"/>
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="30%" stop-color="#f97316"/>
+      <stop offset="70%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
     </linearGradient>
   </defs>
   
-  <!-- Main torch flame -->
-  <path d="M50 10 C35 15, 25 25, 25 40 C25 50, 30 60, 40 65 C45 50, 55 50, 60 65 C70 60, 75 50, 75 40 C75 25, 65 15, 50 10 Z" 
-        fill="url(#flameGradient)" 
-        opacity="0.9"/>
+  <!-- Main flame shape -->
+  <path d="M50 10 C35 12, 20 25, 20 45 C20 55, 25 65, 35 70 C40 75, 45 78, 50 78 C55 78, 60 75, 65 70 C75 65, 80 55, 80 45 C80 35, 75 25, 70 20 C65 15, 60 12, 55 15 C58 20, 60 25, 58 30 C55 25, 50 22, 45 25 C48 30, 52 35, 50 40 C45 35, 40 30, 35 35 C38 40, 42 45, 40 50 C35 45, 30 40, 25 45 C28 50, 32 55, 30 60 C25 55, 22 50, 20 45 Z" 
+        fill="url(#flameGradient)"/>
   
-  <!-- Inner flame detail -->
-  <path d="M50 15 C40 20, 35 30, 35 42 C35 50, 38 55, 45 58 C48 45, 52 45, 55 58 C62 55, 65 50, 65 42 C65 30, 60 20, 50 15 Z" 
-        fill="url(#flameGradient)" 
-        opacity="0.7"/>
-  
-  <!-- Torch handle -->
-  <rect x="47" y="65" width="6" height="25" 
-        fill="#374151" 
-        rx="3"/>
-  
-  <!-- Handle grip lines -->
-  <line x1="45" y1="70" x2="55" y2="70" stroke="#6b7280" stroke-width="0.5"/>
-  <line x1="45" y1="75" x2="55" y2="75" stroke="#6b7280" stroke-width="0.5"/>
-  <line x1="45" y1="80" x2="55" y2="80" stroke="#6b7280" stroke-width="0.5"/>
-  <line x1="45" y1="85" x2="55" y2="85" stroke="#6b7280" stroke-width="0.5"/>
+  <!-- Analytics bars inside flame -->
+  <g fill="white">
+    <!-- Base line -->
+    <rect x="25" y="68" width="50" height="3" rx="1.5"/>
+    
+    <!-- Bar 1 (shortest) -->
+    <rect x="30" y="55" width="6" height="13" rx="3"/>
+    
+    <!-- Bar 2 (medium) -->
+    <rect x="40" y="45" width="6" height="23" rx="3"/>
+    
+    <!-- Bar 3 (tallest) -->
+    <rect x="50" y="35" width="6" height="33" rx="3"/>
+    
+    <!-- Bar 4 (medium-tall) -->
+    <rect x="60" y="40" width="6" height="28" rx="3"/>
+  </g>
 </svg>
