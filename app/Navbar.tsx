@@ -114,6 +114,16 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-50 pt-20 px-6 md:hidden"
           >
+            {/* Close button */}
+            <div className="flex justify-end mb-8">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-gray-300 hover:text-orange-400 transition-colors"
+              >
+                <X size={32} />
+              </button>
+            </div>
+            
             <div className="flex flex-col space-y-4 text-lg">
               <Link 
                 href="/dashboard" 
