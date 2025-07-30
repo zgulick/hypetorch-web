@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 50">
-  <path d="M20 10 Q15 5 10 15 Q8 25 12 35 Q16 45 20 40 Q24 45 28 35 Q32 25 30 15 Q25 5 20 10 Z" fill="#FF4500"/>
-  <path d="M20 15 Q17 12 15 20 Q14 28 17 32 Q19 35 20 32 Q21 35 23 32 Q26 28 25 20 Q23 12 20 15 Z" fill="#FFD700"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <circle cx="16" cy="26" r="3" fill="#ff6b35"/>
+  <ellipse cx="16" cy="20" rx="4" ry="6" fill="#ff4500"/>
+  <ellipse cx="16" cy="14" rx="3" ry="4" fill="#ffa500"/>
+  <ellipse cx="16" cy="10" rx="2" ry="3" fill="#ffd700"/>
 </svg>
 EOF < /dev/null

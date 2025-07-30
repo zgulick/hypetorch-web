@@ -112,13 +112,13 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-20 px-6 md:hidden"
+            className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-16 px-6 md:hidden"
           >
-            <div className="flex flex-col space-y-6 text-lg">
+            <div className="flex flex-col space-y-4 text-lg">
               <Link 
                 href="/dashboard" 
                 onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-3 border-b border-gray-700 transition-colors ${
+                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
                   isActiveRoute('/dashboard') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
@@ -128,7 +128,7 @@ export default function Navbar() {
               <Link 
                 href="/compare" 
                 onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-3 border-b border-gray-700 transition-colors ${
+                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
                   isActiveRoute('/compare') || pathname?.startsWith('/compare') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
@@ -139,7 +139,7 @@ export default function Navbar() {
                 <Link 
                   href="/admin" 
                   onClick={() => setMobileMenuOpen(false)} 
-                  className={`flex items-center space-x-3 font-medium py-3 border-b border-gray-700 transition-colors ${
+                  className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
                     isActiveRoute('/admin') || pathname?.startsWith('/admin') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                   }`}
                 >
@@ -150,7 +150,7 @@ export default function Navbar() {
               <a
                 href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Inquiry"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-4 hover:shadow-lg hover:shadow-orange-500/25 transition-all"
+                className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all"
               >
                 Contact
               </a>
