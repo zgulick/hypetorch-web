@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled
+        className={`fixed top-0 left-0 w-full z-40 transition-all duration-300 ${scrolled
           ? "bg-gray-900 backdrop-blur-md shadow-lg border-b border-gray-700/50 py-3"
           : "bg-gray-900/90 backdrop-blur-md py-4"
           }`}
@@ -37,10 +37,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <Image
-              src="/logo-new-design.svg"
+              src="/hypetorch-logo.svg"
               alt="HypeTorch Logo"
-              width={90}
-              height={30}
+              width={32}
+              height={32}
               className="transition-transform duration-200 group-hover:scale-105"
               priority
             />
@@ -112,7 +112,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-40 pt-16 px-6 md:hidden"
+            className="fixed inset-0 bg-gray-900/95 backdrop-blur-md z-50 pt-20 px-6 md:hidden"
           >
             <div className="flex flex-col space-y-4 text-lg">
               <Link 

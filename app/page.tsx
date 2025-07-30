@@ -211,10 +211,10 @@ export default function Home() {
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
                 <Image 
-                  src="/logo-new-design.svg" 
+                  src="/hypetorch-logo.svg" 
                   alt="HypeTorch Logo" 
-                  width={100} 
-                  height={33} 
+                  width={40} 
+                  height={40} 
                   className="mr-3"
                 />
                 <span className="text-xl font-bold text-white">HypeTorch</span>

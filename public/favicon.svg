@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="flameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main torch flame -->
+  <path d="M16 3 C11 5, 8 8, 8 13 C8 16, 10 19, 13 21 C14 16, 18 16, 19 21 C22 19, 24 16, 24 13 C24 8, 21 5, 16 3 Z" 
+        fill="url(#flameGradient)"/>
+  
+  <!-- Torch handle -->
+  <rect x="15" y="21" width="2" height="8" 
+        fill="#374151" 
+        rx="1"/>
+</svg>

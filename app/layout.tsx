@@ -10,6 +10,11 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "HypeTorch",
   description: "Advanced analytics for off-court performance",
+  icons: {
+    icon: "/hypetorch-logo.svg",
+    shortcut: "/favicon.svg",
+    apple: "/hypetorch-logo.svg",
+  },
 };
 
 export default function RootLayout({
