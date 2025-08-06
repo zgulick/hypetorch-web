@@ -20,7 +20,7 @@ export default function TopMoversWidget({
 }: TopMoversWidgetProps) {
   const [movers, setMovers] = useState<TrendingEntity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadTopMovers() {
@@ -31,44 +31,7 @@ export default function TopMoversWidget({
       } catch (err) {
         console.error('Error loading top movers:', err);
         setError('Failed to load trending data');
-        // Fallback data for development/testing
-        setMovers([
-          {
-            name: 'Caitlin Clark',
-            current_value: 89.2,
-            previous_value: 76.8,
-            percent_change: 16.1,
-            trend_direction: 'up'
-          },
-          {
-            name: 'Angel Reese',
-            current_value: 78.5,
-            previous_value: 82.3,
-            percent_change: -4.6,
-            trend_direction: 'down'
-          },
-          {
-            name: 'Allisha Gray',
-            current_value: 58.7,
-            previous_value: 45.2,
-            percent_change: 29.9,
-            trend_direction: 'up'
-          },
-          {
-            name: 'Jackie Young',
-            current_value: 52.4,
-            previous_value: 49.1,
-            percent_change: 6.7,
-            trend_direction: 'up'
-          },
-          {
-            name: 'Alyssa Thomas',
-            current_value: 65.3,
-            previous_value: 67.8,
-            percent_change: -3.7,
-            trend_direction: 'down'
-          }
-        ]);
+        // No fallback data - show error state
       } finally {
         setLoading(false);
       }
@@ -120,6 +83,23 @@ export default function TopMoversWidget({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error || movers.length === 0) {
+    return (
+      <div className={`bg-red-900/20 border border-red-500/20 rounded-xl p-6 ${className}`}>
+        <h3 className="text-lg font-semibold mb-4 text-white">{title}</h3>
+        <div className="text-center py-4">
+          <p className="text-red-400 font-medium mb-2">API Connection Issue</p>
+          <p className="text-gray-400 text-sm">
+            {error || 'No trending data available'}
+          </p>
+          <p className="text-gray-500 text-xs mt-2">
+            Check API connection and refresh page
+          </p>
         </div>
       </div>
     );

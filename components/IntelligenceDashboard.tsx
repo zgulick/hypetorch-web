@@ -14,7 +14,7 @@ interface IntelligenceDashboardProps {
 export default function IntelligenceDashboard({ className = "" }: IntelligenceDashboardProps) {
   const [widgets, setWidgets] = useState<DashboardWidgets | null>(null);
   const [loading, setLoading] = useState(true);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadDashboardWidgets() {
@@ -25,23 +25,7 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
       } catch (err) {
         console.error('Error loading dashboard widgets:', err);
         setError('Failed to load dashboard data');
-        // Fallback data for development/testing
-        setWidgets({
-          top_movers: [
-            { name: 'Caitlin Clark', current_score: 89.2, change: 16.1, trend: 'up' },
-            { name: 'Allisha Gray', current_score: 58.7, change: 29.9, trend: 'up' },
-            { name: 'Angel Reese', current_score: 78.5, change: -4.6, trend: 'down' }
-          ],
-          narrative_alerts: [
-            { name: 'Angel Reese', rodmn_score: 68.3, alert_level: 'medium', context: 'Rising controversy metrics' },
-            { name: 'Diana Taurasi', rodmn_score: 55.7, alert_level: 'medium', context: 'Polarizing discussions detected' }
-          ],
-          story_opportunities: [
-            { name: 'Jackie Young', hype_score: 52.4, mentions: 67, talk_time: 4.9, angle: 'Emerging storyline' },
-            { name: 'Alyssa Thomas', hype_score: 65.3, mentions: 89, talk_time: 7.1, angle: 'Veteran presence growing' },
-            { name: 'Kelsey Plum', hype_score: 48.2, mentions: 45, talk_time: 3.8, angle: 'Under the radar momentum' }
-          ]
-        });
+        // No fallback data - show error state
       } finally {
         setLoading(false);
       }
@@ -75,10 +59,18 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
     );
   }
 
-  if (!widgets) {
+  if (error || !widgets) {
     return (
       <div className={`text-center py-8 ${className}`}>
-        <p className="text-gray-400">Unable to load intelligence dashboard</p>
+        <div className="bg-red-900/20 border border-red-500/20 rounded-xl p-6">
+          <p className="text-red-400 font-medium mb-2">API Connection Issue</p>
+          <p className="text-gray-400 text-sm">
+            {error || 'Unable to load intelligence dashboard'}
+          </p>
+          <p className="text-gray-500 text-xs mt-2">
+            Check API connection and refresh page
+          </p>
+        </div>
       </div>
     );
   }
