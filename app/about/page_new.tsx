@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { 
-  Trophy, Award, Zap, ArrowRight, BarChart2, TrendingUp, 
-  LineChart, Target, Database, Brain, Lightbulb, Users, 
+  BarChart2, TrendingUp, 
+  LineChart, Target, Database, Brain, Users, 
   Calendar, Eye, ChevronRight
 } from "lucide-react";
 

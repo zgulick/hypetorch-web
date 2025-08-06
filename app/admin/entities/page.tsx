@@ -41,7 +41,13 @@ export default function EntitiesPage() {
         
         // The api_v2.ts interceptor automatically unwraps the data, so response.data should be the entities array
         if (Array.isArray(response.data)) {
-          const entitiesData = response.data.map((entity: any) => ({
+          const entitiesData = response.data.map((entity: {
+            name: string;
+            category?: string;
+            subcategory?: string;
+            type?: string;
+            [key: string]: unknown;
+          }) => ({
             id: entity.name,
             name: entity.name,
             category: entity.category || 'Sports',

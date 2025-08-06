@@ -11,7 +11,7 @@ export interface EntityData {
   type?: string;
   category?: string;
   subcategory?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   metrics?: {
     hype_score?: number;
     rodmn_score?: number;
@@ -301,7 +301,7 @@ export async function compareEntities(
           if (typeof metricData === 'object' && metricData !== null) {
             const entityValue = (metricData as Record<string, number>)[entityName] || 0;
             if (result.entities[entityName].metrics) {
-              (result.entities[entityName].metrics as any)[metricName] = entityValue;
+              (result.entities[entityName].metrics as Record<string, number>)[metricName] = entityValue;
             }
           }
         }
@@ -347,7 +347,7 @@ export async function getWeeklyEvolutionData(
     const recentPeriods = timePeriods.slice(0, periods);
     
     // Get data for each period
-    const evolutionData: any[] = [];
+    const evolutionData: Array<{ time_period: string; display_label: string; [key: string]: string | number }> = [];
     
     for (const period of recentPeriods) {
       const periodData = await getRecentMetrics(
@@ -356,7 +356,7 @@ export async function getWeeklyEvolutionData(
         [metric]
       );
       
-      const periodEntry: any = {
+      const periodEntry: { time_period: string; display_label: string; [key: string]: string | number } = {
         time_period: period.time_period,
         display_label: period.display_label
       };
@@ -408,10 +408,11 @@ export async function getHypeMetrics(period: string = 'current') {
  * @deprecated Use getEntity instead
  */
 export async function getEntityHistory(
-  entityName: string,
-  limit: number = 30,
-  startDate?: string,
-  endDate?: string
+  entityName: string
+  // Legacy parameters - deprecated
+  // limit: number = 30,
+  // startDate?: string,
+  // endDate?: string
 ) {
   try {
     return await getEntity(entityName, true, true);
@@ -422,7 +423,7 @@ export async function getEntityHistory(
 }
 
 // Export default object for easy importing
-export default {
+const dataServiceUnified = {
   getEntities,
   getEntity,
   searchEntities,
@@ -439,3 +440,5 @@ export default {
   getHypeMetrics,
   getEntityHistory
 };
+
+export default dataServiceUnified;

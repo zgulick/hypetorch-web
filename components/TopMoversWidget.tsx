@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 // Import the unified data service
 import { getTrendingEntities, TrendingEntity } from '@/app/lib/dataService_unified';
@@ -20,7 +20,7 @@ export default function TopMoversWidget({
 }: TopMoversWidgetProps) {
   const [movers, setMovers] = useState<TrendingEntity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadTopMovers() {
@@ -94,7 +94,7 @@ export default function TopMoversWidget({
     }
   };
 
-  const getBusinessContext = (change: number, score: number) => {
+  const getBusinessContext = (change: number) => {
     if (change > 20) return "Explosive growth - investigate storyline";
     if (change > 10) return "Strong momentum - prime for coverage";
     if (change > 5) return "Rising interest - watch for opportunities";
@@ -159,7 +159,7 @@ export default function TopMoversWidget({
               <div>
                 <p className="font-medium text-white text-sm">{mover.name}</p>
                 <p className="text-xs text-gray-400">
-                  {getBusinessContext(mover.percent_change, mover.current_value)}
+                  {getBusinessContext(mover.percent_change)}
                 </p>
               </div>
             </div>

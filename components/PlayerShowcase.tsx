@@ -14,7 +14,7 @@ interface PlayerShowcaseProps {
 export default function PlayerShowcase({ className = "" }: PlayerShowcaseProps) {
   const [players, setPlayers] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadFeaturedPlayers() {

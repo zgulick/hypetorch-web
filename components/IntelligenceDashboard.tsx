@@ -14,7 +14,7 @@ interface IntelligenceDashboardProps {
 export default function IntelligenceDashboard({ className = "" }: IntelligenceDashboardProps) {
   const [widgets, setWidgets] = useState<DashboardWidgets | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadDashboardWidgets() {
@@ -97,7 +97,7 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
           <h3 className="text-lg font-semibold text-white">Top Movers</h3>
         </div>
         <div className="space-y-3">
-          {widgets.top_movers.slice(0, 3).map((mover, index) => (
+          {widgets.top_movers.slice(0, 3).map((mover) => (
             <div key={mover.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
               <div>
                 <p className="font-medium text-white text-sm">{mover.name}</p>
@@ -128,7 +128,7 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
           <h3 className="text-lg font-semibold text-white">Narrative Monitor</h3>
         </div>
         <div className="space-y-3">
-          {widgets.narrative_alerts.slice(0, 3).map((alert, index) => (
+          {widgets.narrative_alerts.slice(0, 3).map((alert) => (
             <div key={alert.name} className="flex items-start justify-between p-3 rounded-lg bg-gray-800/50">
               <div className="flex-1">
                 <p className="font-medium text-white text-sm">{alert.name}</p>
@@ -157,7 +157,7 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
           <h3 className="text-lg font-semibold text-white">Story Opportunities</h3>
         </div>
         <div className="space-y-3">
-          {widgets.story_opportunities.slice(0, 3).map((story, index) => (
+          {widgets.story_opportunities.slice(0, 3).map((story) => (
             <div key={story.name} className="p-3 rounded-lg bg-gray-800/50">
               <div className="flex items-center justify-between mb-2">
                 <p className="font-medium text-white text-sm">{story.name}</p>

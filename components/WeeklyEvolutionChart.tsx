@@ -55,8 +55,8 @@ export default function WeeklyEvolutionChart({
 }: WeeklyEvolutionChartProps) {
   const [data, setData] = useState<EvolutionDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [availablePeriods, setAvailablePeriods] = useState<TimePeriod[]>([]);
+  const [, setError] = useState<string | null>(null);
+  const [, setAvailablePeriods] = useState<TimePeriod[]>([]);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>(players);
   
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function WeeklyEvolutionChart({
     }
   };
 
-  const getYAxisDomain = (metricType: string) => {
+  const getYAxisDomain = (metricType: string): [number | string, number | string] => {
     switch (metricType) {
       case 'hype_score':
       case 'rodmn_score':
@@ -158,12 +158,16 @@ export default function WeeklyEvolutionChart({
     }
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { 
+    active?: boolean; 
+    payload?: Array<{ dataKey: string; value: number | string; color: string }>; 
+    label?: string; 
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 shadow-lg">
           <p className="text-white font-semibold mb-2">{label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index: number) => (
             <div key={index} className="flex items-center justify-between mb-1">
               <span className="text-gray-300 mr-4">{entry.dataKey}:</span>
               <span className="font-bold" style={{ color: entry.color }}>
@@ -256,7 +260,7 @@ export default function WeeklyEvolutionChart({
                 y={50} 
                 stroke="#6B7280" 
                 strokeDasharray="2 2" 
-                label={{ value: "Average", position: "topLeft" }}
+                label={{ value: "Average", position: "top" }}
               />
             )}
             
