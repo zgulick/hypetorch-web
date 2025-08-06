@@ -51,7 +51,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 
 // In hypetorch-web/app/compare/comparisonchart.tsx
 
-export default function ComparisonChart({ entityOne, entityTwo, metrics, title }: ComparisonChartProps) {
+export function ComparisonChart({ entityOne, entityTwo, metrics, title }: ComparisonChartProps) {
   // Debug: Print the incoming data
   console.log("ComparisonChart received:", { 
     entity1: entityOne.name, 
@@ -102,3 +102,5 @@ export default function ComparisonChart({ entityOne, entityTwo, metrics, title }
     </div>
   );
 }
+
+export default ComparisonChart;

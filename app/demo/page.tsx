@@ -1,0 +1,537 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  ArrowRight, 
+  BarChart2, 
+  TrendingUp, 
+  Eye, 
+  Calendar,
+  Zap,
+  Target,
+  Users,
+  Activity,
+  AlertTriangle,
+  Lightbulb,
+  LineChart,
+  Database,
+  Clock,
+  ChevronRight
+} from 'lucide-react';
+import Link from 'next/link';
+import Navbar from '../Navbar';
+import ContactModal from '@/components/ContactModal';
+
+// Import components
+import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
+import IntelligenceDashboard from '@/components/IntelligenceDashboard';
+import PlayerShowcase from '@/components/PlayerShowcase';
+import { ComparisonChart } from '@/components/comparisonchart';
+
+// Import data service
+import { getCurrentAnalysisPeriod, TimePeriod, compareEntities, ComparisonResult } from '@/app/lib/dataService_unified';
+
+export default function PlatformDemo() {
+  const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
+  const [comparisonData, setComparisonData] = useState<ComparisonResult | null>(null);
+  const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score'>('hype_score');
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [apiModalOpen, setApiModalOpen] = useState(false);
+  
+  useEffect(() => {
+    async function loadDemoData() {
+      try {
+        // Load current period
+        const period = await getCurrentAnalysisPeriod();
+        setCurrentPeriod(period);
+        
+        // Load comparison data for Caitlin Clark vs Angel Reese
+        const comparison = await compareEntities(['Caitlin Clark', 'Angel Reese']);
+        setComparisonData(comparison);
+      } catch (error) {
+        console.error('Error loading demo data:', error);
+      }
+    }
+    
+    loadDemoData();
+  }, []);
+
+  const formatPeriodLabel = (period: TimePeriod | null) => {
+    if (!period) return "Latest Analysis Period";
+    return period.display_label;
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+      <Navbar />
+      
+      {/* Hero Section */}
+      <section className="relative pt-24 pb-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500">
+              Platform Demo
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              Experience HypeTorch&apos;s advanced analytics intelligence in action. 
+              See how we transform raw data into actionable sports media insights.
+            </p>
+            <div className="flex items-center justify-center text-gray-400 mb-8">
+              <Calendar className="w-5 h-5 mr-2" />
+              <span>Current Analysis Period: {formatPeriodLabel(currentPeriod)}</span>
+            </div>
+            
+            {/* Demo Navigation */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="#evolution-chart" className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors">
+                Weekly Evolution
+              </a>
+              <a href="#intelligence-dashboard" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
+                Intelligence Dashboard  
+              </a>
+              <a href="#player-comparison" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
+                Player Comparison
+              </a>
+              <a href="#api-preview" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
+                API Integration
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Weekly Evolution Chart - Signature Feature */}
+      <section id="evolution-chart" className="py-16 px-6 bg-gray-950">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <LineChart className="w-8 h-8 text-orange-400 mr-3" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Weekly Evolution Tracker</h2>
+            </div>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+              Our signature feature reveals how player narratives evolve over time. 
+              Watch HYPE scores change as storylines develop, helping you identify trending players before they become mainstream news.
+            </p>
+            
+            {/* Feature Highlights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                <Target className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                <h3 className="font-semibold text-white mb-1">Spot Trends Early</h3>
+                <p className="text-sm text-gray-400">Identify rising storylines before competitors</p>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                <Activity className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                <h3 className="font-semibold text-white mb-1">Multi-Player Tracking</h3>
+                <p className="text-sm text-gray-400">Compare up to 5 players simultaneously</p>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                <Database className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                <h3 className="font-semibold text-white mb-1">Historical Context</h3>
+                <p className="text-sm text-gray-400">5+ weeks of narrative evolution data</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Chart Component */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <WeeklyEvolutionChart 
+              players={['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young']}
+              periods={5}
+              metric={selectedMetric}
+              height={450}
+            />
+          </motion.div>
+
+          {/* Metric Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex justify-center mt-8"
+          >
+            <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+              <button
+                onClick={() => setSelectedMetric('hype_score')}
+                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                  selectedMetric === 'hype_score' 
+                    ? 'bg-orange-600 text-white' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                HYPE Score Evolution
+              </button>
+              <button
+                onClick={() => setSelectedMetric('rodmn_score')}
+                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                  selectedMetric === 'rodmn_score' 
+                    ? 'bg-red-600 text-white' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                RODMN Score Evolution
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Intelligence Dashboard */}
+      <section id="intelligence-dashboard" className="py-16 px-6 bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <BarChart2 className="w-8 h-8 text-blue-400 mr-3" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Current Intelligence Dashboard</h2>
+            </div>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+              Real-time intelligence widgets provide instant insights into narrative shifts, 
+              controversy alerts, and emerging story opportunities.
+            </p>
+            <div className="flex items-center justify-center text-gray-400 mb-8">
+              <Clock className="w-5 h-5 mr-2" />
+              <span>Updated: {formatPeriodLabel(currentPeriod)}</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <IntelligenceDashboard />
+          </motion.div>
+
+          {/* Dashboard Features */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
+          >
+            <div className="text-center">
+              <div className="bg-green-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <TrendingUp className="w-8 h-8 text-green-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Top Movers</h3>
+              <p className="text-gray-400">Track biggest HYPE score changes with percentage calculations and business context</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-yellow-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-yellow-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Narrative Monitor</h3>
+              <p className="text-gray-400">RODMN alerts identify controversial discussions and polarizing storylines</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-blue-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Lightbulb className="w-8 h-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Story Opportunities</h3>
+              <p className="text-gray-400">Data-backed angles ready for coverage with engagement potential</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Player Deep Dive Comparison */}
+      <section id="player-comparison" className="py-16 px-6 bg-gray-950">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <Users className="w-8 h-8 text-purple-400 mr-3" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Player Intelligence Comparison</h2>
+            </div>
+            <h3 className="text-2xl text-orange-400 mb-4">Caitlin Clark vs Angel Reese: The Data Behind the Rivalry</h3>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+              Deep-dive analysis comparing two of the most talked-about players. 
+              Our multi-dimensional metrics reveal the full story behind the headlines.
+            </p>
+          </motion.div>
+
+          {/* Featured Player Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="mb-12"
+          >
+            <PlayerShowcase />
+          </motion.div>
+
+          {/* Comparison Chart */}
+          {comparisonData && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700"
+            >
+              <h4 className="text-xl font-semibold text-white mb-6 text-center">
+                Multi-Metric Comparison: All 8 Analytics Dimensions
+              </h4>
+              {comparisonData && comparisonData.entities && (
+                <ComparisonChart 
+                  entityOne={{
+                    name: 'Caitlin Clark',
+                    color: '#f97316', // orange
+                    data: comparisonData.entities['Caitlin Clark']?.metrics || {}
+                  }}
+                  entityTwo={{
+                    name: 'Angel Reese',
+                    color: '#3b82f6', // blue
+                    data: comparisonData.entities['Angel Reese']?.metrics || {}
+                  }}
+                  metrics={[
+                    { key: 'hype_score', label: 'HYPE Score' },
+                    { key: 'rodmn_score', label: 'RODMN Score' },
+                    { key: 'mentions', label: 'Mentions' },
+                    { key: 'talk_time', label: 'Talk Time' },
+                    { key: 'wikipedia_views', label: 'Wikipedia Views' },
+                    { key: 'reddit_mentions', label: 'Reddit Mentions' },
+                    { key: 'google_trends', label: 'Google Trends' },
+                    { key: 'google_news_mentions', label: 'Google News' }
+                  ]}
+                  title="Multi-Metric Comparison"
+                />
+              )}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h5 className="font-semibold text-orange-400 mb-2">Business Context</h5>
+                  <p className="text-sm text-gray-400">
+                    This rivalry represents one of the most engaging storylines in women&apos;s sports, 
+                    with complementary strengths creating ongoing narrative opportunities.
+                  </p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h5 className="font-semibold text-blue-400 mb-2">Coverage Strategy</h5>
+                  <p className="text-sm text-gray-400">
+                    High HYPE scores with varying RODMN levels suggest different content approaches: 
+                    celebration vs. controversy-driven narratives.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </section>
+
+      {/* API Preview Section */}
+      <section id="api-preview" className="py-16 px-6 bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <Database className="w-8 h-8 text-green-400 mr-3" />
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Integration Ready</h2>
+            </div>
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+              Built for newsroom workflows. Our API provides programmatic access to all intelligence data, 
+              enabling seamless integration with your existing content management systems.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Sample API Response */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-xl p-6 border border-gray-700"
+            >
+              <h3 className="text-xl font-semibold text-white mb-4">Sample JSON Response</h3>
+              <div className="bg-gray-900 rounded-lg p-4 text-sm font-mono overflow-x-auto">
+                <pre className="text-green-400">
+{`{
+  "status": "success",
+  "data": {
+    "name": "Caitlin Clark",
+    "metrics": {
+      "hype_score": 89.2,
+      "rodmn_score": 34.1,
+      "mentions": 156,
+      "talk_time": 12.3,
+      "wikipedia_views": 45230,
+      "reddit_mentions": 89,
+      "google_trends": 78,
+      "google_news_mentions": 234
+    },
+    "time_period": "week_2025_07_27",
+    "last_updated": "2025-08-05T14:05:40Z"
+  },
+  "metadata": {
+    "processing_time_ms": 23.4
+  }
+}`}
+                </pre>
+              </div>
+            </motion.div>
+
+            {/* Integration Examples */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h3 className="text-xl font-semibold text-white mb-4">Integration Examples</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <ChevronRight className="w-5 h-5 text-orange-400 mr-2 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-white">Editorial Dashboards</h4>
+                      <p className="text-sm text-gray-400">Real-time widgets for newsroom story planning</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <ChevronRight className="w-5 h-5 text-blue-400 mr-2 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-white">Content Automation</h4>
+                      <p className="text-sm text-gray-400">Trigger alerts for trending storylines</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <ChevronRight className="w-5 h-5 text-green-400 mr-2 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-white">Audience Targeting</h4>
+                      <p className="text-sm text-gray-400">Optimize content timing and angles</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-orange-900/20 to-red-900/20 rounded-xl p-6 border border-orange-500/20">
+                <h3 className="text-lg font-semibold text-orange-400 mb-2">Coming Soon: Predictive Capabilities</h3>
+                <p className="text-gray-300 mb-4">
+                  We&apos;re developing predictive capabilities for narrative timing, helping you anticipate 
+                  when storylines will peak for maximum audience engagement.
+                </p>
+                <div className="flex items-center text-sm text-gray-400">
+                  <Zap className="w-4 h-4 mr-2" />
+                  <span>Advanced machine learning models in development</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* API Access CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="text-center mt-12"
+          >
+            <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-8 border border-gray-600">
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to Integrate?</h3>
+              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                Get access to our comprehensive API documentation and start building 
+                advanced sports media intelligence into your workflow.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/docs">
+                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
+                    View API Documentation
+                  </button>
+                </Link>
+                <button 
+                  onClick={() => setApiModalOpen(true)}
+                  className="px-8 py-3 border border-gray-600 hover:border-orange-500 rounded-lg text-white font-semibold transition-colors"
+                >
+                  Request API Access
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 px-6 bg-gradient-to-b from-gray-950 to-black">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+              <span className="text-orange-400">Experience the Full Platform</span>
+            </h2>
+            <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+              This demo showcases just a fraction of HypeTorch&apos;s capabilities. 
+              See how our complete analytics intelligence platform can transform your sports media coverage.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={() => setDemoModalOpen(true)}
+                className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                Schedule Full Demo
+              </button>
+              <Link href="/about">
+                <button className="px-10 py-4 border border-gray-600 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
+                  Learn More <ArrowRight className="w-5 h-5 ml-2 inline" />
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      
+      {/* Contact Modals */}
+      <ContactModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+        title="Schedule Full Demo"
+        subtitle="See the complete HypeTorch platform in action"
+        inquiryType="demo"
+      />
+      
+      <ContactModal
+        isOpen={apiModalOpen}
+        onClose={() => setApiModalOpen(false)}
+        title="Request API Access"
+        subtitle="Get started with HypeTorch API integration"
+        inquiryType="api_access"
+      />
+    </main>
+  );
+}

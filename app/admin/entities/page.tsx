@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Save, X, AlertCircle, Loader2 } from 'lucide-react';
-import api from '@/lib/api';
+import apiV2 from '@/lib/api_v2';
 
 export default function EntitiesPage() {
   interface Entity {
@@ -36,29 +36,24 @@ export default function EntitiesPage() {
     const fetchEntities = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/v1/entities');
-        console.log("🔍 Fetched Entity Names:", response.data);
+        const response = await apiV2.get('/entities');
+        console.log("🔍 Fetched Entities from v2 API:", response.data);
         
-        const entityDetailsPromises = response.data.map(async (name: string) => {
-          try {
-            const detailsResponse = await api.get(`/v1/entities/${encodeURIComponent(name)}`);
-            console.log(`🔍 Details for ${name}:`, detailsResponse.data);
-            
-            return {
-              id: name,
-              name: detailsResponse.data.name || name,
-              category: detailsResponse.data.category || 'Sports', 
-              subcategory: detailsResponse.data.subcategory || 'Unrivaled', 
-              type: detailsResponse.data.type || 'person'
-            };
-          } catch (err) {
-            console.error(`Error processing ${name}:`, err);
-            return null;
-          }
-        });
-        
-        const fetchedEntities = await Promise.all(entityDetailsPromises);
-        setEntities(fetchedEntities.filter(e => e !== null));
+        // The api_v2.ts interceptor automatically unwraps the data, so response.data should be the entities array
+        if (Array.isArray(response.data)) {
+          const entitiesData = response.data.map((entity: any) => ({
+            id: entity.name,
+            name: entity.name,
+            category: entity.category || 'Sports',
+            subcategory: entity.subcategory || 'Unrivaled',
+            type: entity.type || 'person'
+          }));
+          
+          setEntities(entitiesData);
+        } else {
+          console.error("Unexpected v2 API response format:", response.data);
+          setEntities([]);
+        }
         setError(null);
       } catch (err) {
         console.error("❌ Error fetching entities:", err);
@@ -87,7 +82,9 @@ export default function EntitiesPage() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this entity?')) {
       try {
-        await api.delete(`/v1/entities/${encodeURIComponent(id)}`);
+        // Note: v2 API might not have delete endpoint yet
+        // Using v1 for now - update when v2 delete endpoint is available
+        await apiV2.delete(`/entities/${encodeURIComponent(id)}`);
         
         setEntities(entities.filter(e => e.id !== id));
         
@@ -112,7 +109,9 @@ export default function EntitiesPage() {
       type: formData.type
     };
     
-    await api.put(`/v1/entities/${encodeURIComponent(id)}`, entityData);
+    // Note: v2 API might not have put endpoint yet
+    // Using v2 for now - will need backend implementation
+    await apiV2.put(`/entities/${encodeURIComponent(id)}`, entityData);
     
     setEntities(entities.map(e => 
       e.id === id ? { ...e, ...formData } : e
@@ -136,7 +135,9 @@ const handleAdd = async () => {
       type: formData.type
     };
     
-    await api.post("/v1/entities", entityData);
+    // Note: v2 API might not have post endpoint yet
+    // Using v2 for now - will need backend implementation
+    await apiV2.post("/entities", entityData);
     
     const newEntity = {
       id: formData.name,

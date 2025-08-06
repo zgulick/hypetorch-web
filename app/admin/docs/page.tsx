@@ -8,7 +8,7 @@ export default function ApiDocs() {
   const [expandedSection, setExpandedSection] = useState<string | null>("authentication");
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
   
-  const baseUrl = "https://hypetorch-api.onrender.com/api";
+  const baseUrl = "https://hypetorch-api.onrender.com";
   
   const toggleSection = (section: string) => {
     if (expandedSection === section) {
@@ -26,7 +26,424 @@ export default function ApiDocs() {
     }, 2000);
   };
   
-  const endpoints = [
+  const v2Endpoints = [
+    {
+      id: "health-check",
+      name: "Health Check",
+      method: "GET",
+      path: "/v2/health",
+      description: "Check API health status and verify connectivity.",
+      response: `{
+  "status": "success",
+  "message": "API is healthy",
+  "timestamp": "2025-08-06T14:05:40Z"
+}`,
+      code: `fetch("${baseUrl}/v2/health", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "auth-verify",
+      name: "Verify API Key",
+      method: "GET",
+      path: "/v2/auth/verify",
+      description: "Verify that your API key is valid and get key information.",
+      response: `{
+  "status": "success",
+  "data": {
+    "valid": true,
+    "key_name": "production",
+    "rate_limit": 1000
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/auth/verify", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-entities",
+      name: "Get All Entities (V2)",
+      method: "GET",
+      path: "/v2/entities",
+      description: "Returns a list of all tracked entities with optional filtering and enhanced metadata.",
+      params: [
+        {
+          name: "category",
+          type: "query",
+          description: "Filter by category (e.g., Sports, Entertainment)"
+        },
+        {
+          name: "subcategory",
+          type: "query",
+          description: "Filter by subcategory (e.g., WNBA, Unrivaled)"
+        },
+        {
+          name: "limit",
+          type: "query",
+          description: "Maximum number of entities to return (default: 50)"
+        }
+      ],
+      response: `{
+  "status": "success",
+  "data": [
+    {
+      "name": "Caitlin Clark",
+      "category": "Sports",
+      "subcategory": "WNBA",
+      "type": "person"
+    },
+    {
+      "name": "Angel Reese",
+      "category": "Sports", 
+      "subcategory": "WNBA",
+      "type": "person"
+    }
+  ],
+  "count": 37
+}`,
+      code: `fetch("${baseUrl}/v2/entities?category=Sports&limit=10", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-entity-details",
+      name: "Get Entity Details (V2)",
+      method: "GET",
+      path: "/v2/entities/{entity_id}",
+      description: "Returns detailed information for a specific entity, including all 8 advanced metrics.",
+      params: [
+        {
+          name: "entity_id",
+          type: "path",
+          description: "The name of the entity (URL-encoded)"
+        },
+        {
+          name: "time_period",
+          type: "query",
+          description: "Time period for metrics (e.g., current, week_2025_07_20)"
+        }
+      ],
+      response: `{
+  "status": "success",
+  "data": {
+    "name": "Caitlin Clark",
+    "category": "Sports",
+    "subcategory": "WNBA",
+    "metrics": {
+      "hype_score": 89.2,
+      "rodmn_score": 34.1,
+      "mentions": 156,
+      "talk_time": 12.3,
+      "wikipedia_views": 45230,
+      "reddit_mentions": 89,
+      "google_trends": 78,
+      "google_news_mentions": 234
+    },
+    "time_period": "week_2025_07_27",
+    "last_updated": "2025-08-05T14:05:40Z"
+  },
+  "metadata": {
+    "processing_time_ms": 23.4
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/entities/Caitlin%20Clark?time_period=current", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-trending",
+      name: "Get Trending Entities (V2)",
+      method: "GET",
+      path: "/v2/trending",
+      description: "Returns trending entities with percentage changes and business context.",
+      params: [
+        {
+          name: "metric",
+          type: "query",
+          description: "Metric to analyze (default: hype_score)"
+        },
+        {
+          name: "limit",
+          type: "query",
+          description: "Maximum number of entities to return (default: 10)"
+        },
+        {
+          name: "category",
+          type: "query",
+          description: "Filter by category"
+        }
+      ],
+      response: `{
+  "status": "success",
+  "data": [
+    {
+      "name": "Caitlin Clark",
+      "current_value": 89.2,
+      "previous_value": 76.8,
+      "percent_change": 16.15,
+      "direction": "up",
+      "category": "Sports"
+    },
+    {
+      "name": "Angel Reese",
+      "current_value": 82.4,
+      "previous_value": 89.1,
+      "percent_change": -7.52,
+      "direction": "down",
+      "category": "Sports"
+    }
+  ],
+  "metadata": {
+    "time_period": "week_2025_07_27",
+    "metric_analyzed": "hype_score"
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/trending?metric=hype_score&limit=5", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-recent-metrics",
+      name: "Get Recent Metrics",
+      method: "GET",
+      path: "/v2/metrics/recent",
+      description: "Get recent metrics for multiple entities in a single request.",
+      params: [
+        {
+          name: "time_period",
+          type: "query",
+          description: "Time period for metrics (default: current)"
+        },
+        {
+          name: "entities",
+          type: "query",
+          description: "Comma-separated list of entity names"
+        },
+        {
+          name: "metrics",
+          type: "query",
+          description: "Comma-separated list of metrics to include"
+        }
+      ],
+      response: `{
+  "status": "success",
+  "data": [
+    {
+      "name": "Caitlin Clark",
+      "metrics": {
+        "hype_score": 89.2,
+        "rodmn_score": 34.1,
+        "mentions": 156,
+        "talk_time": 12.3
+      }
+    },
+    {
+      "name": "Angel Reese",
+      "metrics": {
+        "hype_score": 82.4,
+        "rodmn_score": 28.7,
+        "mentions": 143,
+        "talk_time": 9.8
+      }
+    }
+  ],
+  "metadata": {
+    "time_period": "week_2025_07_27"
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/metrics/recent?entities=Caitlin%20Clark,Angel%20Reese&metrics=hype_score,mentions", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-dashboard-widgets",
+      name: "Get Dashboard Widgets",
+      method: "GET",
+      path: "/v2/dashboard/widgets",
+      description: "Get all dashboard widget data in a single optimized request.",
+      response: `{
+  "status": "success",
+  "data": {
+    "top_movers": [
+      {
+        "name": "Caitlin Clark",
+        "percent_change": 16.15,
+        "direction": "up"
+      }
+    ],
+    "narrative_alerts": [
+      {
+        "entity": "Angel Reese",
+        "rodm_score": 45.2,
+        "alert_type": "high_controversy"
+      }
+    ],
+    "story_opportunities": [
+      {
+        "title": "Caitlin Clark's Rising Influence",
+        "entities": ["Caitlin Clark"],
+        "confidence": 0.87
+      }
+    ]
+  },
+  "metadata": {
+    "generated_at": "2025-08-05T14:05:40Z",
+    "time_period": "week_2025_07_27"
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/dashboard/widgets", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-time-periods",
+      name: "Get Available Time Periods",
+      method: "GET",
+      path: "/v2/time-periods",
+      description: "Get list of available historical time periods for analysis.",
+      response: `{
+  "status": "success",
+  "data": [
+    {
+      "id": "current",
+      "display_label": "Current Week (July 27 - Aug 2, 2025)",
+      "start_date": "2025-07-27",
+      "end_date": "2025-08-02"
+    },
+    {
+      "id": "week_2025_07_20",
+      "display_label": "July 20-26, 2025",
+      "start_date": "2025-07-20",
+      "end_date": "2025-07-26"
+    }
+  ],
+  "metadata": {
+    "total_periods": 8,
+    "oldest_period": "week_2025_06_08"
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/time-periods", {
+  headers: {
+    "X-API-Key": "YOUR_API_KEY"
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    },
+    {
+      id: "v2-compare-entities",
+      name: "Compare Entities",
+      method: "POST",
+      path: "/v2/metrics/compare",
+      description: "Compare multiple entities across all metrics with detailed analysis.",
+      params: [
+        {
+          name: "entities",
+          type: "body",
+          description: "Array of entity names to compare"
+        },
+        {
+          name: "time_period",
+          type: "body",
+          description: "Time period for comparison (optional)"
+        }
+      ],
+      response: `{
+  "status": "success",
+  "data": {
+    "comparison": [
+      {
+        "name": "Caitlin Clark",
+        "metrics": {
+          "hype_score": 89.2,
+          "rodmn_score": 34.1,
+          "mentions": 156,
+          "talk_time": 12.3,
+          "wikipedia_views": 45230,
+          "reddit_mentions": 89,
+          "google_trends": 78,
+          "google_news_mentions": 234
+        }
+      },
+      {
+        "name": "Angel Reese",
+        "metrics": {
+          "hype_score": 82.4,
+          "rodmn_score": 28.7,
+          "mentions": 143,
+          "talk_time": 9.8,
+          "wikipedia_views": 38940,
+          "reddit_mentions": 76,
+          "google_trends": 65,
+          "google_news_mentions": 187
+        }
+      }
+    ],
+    "summary": {
+      "highest_hype": "Caitlin Clark",
+      "most_controversial": "Caitlin Clark",
+      "most_mentioned": "Caitlin Clark"
+    }
+  },
+  "metadata": {
+    "time_period": "week_2025_07_27",
+    "entities_compared": 2
+  }
+}`,
+      code: `fetch("${baseUrl}/v2/metrics/compare", {
+  method: "POST",
+  headers: {
+    "X-API-Key": "YOUR_API_KEY",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    entities: ["Caitlin Clark", "Angel Reese"],
+    time_period: "current"
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));`
+    }
+  ];
+
+  const legacyEndpoints = [
     {
       id: "entities-list",
       name: "List All Entities",
@@ -413,9 +830,31 @@ export default function ApiDocs() {
         )}
       </div>
       
-      <h2 className="text-2xl font-semibold mb-4">API Endpoints</h2>
+      <div className="bg-blue-900/20 rounded-lg border border-blue-500/30 p-6 mb-8">
+        <h2 className="text-2xl font-semibold mb-4 text-blue-300">📢 API v2 Available Now</h2>
+        <p className="text-blue-200 mb-4">
+          We&apos;ve launched <strong>API v2</strong> with enhanced features, better performance, and standardized response formats. 
+          All new integrations should use v2 endpoints.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="bg-blue-800/30 p-3 rounded">
+            <h4 className="font-semibold text-blue-200 mb-1">✨ Enhanced Features</h4>
+            <p className="text-blue-300">Standardized responses, better error handling, improved performance</p>
+          </div>
+          <div className="bg-green-800/30 p-3 rounded">
+            <h4 className="font-semibold text-green-200 mb-1">🚀 New Endpoints</h4>
+            <p className="text-green-300">Dashboard widgets, trending analysis, bulk operations</p>
+          </div>
+          <div className="bg-orange-800/30 p-3 rounded">
+            <h4 className="font-semibold text-orange-200 mb-1">🔧 Developer-Friendly</h4>
+            <p className="text-orange-300">Better documentation, consistent patterns, query optimization</p>
+          </div>
+        </div>
+      </div>
       
-      {endpoints.map((endpoint) => (
+      <h2 className="text-2xl font-semibold mb-4">API v2 Endpoints (Recommended)</h2>
+      
+      {v2Endpoints.map((endpoint) => (
         <div key={endpoint.id} className="bg-gray-800 rounded-lg border border-gray-700 mb-4">
           <div 
             className="p-6 flex justify-between items-center cursor-pointer"
@@ -443,6 +882,106 @@ export default function ApiDocs() {
           
           {expandedSection === endpoint.id && (
             <div className="p-6 pt-0 border-t border-gray-700">
+              <p className="mb-4">{endpoint.description}</p>
+              
+              {endpoint.params && endpoint.params.length > 0 && (
+                <>
+                  <h4 className="font-semibold mb-2">Parameters</h4>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm mb-4">
+                      <thead>
+                        <tr className="bg-gray-700">
+                          <th className="px-4 py-2 text-left">Name</th>
+                          <th className="px-4 py-2 text-left">Location</th>
+                          <th className="px-4 py-2 text-left">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-700">
+                        {endpoint.params.map((param, index) => (
+                          <tr key={index} className="divide-x divide-gray-700">
+                            <td className="px-4 py-2 font-mono">{param.name}</td>
+                            <td className="px-4 py-2">{param.type}</td>
+                            <td className="px-4 py-2">{param.description}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+              
+              <h4 className="font-semibold mb-2">Example Response</h4>
+              <div className="bg-gray-900 rounded-md p-4 mb-4 overflow-x-auto">
+                <pre className="font-mono text-sm">{endpoint.response}</pre>
+              </div>
+              
+              <h4 className="font-semibold mb-2">Example Request</h4>
+              <div className="bg-gray-900 rounded-md p-4 mb-2 relative">
+                <pre className="font-mono text-sm whitespace-pre-wrap">{endpoint.code}</pre>
+                <button 
+                  onClick={() => copyToClipboard(endpoint.code, endpoint.id)}
+                  className="absolute top-2 right-2 bg-gray-800 p-1 rounded text-gray-400 hover:text-white"
+                >
+                  {copiedEndpoint === endpoint.id ? <Check size={16} /> : <Copy size={16} />}
+                </button>
+              </div>
+              
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <h4 className="font-semibold mb-2">Full Endpoint URL</h4>
+                <div className="bg-gray-900 rounded-md p-4 flex justify-between items-center">
+                  <code className="font-mono text-sm break-all">{baseUrl + endpoint.path.replace(/{([^}]+)}/g, '...')}</code>
+                  <button 
+                    onClick={() => copyToClipboard(baseUrl + endpoint.path.replace(/{([^}]+)}/g, '...'), `${endpoint.id}-url`)}
+                    className="text-gray-400 hover:text-white ml-2 flex-shrink-0"
+                  >
+                    {copiedEndpoint === `${endpoint.id}-url` ? <Check size={16} /> : <Copy size={16} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+      
+      <div className="bg-yellow-900/20 rounded-lg border border-yellow-500/30 p-6 mb-8 mt-12">
+        <h2 className="text-2xl font-semibold mb-4 text-yellow-300">⚠️ Legacy API v1 Endpoints</h2>
+        <p className="text-yellow-200 mb-4">
+          The following endpoints are <strong>deprecated</strong> and maintained for backward compatibility only. 
+          Please migrate to v2 endpoints for new integrations.
+        </p>
+        <p className="text-yellow-300 text-sm">
+          <strong>Migration Support:</strong> Contact us at <a href="mailto:hypetorch@gmail.com" className="text-orange-400 hover:underline">hypetorch@gmail.com</a> for assistance migrating to v2.
+        </p>
+      </div>
+      
+      {legacyEndpoints.map((endpoint) => (
+        <div key={endpoint.id} className="bg-gray-800 rounded-lg border border-gray-700 mb-4">
+          <div 
+            className="p-6 flex justify-between items-center cursor-pointer"
+            onClick={() => toggleSection(endpoint.id)}
+          >
+            <div className="flex items-center">
+              <Code size={20} className="mr-3 text-orange-500" />
+              <div>
+                <h3 className="font-semibold">{endpoint.name}</h3>
+                <div className="flex items-center mt-1">
+                  <span className={`px-2 py-0.5 text-xs rounded mr-2 ${
+                    endpoint.method === "GET" ? "bg-blue-900/50 text-blue-400" :
+                    endpoint.method === "POST" ? "bg-green-900/50 text-green-400" :
+                    endpoint.method === "PUT" ? "bg-yellow-900/50 text-yellow-400" :
+                    "bg-red-900/50 text-red-400"
+                  }`}>
+                    {endpoint.method}
+                  </span>
+                  <code className="text-sm font-mono text-gray-400">{endpoint.path}</code>
+                </div>
+              </div>
+            </div>
+            {expandedSection === endpoint.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </div>
+          
+          {expandedSection === endpoint.id && (
+            <div className="p-6 pt-0 border-t border-gray-700 bg-yellow-900/10">
               <p className="mb-4">{endpoint.description}</p>
               
               {endpoint.params && endpoint.params.length > 0 && (

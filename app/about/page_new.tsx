@@ -1,21 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import Navbar from "@/app/Navbar";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import ContactModal from '@/components/ContactModal';
 import { 
-  BarChart2, TrendingUp, 
-  LineChart, Target, Database, Brain, Users, 
+  Trophy, Award, Zap, ArrowRight, BarChart2, TrendingUp, 
+  LineChart, Target, Database, Brain, Lightbulb, Users, 
   Calendar, Eye, ChevronRight
 } from "lucide-react";
 
 export default function About() {
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
-  const [partnerModalOpen, setPartnerModalOpen] = useState(false);
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
       <Navbar />
@@ -446,21 +441,20 @@ export default function About() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <button 
-              onClick={() => setDemoModalOpen(true)}
-              className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-full sm:w-auto"
-            >
-              <Eye size={20} />
-              Request Demo
-            </button>
+            <Link href="/demo">
+              <button className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-full sm:w-auto">
+                <Eye size={20} />
+                Request Demo
+              </button>
+            </Link>
             
-            <button 
-              onClick={() => setPartnerModalOpen(true)}
+            <a 
+              href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Partnership%20Inquiry"
               className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 transition-colors w-full sm:w-auto"
             >
               <Users size={20} />
               Partner With Us
-            </button>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -505,23 +499,6 @@ export default function About() {
           </div>
         </div>
       </footer>
-      
-      {/* Contact Modals */}
-      <ContactModal
-        isOpen={demoModalOpen}
-        onClose={() => setDemoModalOpen(false)}
-        title="Request a Demo"
-        subtitle="Experience our advanced analytics intelligence"
-        inquiryType="demo"
-      />
-      
-      <ContactModal
-        isOpen={partnerModalOpen}
-        onClose={() => setPartnerModalOpen(false)}
-        title="Partnership Inquiry"
-        subtitle="Explore partnership opportunities with HypeTorch"
-        inquiryType="partnership"
-      />
     </div>
   );
 }

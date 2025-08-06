@@ -3,14 +3,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, BarChart2, Activity, TrendingUp } from "lucide-react";
+import { Menu, X, BarChart2, Activity, TrendingUp, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
+import ContactModal from '@/components/ContactModal';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -52,6 +54,17 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
+              href="/demo" 
+              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/demo') 
+                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
+            >
+              <Eye size={16} />
+              <span>Platform Demo</span>
+            </Link>
+            <Link 
               href="/dashboard" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
                 isActiveRoute('/dashboard') 
@@ -86,12 +99,12 @@ export default function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-            <a
-              href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Inquiry"
+            <button
+              onClick={() => setContactModalOpen(true)}
               className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105"
             >
-              Contact
-            </a>
+              Request Demo
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -126,6 +139,16 @@ export default function Navbar() {
             
             <div className="flex flex-col space-y-4 text-lg">
               <Link 
+                href="/demo" 
+                onClick={() => setMobileMenuOpen(false)} 
+                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/demo') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                }`}
+              >
+                <Eye size={20} />
+                <span>Platform Demo</span>
+              </Link>
+              <Link 
                 href="/dashboard" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
@@ -157,17 +180,28 @@ export default function Navbar() {
                   <span>Admin</span>
                 </Link>
               )}
-              <a
-                href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Inquiry"
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all"
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setContactModalOpen(true);
+                }}
+                className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full"
               >
-                Contact
-              </a>
+                Request Demo
+              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        title="Request a Demo"
+        subtitle="See HypeTorch's advanced analytics in action"
+        inquiryType="demo"
+      />
     </>
   );
 }
