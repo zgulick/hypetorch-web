@@ -85,24 +85,26 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
         className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700"
       >
         <div className="flex items-center mb-4">
-          <TrendingUp className="w-5 h-5 text-orange-400 mr-2" />
-          <h3 className="text-lg font-semibold text-white">Top 5 JORDN Scores</h3>
+          <TrendingUp className="w-5 h-5 text-green-400 mr-2" />
+          <h3 className="text-lg font-semibold text-white">Top Movers</h3>
         </div>
         <div className="space-y-3">
-          {widgets.top_movers.slice(0, 5).map((mover, index) => (
+          {widgets.top_movers.slice(0, 3).map((mover) => (
             <div key={mover.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
               <div>
                 <p className="font-medium text-white text-sm">{mover.name}</p>
-                <p className="text-xs text-gray-400">JORDN Score: {mover.current_score.toFixed(1)}</p>
+                <p className="text-xs text-gray-400">HYPE Score: {mover.current_score.toFixed(1)}</p>
               </div>
-              <div className="flex items-center text-sm font-bold text-orange-400">
-                #{index + 1}
+              <div className={`flex items-center text-sm font-bold ${
+                mover.trend === 'up' ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {mover.change > 0 ? '+' : ''}{mover.change.toFixed(1)}%
               </div>
             </div>
           ))}
         </div>
         <p className="text-xs text-gray-500 mt-4">
-          Highest JORDN scores this week
+          Biggest percentage changes this period
         </p>
       </motion.div>
 
