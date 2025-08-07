@@ -236,11 +236,11 @@ export default function PlatformDemo() {
           >
             <div className="flex items-center justify-center mb-4">
               <Database className="w-8 h-8 text-green-400 mr-3" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white">Integration Ready</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-white">Built for Marketing Teams</h2>
             </div>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-              Built for newsroom workflows. Our API provides programmatic access to all intelligence data, 
-              enabling seamless integration with your existing content management systems.
+              Designed for marketing agencies and athlete representatives. Our API provides programmatic access to all influence data, 
+              enabling seamless integration with your existing campaign management and CRM systems.
             </p>
           </motion.div>
 
@@ -288,41 +288,41 @@ export default function PlatformDemo() {
               className="space-y-6"
             >
               <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <h3 className="text-xl font-semibold text-white mb-4">Integration Examples</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">Marketing Use Cases</h3>
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <ChevronRight className="w-5 h-5 text-orange-400 mr-2 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-white">Editorial Dashboards</h4>
-                      <p className="text-sm text-gray-400">Real-time widgets for newsroom story planning</p>
+                      <h4 className="font-semibold text-white">Campaign Dashboards</h4>
+                      <p className="text-sm text-gray-400">Real-time ROI tracking for athlete partnerships</p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <ChevronRight className="w-5 h-5 text-blue-400 mr-2 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-white">Content Automation</h4>
-                      <p className="text-sm text-gray-400">Trigger alerts for trending storylines</p>
+                      <h4 className="font-semibold text-white">Partnership Alerts</h4>
+                      <p className="text-sm text-gray-400">Automated notifications when athletes trend upward</p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <ChevronRight className="w-5 h-5 text-green-400 mr-2 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-white">Audience Targeting</h4>
-                      <p className="text-sm text-gray-400">Optimize content timing and angles</p>
+                      <h4 className="font-semibold text-white">Client Portfolio Management</h4>
+                      <p className="text-sm text-gray-400">Track representation value and market positioning</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="bg-gradient-to-r from-orange-900/20 to-red-900/20 rounded-xl p-6 border border-orange-500/20">
-                <h3 className="text-lg font-semibold text-orange-400 mb-2">Coming Soon: Predictive Capabilities</h3>
+                <h3 className="text-lg font-semibold text-orange-400 mb-2">Coming Soon: Predictive ROI Models</h3>
                 <p className="text-gray-300 mb-4">
-                  We&apos;re developing predictive capabilities for narrative timing, helping you anticipate 
-                  when storylines will peak for maximum audience engagement.
+                  We&apos;re developing predictive models for partnership timing, helping you anticipate 
+                  when athlete influence will peak for maximum marketing ROI and brand exposure.
                 </p>
                 <div className="flex items-center text-sm text-gray-400">
                   <Zap className="w-4 h-4 mr-2" />
-                  <span>Advanced machine learning models in development</span>
+                  <span>Advanced ML models for partnership optimization</span>
                 </div>
               </div>
             </motion.div>
@@ -337,10 +337,10 @@ export default function PlatformDemo() {
             className="text-center mt-12"
           >
             <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-8 border border-gray-600">
-              <h3 className="text-2xl font-bold text-white mb-4">Ready to Integrate?</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to Optimize Your Campaigns?</h3>
               <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
                 Get access to our comprehensive API documentation and start building 
-                advanced sports media intelligence into your workflow.
+                athlete influence intelligence into your marketing operations.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/docs">
