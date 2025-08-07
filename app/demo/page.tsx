@@ -21,15 +21,13 @@ import ContactModal from '@/components/ContactModal';
 // Import components
 import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
 import DemoDashboard from '@/components/DemoDashboard';
-import PlayerShowcase from '@/components/PlayerShowcase';
-import { ComparisonChart } from '@/components/comparisonchart';
+import HeadToHeadComparison from '@/components/HeadToHeadComparison';
 
 // Import data service
-import { getCurrentAnalysisPeriod, TimePeriod, compareEntities, ComparisonResult } from '@/app/lib/dataService_unified';
+import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
 
 export default function PlatformDemo() {
   const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
-  const [comparisonData, setComparisonData] = useState<ComparisonResult | null>(null);
   const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score'>('hype_score');
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [apiModalOpen, setApiModalOpen] = useState(false);
@@ -40,10 +38,6 @@ export default function PlatformDemo() {
         // Load current period
         const period = await getCurrentAnalysisPeriod();
         setCurrentPeriod(period);
-        
-        // Load comparison data for Caitlin Clark vs Angel Reese
-        const comparison = await compareEntities(['Caitlin Clark', 'Angel Reese']);
-        setComparisonData(comparison);
       } catch (error) {
         console.error('Error loading demo data:', error);
       }
@@ -216,72 +210,18 @@ export default function PlatformDemo() {
             </p>
           </motion.div>
 
-          {/* Featured Player Cards */}
+          {/* Head-to-Head Comparison */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mb-12"
           >
-            <PlayerShowcase />
+            <HeadToHeadComparison 
+              playerOne="Caitlin Clark"
+              playerTwo="Angel Reese"
+            />
           </motion.div>
-
-          {/* Comparison Chart */}
-          {comparisonData && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700"
-            >
-              <h4 className="text-xl font-semibold text-white mb-6 text-center">
-                Multi-Metric Comparison: All 8 Analytics Dimensions
-              </h4>
-              {comparisonData && comparisonData.entities && (
-                <ComparisonChart 
-                  entityOne={{
-                    name: 'Caitlin Clark',
-                    color: '#f97316', // orange
-                    data: comparisonData.entities['Caitlin Clark']?.metrics || {}
-                  }}
-                  entityTwo={{
-                    name: 'Angel Reese',
-                    color: '#3b82f6', // blue
-                    data: comparisonData.entities['Angel Reese']?.metrics || {}
-                  }}
-                  metrics={[
-                    { key: 'hype_score', label: 'HYPE Score' },
-                    { key: 'rodmn_score', label: 'RODMN Score' },
-                    { key: 'mentions', label: 'Mentions' },
-                    { key: 'talk_time', label: 'Talk Time' },
-                    { key: 'wikipedia_views', label: 'Wikipedia Views' },
-                    { key: 'reddit_mentions', label: 'Reddit Mentions' },
-                    { key: 'google_trends', label: 'Google Trends' },
-                    { key: 'google_news_mentions', label: 'Google News' }
-                  ]}
-                  title="Multi-Metric Comparison"
-                />
-              )}
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-800/50 rounded-lg p-4">
-                  <h5 className="font-semibold text-orange-400 mb-2">Business Context</h5>
-                  <p className="text-sm text-gray-400">
-                    This rivalry represents one of the most engaging storylines in women&apos;s sports, 
-                    with complementary strengths creating ongoing narrative opportunities.
-                  </p>
-                </div>
-                <div className="bg-gray-800/50 rounded-lg p-4">
-                  <h5 className="font-semibold text-blue-400 mb-2">Coverage Strategy</h5>
-                  <p className="text-sm text-gray-400">
-                    High HYPE scores with varying RODMN levels suggest different content approaches: 
-                    celebration vs. controversy-driven narratives.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
         </div>
       </section>
 
