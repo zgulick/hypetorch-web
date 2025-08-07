@@ -4,19 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
-  BarChart2, 
-  TrendingUp, 
   Eye, 
   Calendar,
   Zap,
   Target,
   Users,
   Activity,
-  AlertTriangle,
-  Lightbulb,
   LineChart,
   Database,
-  Clock,
   ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
