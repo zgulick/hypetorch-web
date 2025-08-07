@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, BarChart2, Activity, TrendingUp, Eye } from "lucide-react";
+import { Menu, X, Activity, Eye, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
@@ -65,26 +65,15 @@ export default function Navbar() {
               <span>Platform Demo</span>
             </Link>
             <Link 
-              href="/dashboard" 
+              href="/about" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/dashboard') 
+                isActiveRoute('/about') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
                   : 'text-gray-300 hover:text-orange-400'
               }`}
             >
-              <BarChart2 size={16} />
-              <span>Dashboard</span>
-            </Link>
-            <Link 
-              href="/compare" 
-              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/compare') || pathname?.startsWith('/compare') 
-                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
-                  : 'text-gray-300 hover:text-orange-400'
-              }`}
-            >
-              <TrendingUp size={16} />
-              <span>Analysis</span>
+              <Info size={16} />
+              <span>About</span>
             </Link>
             {isAuthenticated() && (
               <Link 
@@ -149,24 +138,14 @@ export default function Navbar() {
                 <span>Platform Demo</span>
               </Link>
               <Link 
-                href="/dashboard" 
+                href="/about" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/dashboard') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                  isActiveRoute('/about') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
-                <BarChart2 size={20} />
-                <span>Dashboard</span>
-              </Link>
-              <Link 
-                href="/compare" 
-                onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/compare') || pathname?.startsWith('/compare') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
-                }`}
-              >
-                <TrendingUp size={20} />
-                <span>Analysis</span>
+                <Info size={20} />
+                <span>About</span>
               </Link>
               {isAuthenticated() && (
                 <Link 

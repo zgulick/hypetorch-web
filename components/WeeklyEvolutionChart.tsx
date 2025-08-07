@@ -147,8 +147,9 @@ export default function WeeklyEvolutionChart({
   const getYAxisDomain = (metricType: string): [number | string, number | string] => {
     switch (metricType) {
       case 'hype_score':
-      case 'rodmn_score':
         return [0, 100];
+      case 'rodmn_score':
+        return [0, 10];
       case 'mentions':
         return [0, 'dataMax + 50'];
       case 'talk_time':

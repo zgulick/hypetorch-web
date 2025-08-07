@@ -25,7 +25,7 @@ import ContactModal from '@/components/ContactModal';
 
 // Import components
 import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
-import IntelligenceDashboard from '@/components/IntelligenceDashboard';
+import DemoDashboard from '@/components/DemoDashboard';
 import PlayerShowcase from '@/components/PlayerShowcase';
 import { ComparisonChart } from '@/components/comparisonchart';
 
@@ -92,8 +92,8 @@ export default function PlatformDemo() {
               <a href="#evolution-chart" className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors">
                 Weekly Evolution
               </a>
-              <a href="#intelligence-dashboard" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
-                Intelligence Dashboard  
+              <a href="#metrics-dashboard" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
+                Key Metrics Dashboard  
               </a>
               <a href="#player-comparison" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
                 Player Comparison
@@ -145,28 +145,13 @@ export default function PlatformDemo() {
             </div>
           </motion.div>
 
-          {/* Chart Component */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <WeeklyEvolutionChart 
-              players={['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young']}
-              periods={5}
-              metric={selectedMetric}
-              height={450}
-            />
-          </motion.div>
-
           {/* Metric Toggle */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex justify-center mt-8"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex justify-center mb-8"
           >
             <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
               <button
@@ -177,7 +162,7 @@ export default function PlatformDemo() {
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                HYPE Score Evolution
+                JORDN Score Evolution
               </button>
               <button
                 onClick={() => setSelectedMetric('rodmn_score')}
@@ -191,71 +176,28 @@ export default function PlatformDemo() {
               </button>
             </div>
           </motion.div>
+
+          {/* Chart Component */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <WeeklyEvolutionChart 
+              players={['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young']}
+              periods={5}
+              metric={selectedMetric}
+              height={450}
+            />
+          </motion.div>
         </div>
       </section>
 
-      {/* Intelligence Dashboard */}
-      <section id="intelligence-dashboard" className="py-16 px-6 bg-gray-900">
+      {/* Key Metrics Dashboard */}
+      <section id="metrics-dashboard" className="py-16 px-6 bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <BarChart2 className="w-8 h-8 text-blue-400 mr-3" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white">Current Intelligence Dashboard</h2>
-            </div>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-              Real-time intelligence widgets provide instant insights into narrative shifts, 
-              controversy alerts, and emerging story opportunities.
-            </p>
-            <div className="flex items-center justify-center text-gray-400 mb-8">
-              <Clock className="w-5 h-5 mr-2" />
-              <span>Updated: {formatPeriodLabel(currentPeriod)}</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <IntelligenceDashboard />
-          </motion.div>
-
-          {/* Dashboard Features */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
-          >
-            <div className="text-center">
-              <div className="bg-green-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <TrendingUp className="w-8 h-8 text-green-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Top Movers</h3>
-              <p className="text-gray-400">Track biggest HYPE score changes with percentage calculations and business context</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-yellow-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-yellow-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Narrative Monitor</h3>
-              <p className="text-gray-400">RODMN alerts identify controversial discussions and polarizing storylines</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-blue-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Lightbulb className="w-8 h-8 text-blue-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Story Opportunities</h3>
-              <p className="text-gray-400">Data-backed angles ready for coverage with engagement potential</p>
-            </div>
-          </motion.div>
+          <DemoDashboard />
         </div>
       </section>
 
