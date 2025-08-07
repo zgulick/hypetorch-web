@@ -327,7 +327,7 @@ export default function HeadToHeadComparison({
             <h5 className="font-semibold text-blue-400 mb-1 text-sm">Marketing Insight</h5>
             <p className="text-xs text-gray-400">
               Use these metrics to determine optimal partnership strategies and content approaches 
-              for each athlete's unique influence profile.
+              for each athlete&apos;s unique influence profile.
             </p>
           </div>
         </div>
