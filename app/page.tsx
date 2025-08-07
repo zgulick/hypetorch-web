@@ -56,8 +56,8 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500 leading-tight mb-6"
           >
-            Advanced Analytics Intelligence<br/>
-            <span className="text-4xl md:text-6xl">for Sports Media</span>
+            Athlete Influence Intelligence<br/>
+            <span className="text-4xl md:text-6xl">for Marketing Teams</span>
           </motion.h1>
 
           <motion.h2
@@ -68,7 +68,7 @@ export default function Home() {
           >
             What WAR was to RBIs and batting average, our algorithms are to likes, views, and impressions.
             <br className="hidden md:block"/>
-            <span className="text-orange-400">Data-driven story angles that drive engagement.</span>
+            <span className="text-orange-400">Data-driven partnership decisions that maximize ROI.</span>
           </motion.h2>
 
           {/* Three Value Propositions */}
@@ -80,18 +80,18 @@ export default function Home() {
           >
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <Target className="w-8 h-8 text-orange-400 mb-3 mx-auto" />
-              <h3 className="font-semibold text-white mb-2">Identify Trending Storylines</h3>
-              <p className="text-gray-400 text-sm">Before they explode in mainstream media</p>
+              <h3 className="font-semibold text-white mb-2">Identify Rising Talent</h3>
+              <p className="text-gray-400 text-sm">Before your competition signs them</p>
             </div>
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <BarChart2 className="w-8 h-8 text-red-400 mb-3 mx-auto" />
-              <h3 className="font-semibold text-white mb-2">Multi-Dimensional Analytics</h3>
-              <p className="text-gray-400 text-sm">Beyond basic social metrics and impressions</p>
+              <h3 className="font-semibold text-white mb-2">Objective Influence Scores</h3>
+              <p className="text-gray-400 text-sm">Beyond follower counts and vanity metrics</p>
             </div>
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <Zap className="w-8 h-8 text-amber-400 mb-3 mx-auto" />
-              <h3 className="font-semibold text-white mb-2">Continuous Intelligence</h3>
-              <p className="text-gray-400 text-sm">Stay ahead of the narrative cycle</p>
+              <h3 className="font-semibold text-white mb-2">Maximize Marketing ROI</h3>
+              <p className="text-gray-400 text-sm">Data-driven sponsorship and partnership decisions</p>
             </div>
           </motion.div>
 
@@ -147,7 +147,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Top Movers and Intelligence Dashboard */}
+          {/* Intelligence Dashboard - All Tiles Equal Height */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -155,15 +155,11 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12"
           >
-            <div className="xl:col-span-1">
-              <TopMoversWidget 
-                title="This Week's Biggest Movers"
-                limit={5}
-              />
-            </div>
-            <div className="xl:col-span-2">
-              <IntelligenceDashboard />
-            </div>
+            <TopMoversWidget 
+              title="Most Hype This Week"
+              limit={5}
+            />
+            <IntelligenceDashboard />
           </motion.div>
 
           {/* Featured Players Section */}
@@ -180,7 +176,7 @@ export default function Home() {
             <PlayerShowcase />
           </motion.div>
 
-          {/* Under the Radar Section */}
+          {/* Platform Capabilities Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -189,23 +185,27 @@ export default function Home() {
             className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-8 border border-gray-700"
           >
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-white mb-4">Under the Radar</h3>
-              <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-                Our algorithms identify emerging storylines before traditional metrics catch up. 
-                These players show increasing narrative potential worth monitoring.
+              <h3 className="text-2xl font-bold text-white mb-4">Built for Scale & Flexibility</h3>
+              <p className="text-gray-400 mb-8 max-w-3xl mx-auto">
+                Our platform tracks audio mentions and talk time across podcasts, creating objective influence scores 
+                that work across any sport or league. Compare WNBA to NBA, Rugby to Premier League, or discover 
+                emerging narratives before traditional metrics catch up.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-400 mb-2">37+</div>
-                  <div className="text-sm text-gray-400">Players Tracked</div>
+                  <div className="text-3xl font-bold text-blue-400 mb-2">Multi-Sport</div>
+                  <div className="text-sm text-gray-400 mb-3">Cross-League Analysis</div>
+                  <p className="text-xs text-gray-500">Compare influence across different sports and leagues with unified scoring</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400 mb-2">8</div>
-                  <div className="text-sm text-gray-400">Metrics Per Player</div>
+                  <div className="text-3xl font-bold text-green-400 mb-2">Audio-First</div>
+                  <div className="text-sm text-gray-400 mb-3">Talk Time & Mentions</div>
+                  <p className="text-xs text-gray-500">Track conversation volume and context from podcast transcripts</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-400 mb-2">Weekly</div>
-                  <div className="text-sm text-gray-400">Analysis Updates</div>
+                  <div className="text-3xl font-bold text-orange-400 mb-2">Scalable</div>
+                  <div className="text-sm text-gray-400 mb-3">Industry Agnostic</div>
+                  <p className="text-xs text-gray-500">Built to expand beyond sports to any industry with narrative influence</p>
                 </div>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function Home() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-6 text-white">
-              Why Sports Media Companies Choose HypeTorch
+              Why Marketing Teams Choose HypeTorch
             </h2>
           </motion.div>
 
@@ -235,19 +235,19 @@ export default function Home() {
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
             <div className="text-center p-6 bg-gradient-to-br from-orange-900/20 to-red-900/20 rounded-xl border border-orange-500/20">
-              <h3 className="font-bold text-lg text-orange-400 mb-3">They count mentions</h3>
-              <p className="text-gray-300 font-bold">We measure influence</p>
-              <p className="text-gray-500 text-sm mt-2">Multi-source analysis beyond basic social metrics</p>
+              <h3 className="font-bold text-lg text-orange-400 mb-3">They track followers</h3>
+              <p className="text-gray-300 font-bold">We measure marketing ROI</p>
+              <p className="text-gray-500 text-sm mt-2">Data-driven athlete partnership decisions</p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl border border-blue-500/20">
-              <h3 className="font-bold text-lg text-blue-400 mb-3">They show what happened</h3>
-              <p className="text-gray-300 font-bold">We show what&apos;s happening next</p>
-              <p className="text-gray-500 text-sm mt-2">Predictive insights for narrative timing</p>
+              <h3 className="font-bold text-lg text-blue-400 mb-3">They guess who's popular</h3>
+              <p className="text-gray-300 font-bold">We show who's trending</p>
+              <p className="text-gray-500 text-sm mt-2">Identify rising stars before your competition</p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-green-900/20 to-teal-900/20 rounded-xl border border-green-500/20">
-              <h3 className="font-bold text-lg text-green-400 mb-3">Basic social metrics</h3>
-              <p className="text-gray-300 font-bold">Multi-dimensional intelligence</p>
-              <p className="text-gray-500 text-sm mt-2">HYPE, RODMN, and 6 additional advanced metrics</p>
+              <h3 className="font-bold text-lg text-green-400 mb-3">Vanity metrics</h3>
+              <p className="text-gray-300 font-bold">Influence intelligence</p>
+              <p className="text-gray-500 text-sm mt-2">Optimize marketing spend with objective influence scores</p>
             </div>
           </motion.div>
         </div>
@@ -262,7 +262,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-bold mb-6"
           >
-            <span className="text-orange-400">Ready to Transform Your Sports Coverage?</span>
+            <span className="text-orange-400">Ready to Optimize Your Athlete Marketing?</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -271,8 +271,8 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="text-gray-400 mb-10 text-lg max-w-2xl mx-auto"
           >
-            Join forward-thinking sports media companies using HypeTorch to identify trending storylines, 
-            optimize content timing, and stay ahead of the narrative cycle.
+            Join marketing teams using HypeTorch to maximize ROI on athlete partnerships, 
+            identify emerging talent, and make data-driven sponsorship decisions before your competition.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -90,7 +90,7 @@ export default function TopMoversWidget({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 ${className}`}
+      className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 h-full flex flex-col ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -102,7 +102,7 @@ export default function TopMoversWidget({
       </div>
 
       {/* Top Scores List */}
-      <div className="space-y-4">
+      <div className="space-y-4 flex-grow">
         {topScores.map((player, index) => (
           <motion.div
             key={player.name}
