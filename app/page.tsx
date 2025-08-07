@@ -240,8 +240,8 @@ export default function Home() {
               <p className="text-gray-500 text-sm mt-2">Data-driven athlete partnership decisions</p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl border border-blue-500/20">
-              <h3 className="font-bold text-lg text-blue-400 mb-3">They guess who's popular</h3>
-              <p className="text-gray-300 font-bold">We show who's trending</p>
+              <h3 className="font-bold text-lg text-blue-400 mb-3">They guess who&apos;s popular</h3>
+              <p className="text-gray-300 font-bold">We show who&apos;s trending</p>
               <p className="text-gray-500 text-sm mt-2">Identify rising stars before your competition</p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-green-900/20 to-teal-900/20 rounded-xl border border-green-500/20">
