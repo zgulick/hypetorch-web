@@ -12,7 +12,7 @@ interface MetricTileProps {
   icon: React.ReactNode;
   data: EntityData[];
   formatValue: (value: number) => string;
-  valueKey: keyof EntityData['metrics'];
+  valueKey: keyof NonNullable<EntityData['metrics']>;
   color: string;
   loading: boolean;
   error: string | null;
@@ -126,10 +126,10 @@ export default function DemoDashboard() {
   }, []);
 
   // Helper functions for data processing
-  const getTopByMetric = (metric: keyof EntityData['metrics'], limit: number = 5): EntityData[] => {
+  const getTopByMetric = (metric: keyof NonNullable<EntityData['metrics']>, limit: number = 5): EntityData[] => {
     return allData
       .filter(item => item.metrics?.[metric] !== undefined && item.metrics?.[metric] !== null && item.metrics?.[metric] !== 0)
-      .sort((a, b) => (b.metrics?.[metric] || 0) - (a.metrics?.[metric] || 0))
+      .sort((a, b) => (Number(b.metrics?.[metric]) || 0) - (Number(a.metrics?.[metric]) || 0))
       .slice(0, limit);
   };
 
