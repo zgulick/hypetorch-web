@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Navbar from "@/app/Navbar";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { 
   Code2, Key, Zap, Shield, Clock, ArrowRight, 
   Copy, Check, AlertTriangle, Database, TrendingUp,
