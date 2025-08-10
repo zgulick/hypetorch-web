@@ -157,16 +157,17 @@ export default function About() {
                 </div>
               </div>
               <div className="mb-6">
-                <h4 className="font-semibold text-orange-200 mb-3">HypeTorch Algorithms:</h4>
+                <h4 className="font-semibold text-orange-200 mb-3">HypeTorch AI-Powered Analytics:</h4>
                 <ul className="space-y-2 text-gray-200">
-                  <li>• HYPE Score (JORDN Algorithm)</li>
-                  <li>• RODMN Score (Controversy Rating)</li>
-                  <li>• Multi-source data synthesis</li>
-                  <li>• Narrative evolution tracking</li>
+                  <li>• <strong>Semantic Entity Detection</strong> - AI understands context, not just keywords</li>
+                  <li>• <strong>Enhanced JORDN Algorithm</strong> - Dynamic weights with interaction effects</li>
+                  <li>• <strong>Advanced RODMN Score</strong> - Multi-component controversy analysis</li>
+                  <li>• <strong>Vector-Based Intelligence</strong> - 50% better entity recognition accuracy</li>
+                  <li>• <strong>Narrative Evolution AI</strong> - Real-time storyline momentum tracking</li>
                 </ul>
               </div>
               <p className="text-gray-200 text-sm font-medium">
-                Beyond performance metrics - measuring cultural impact, media influence, and narrative momentum.
+                <strong>Next-level intelligence:</strong> Our AI doesn't just count mentions—it understands context, identifies "the rookie from Iowa" as Caitlin Clark, and detects narrative patterns before they explode.
               </p>
             </motion.div>
           </div>
@@ -273,26 +274,54 @@ export default function About() {
             <div className="bg-gradient-to-br from-orange-900/20 to-red-900/20 p-8 rounded-xl border border-orange-500/20">
               <div className="flex items-center mb-4">
                 <LineChart className="w-8 h-8 text-orange-400 mr-3" />
-                <h3 className="text-xl font-bold text-white">HYPE Algorithm (JORDN)</h3>
+                <h3 className="text-xl font-bold text-white">Enhanced JORDN Algorithm (HYPE 2.0)</h3>
               </div>
               <p className="text-lg text-orange-200 font-medium mb-4">
-                &quot;What WAR was to RBIs, HRs, and Batting Average, JORDN is to likes, views and impressions&quot;
+                &quot;What WAR was to RBIs, HRs, and Batting Average, Enhanced JORDN is to likes, views and impressions&quot;
               </p>
+              <div className="space-y-3 mb-4">
+                <div className="text-sm">
+                  <span className="text-orange-300 font-semibold">Dynamic Weighting:</span>
+                  <span className="text-gray-300"> Algorithm adapts weights based on data quality and information gain</span>
+                </div>
+                <div className="text-sm">
+                  <span className="text-orange-300 font-semibold">Interaction Effects:</span>
+                  <span className="text-gray-300"> Detects viral moments (talk + mentions), mainstream breakthroughs, and community debates</span>
+                </div>
+                <div className="text-sm">
+                  <span className="text-orange-300 font-semibold">Commercial Consistency:</span>
+                  <span className="text-gray-300"> Always averages 100 for reliable benchmarking across time periods</span>
+                </div>
+              </div>
               <p className="text-gray-300 text-sm">
-                Multi-dimensional influence measurement that goes beyond surface metrics to reveal true narrative impact.
+                Next-generation influence measurement that captures complex narrative dynamics and momentum patterns traditional metrics miss entirely.
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-red-900/20 to-purple-900/20 p-8 rounded-xl border border-red-500/20">
               <div className="flex items-center mb-4">
                 <TrendingUp className="w-8 h-8 text-red-400 mr-3" />
-                <h3 className="text-xl font-bold text-white">RODMN Algorithm</h3>
+                <h3 className="text-xl font-bold text-white">Advanced RODMN Algorithm (Controversy 2.0)</h3>
               </div>
               <p className="text-lg text-red-200 font-medium mb-4">
-                &quot;What PER was to points, rebounds, and assists, RODMN is to toxicity, controversy and sentiment&quot;
+                &quot;What PER was to points, rebounds, and assists, Enhanced RODMN is to toxicity, controversy and sentiment&quot;
               </p>
+              <div className="space-y-3 mb-4">
+                <div className="text-sm">
+                  <span className="text-red-300 font-semibold">Multi-Component Analysis:</span>
+                  <span className="text-gray-300"> Polarization (35%), Volatility (25%), Intensity (20%), Disagreement (20%)</span>
+                </div>
+                <div className="text-sm">
+                  <span className="text-red-300 font-semibold">Controversy-First Design:</span>
+                  <span className="text-gray-300"> Independent from popularity—controversial unknowns can score 10/10</span>
+                </div>
+                <div className="text-sm">
+                  <span className="text-red-300 font-semibold">JORDN Amplification:</span>
+                  <span className="text-gray-300"> Formula: controversy_coefficient × (1 + JORDN/200) for context weighting</span>
+                </div>
+              </div>
               <p className="text-gray-300 text-sm">
-                Sophisticated controversy detection that measures divisiveness and polarization in public discourse.
+                Next-level controversy intelligence that identifies divisive topics and PR risks before they explode into public crises.
               </p>
             </div>
           </motion.div>
@@ -307,36 +336,39 @@ export default function About() {
           >
             <div className="flex items-center mb-6">
               <Database className="w-8 h-8 text-blue-400 mr-3" />
-              <h3 className="text-2xl font-bold text-white">Current Capabilities</h3>
+              <h3 className="text-2xl font-bold text-white">AI-Enhanced Capabilities</h3>
+              <div className="ml-3 px-3 py-1 bg-orange-600/20 border border-orange-500/30 rounded-full">
+                <span className="text-orange-300 text-sm font-semibold">50% Better Accuracy</span>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-orange-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Brain className="w-8 h-8 text-orange-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">JORDN Algorithm</h4>
-                <p className="text-sm text-gray-400">Judge Of Relevance & Digital Notability</p>
+                <h4 className="font-semibold text-white mb-2">Semantic Entity Detection</h4>
+                <p className="text-sm text-gray-400">AI-powered context understanding with 384-dimensional embeddings</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <TrendingUp className="w-8 h-8 text-red-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">RODMN Algorithm</h4>
-                <p className="text-sm text-gray-400">Rating Of Divisive Media Narratives</p>
+                <h4 className="font-semibold text-white mb-2">Enhanced JORDN 2.0</h4>
+                <p className="text-sm text-gray-400">Dynamic weighting with interaction effects and viral moment detection</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Database className="w-8 h-8 text-blue-400" />
+                <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Database className="w-8 h-8 text-purple-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Multi-Source Synthesis</h4>
-                <p className="text-sm text-gray-400">8 data sources integrated seamlessly</p>
+                <h4 className="font-semibold text-white mb-2">Advanced RODMN 2.0</h4>
+                <p className="text-sm text-gray-400">4-component controversy analysis with polarization detection</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Calendar className="w-8 h-8 text-green-400" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Historical Intelligence</h4>
-                <p className="text-sm text-gray-400">Weekly evolution tracking & trends</p>
+                <h4 className="font-semibold text-white mb-2">Vector-Based Intelligence</h4>
+                <p className="text-sm text-gray-400">Sentence transformers with cosine similarity for contextual matching</p>
               </div>
             </div>
           </motion.div>
@@ -353,10 +385,10 @@ export default function About() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              This is Just the Beginning
+              The AI Revolution is Just Getting Started
             </h2>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              We&apos;re building the infrastructure for the next generation of sports media intelligence.
+              Our semantic detection and enhanced algorithms represent Sports 3.0. We&apos;re already building the AI foundation for Sports 4.0—where predictive narrative intelligence meets real-time audience behavior modeling.
             </p>
           </motion.div>
 
@@ -404,11 +436,11 @@ export default function About() {
             >
               <div className="flex items-center mb-4">
                 <ChevronRight className="w-6 h-6 text-green-400 mr-2" />
-                <h3 className="text-lg font-semibold text-white">Next-Gen Intelligence</h3>
+                <h3 className="text-lg font-semibold text-white">Sports 4.0: Predictive AI</h3>
               </div>
               <p className="text-gray-400 text-sm">
-                Building the foundation for Sports 4.0 - where AI-powered narrative analysis 
-                meets real-time audience sentiment and engagement prediction.
+                Advanced transformer models for narrative forecasting, audience behavior prediction, 
+                and real-time content optimization. The next evolution beyond our current semantic intelligence.
               </p>
             </motion.div>
           </div>
