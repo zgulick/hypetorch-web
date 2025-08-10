@@ -167,7 +167,7 @@ export default function About() {
                 </ul>
               </div>
               <p className="text-gray-200 text-sm font-medium">
-                <strong>Next-level intelligence:</strong> Our AI doesn't just count mentions—it understands context, identifies "the rookie from Iowa" as Caitlin Clark, and detects narrative patterns before they explode.
+                <strong>Next-level intelligence:</strong> Our AI doesn&apos;t just count mentions—it understands context, identifies &quot;the rookie from Iowa&quot; as Caitlin Clark, and detects narrative patterns before they explode.
               </p>
             </motion.div>
           </div>
