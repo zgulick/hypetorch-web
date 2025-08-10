@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Activity, Eye, Info } from "lucide-react";
+import { Menu, X, Activity, Eye, Info, Code2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
@@ -74,6 +74,17 @@ export default function Navbar() {
             >
               <Info size={16} />
               <span>About</span>
+            </Link>
+            <Link 
+              href="/docs" 
+              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/docs') 
+                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
+            >
+              <Code2 size={16} />
+              <span>API Docs</span>
             </Link>
             {isAuthenticated() && (
               <Link 
@@ -146,6 +157,16 @@ export default function Navbar() {
               >
                 <Info size={20} />
                 <span>About</span>
+              </Link>
+              <Link 
+                href="/docs" 
+                onClick={() => setMobileMenuOpen(false)} 
+                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/docs') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                }`}
+              >
+                <Code2 size={20} />
+                <span>API Docs</span>
               </Link>
               {isAuthenticated() && (
                 <Link 
