@@ -18,6 +18,15 @@ export default function ApiDocs() {
     setTimeout(() => setCopiedEndpoint(''), 2000);
   };
 
+  interface ApiParam {
+    name: string;
+    type: string;
+    required?: boolean;
+    optional?: boolean;
+    default?: string;
+    description: string;
+  }
+
   const endpoints = [
     {
       method: "GET",
@@ -28,7 +37,7 @@ export default function ApiDocs() {
         { name: "include_metrics", type: "boolean", default: "false", description: "Include current metrics" },
         { name: "category", type: "string", optional: true, description: "Filter by category (Sports, Crypto)" },
         { name: "subcategory", type: "string", optional: true, description: "Filter by subcategory (NFL, WNBA)" }
-      ],
+      ] as ApiParam[],
       example: {
         request: "curl -X GET 'https://api.hypetorch.com/v2/entities?include_metrics=true&category=Sports' \\\n  -H 'X-API-Key: your-api-key'",
         response: {
@@ -60,7 +69,7 @@ export default function ApiDocs() {
         { name: "q", type: "string", required: true, description: "Search query" },
         { name: "category", type: "string", optional: true, description: "Filter by category" },
         { name: "limit", type: "integer", default: "20", description: "Max results (1-100)" }
-      ],
+      ] as ApiParam[],
       example: {
         request: "curl -X GET 'https://api.hypetorch.com/v2/entities/search?q=Clark&limit=5' \\\n  -H 'X-API-Key: your-api-key'",
         response: {
@@ -82,7 +91,7 @@ export default function ApiDocs() {
       path: "/v2/entities/bulk",
       title: "Bulk Entity Query",
       description: "Get multiple entities with specific metrics and optional history",
-      params: [],
+      params: [] as ApiParam[],
       example: {
         request: "curl -X POST 'https://api.hypetorch.com/v2/entities/bulk' \\\n  -H 'X-API-Key: your-api-key' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"entity_names\": [\"Caitlin Clark\", \"Angel Reese\"],\n    \"metrics\": [\"hype_score\", \"rodmn_score\", \"mentions\"],\n    \"include_history\": false\n  }'",
         response: {
@@ -117,7 +126,7 @@ export default function ApiDocs() {
         { name: "metric", type: "string", default: "hype_score", description: "Metric to analyze for trends" },
         { name: "limit", type: "integer", default: "10", description: "Max results (1-50)" },
         { name: "category", type: "string", optional: true, description: "Filter by category" }
-      ],
+      ] as ApiParam[],
       example: {
         request: "curl -X GET 'https://api.hypetorch.com/v2/trending?metric=hype_score&limit=5' \\\n  -H 'X-API-Key: your-api-key'",
         response: {
@@ -139,7 +148,7 @@ export default function ApiDocs() {
       path: "/v2/dashboard/widgets",
       title: "Dashboard Widgets",
       description: "Get pre-configured dashboard data for top movers, alerts, and opportunities",
-      params: [],
+      params: [] as ApiParam[],
       example: {
         request: "curl -X GET 'https://api.hypetorch.com/v2/dashboard/widgets' \\\n  -H 'X-API-Key: your-api-key'",
         response: {
@@ -432,6 +441,9 @@ print(data)`,
                                   <span className="text-xs px-2 py-1 bg-blue-600 text-white rounded">{param.type}</span>
                                   {param.required && (
                                     <span className="text-xs px-2 py-1 bg-red-600 text-white rounded">Required</span>
+                                  )}
+                                  {param.optional && (
+                                    <span className="text-xs px-2 py-1 bg-gray-600 text-white rounded">Optional</span>
                                   )}
                                   {param.default && (
                                     <span className="text-xs text-gray-400">Default: {param.default}</span>
