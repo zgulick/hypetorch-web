@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
-import { ArrowRight, BarChart2, Target, Zap, Eye, Calendar } from "lucide-react";
+import { BarChart2, Target, Zap, Eye, Calendar, DollarSign } from "lucide-react";
 import Image from "next/image";
 
 // Import new components
@@ -95,6 +95,20 @@ export default function Home() {
             </div>
           </motion.div>
 
+          {/* Pricing Teaser */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.8 }}
+            className="mb-8"
+          >
+            <p className="text-lg text-gray-300 text-center">
+              Advanced analytics starting at <span className="text-orange-400 font-semibold">$500</span> for custom reports, 
+              <br className="hidden sm:block"/>
+              scaling to full API access for enterprise needs.
+            </p>
+          </motion.div>
+
           {/* Primary CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -102,22 +116,22 @@ export default function Home() {
             transition={{ delay: 1.0, duration: 0.8 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/demo">
+            <Link href="/pricing">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-64 sm:w-auto"
               >
-                <Eye size={20} /> Request Demo
+                <DollarSign size={20} /> See Pricing
               </motion.button>
             </Link>
-            <Link href="/about">
+            <Link href="/demo">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 transition-colors w-64 sm:w-auto"
               >
-                Learn More <ArrowRight size={20} />
+                <Eye size={20} /> View Demo
               </motion.button>
             </Link>
           </motion.div>

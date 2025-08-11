@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Activity, Eye, Info, Code2 } from "lucide-react";
+import { Menu, X, Activity, Eye, Info, Code2, DollarSign } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
@@ -76,6 +76,17 @@ export default function Navbar() {
               <span>About</span>
             </Link>
             <Link 
+              href="/pricing" 
+              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/pricing') 
+                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
+            >
+              <DollarSign size={16} />
+              <span>Pricing</span>
+            </Link>
+            <Link 
               href="/docs" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
                 isActiveRoute('/docs') 
@@ -99,12 +110,11 @@ export default function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-            <button
-              onClick={() => setContactModalOpen(true)}
-              className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105"
-            >
-              Request Demo
-            </button>
+            <Link href="/pricing">
+              <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
+                See Pricing
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -159,6 +169,16 @@ export default function Navbar() {
                 <span>About</span>
               </Link>
               <Link 
+                href="/pricing" 
+                onClick={() => setMobileMenuOpen(false)} 
+                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/pricing') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                }`}
+              >
+                <DollarSign size={20} />
+                <span>Pricing</span>
+              </Link>
+              <Link 
                 href="/docs" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
@@ -180,15 +200,11 @@ export default function Navbar() {
                   <span>Admin</span>
                 </Link>
               )}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setContactModalOpen(true);
-                }}
-                className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full"
-              >
-                Request Demo
-              </button>
+              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
+                <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full">
+                  See Pricing
+                </button>
+              </Link>
             </div>
           </motion.div>
         )}
@@ -198,9 +214,9 @@ export default function Navbar() {
       <ContactModal
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
-        title="Request a Demo"
-        subtitle="See HypeTorch's advanced analytics in action"
-        inquiryType="demo"
+        title="Contact Sales"
+        subtitle="Get a custom quote for your specific needs"
+        inquiryType="sales"
       />
     </>
   );

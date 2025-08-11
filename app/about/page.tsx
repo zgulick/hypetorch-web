@@ -9,7 +9,7 @@ import ContactModal from '@/components/ContactModal';
 import { 
   BarChart2, TrendingUp, 
   LineChart, Target, Database, Brain, Users, 
-  Calendar, Eye, ChevronRight
+  Calendar, ChevronRight, DollarSign
 } from "lucide-react";
 
 export default function About() {
@@ -478,13 +478,12 @@ export default function About() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <button 
-              onClick={() => setDemoModalOpen(true)}
-              className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-full sm:w-auto"
-            >
-              <Eye size={20} />
-              Request Demo
-            </button>
+            <Link href="/pricing">
+              <button className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-full sm:w-auto">
+                <DollarSign size={20} />
+                See Pricing
+              </button>
+            </Link>
             
             <button 
               onClick={() => setPartnerModalOpen(true)}
@@ -519,7 +518,7 @@ export default function About() {
                 <h4 className="font-semibold mb-3 text-white">Platform</h4>
                 <ul className="space-y-2">
                   <li><Link href="/demo" className="hover:text-orange-400 transition-colors">Platform Demo</Link></li>
-                  <li><Link href="/dashboard" className="hover:text-orange-400 transition-colors">Dashboard</Link></li>
+                  <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
                   <li><Link href="/docs" className="hover:text-orange-400 transition-colors">API Docs</Link></li>
                 </ul>
               </div>
