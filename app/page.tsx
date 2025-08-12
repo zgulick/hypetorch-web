@@ -103,9 +103,9 @@ export default function Home() {
             className="mb-8"
           >
             <p className="text-lg text-gray-300 text-center">
-              Advanced analytics starting at <span className="text-orange-400 font-semibold">$500</span> for custom reports, 
+              Advanced YouTube-based analytics starting at <span className="text-orange-400 font-semibold">$500</span> for custom reports
               <br className="hidden sm:block"/>
-              scaling to full API access for enterprise needs.
+              JORDN & RODMN scores from podcast transcript analysis
             </p>
           </motion.div>
 
@@ -122,16 +122,16 @@ export default function Home() {
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-64 sm:w-auto"
               >
-                <DollarSign size={20} /> See Pricing
+                <DollarSign size={20} /> Get Started
               </motion.button>
             </Link>
-            <Link href="/demo">
+            <Link href="/reports">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 transition-colors w-64 sm:w-auto"
               >
-                <Eye size={20} /> View Demo
+                <Eye size={20} /> See How It Works
               </motion.button>
             </Link>
           </motion.div>
@@ -295,21 +295,20 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/demo">
+            <Link href="/pricing">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg shadow-lg shadow-orange-900/30"
               >
-                Request Demo
+                Get Started
               </motion.button>
             </Link>
-            <a
-              href="mailto:hypetorch@gmail.com?subject=HypeTorch%20Demo%20Request"
-              className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors"
-            >
-              Contact Sales
-            </a>
+            <Link href="/contact">
+              <button className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
+                Contact Us
+              </button>
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -335,16 +334,15 @@ export default function Home() {
               <div>
                 <h4 className="font-semibold mb-3 text-white">Platform</h4>
                 <ul className="space-y-2">
-                  <li><Link href="/demo" className="hover:text-orange-400 transition-colors">Platform Demo</Link></li>
-                  <li><Link href="/docs" className="hover:text-orange-400 transition-colors">API Docs</Link></li>
-                  <li><Link href="/dashboard" className="hover:text-orange-400 transition-colors">Dashboard</Link></li>
+                  <li><Link href="/reports" className="hover:text-orange-400 transition-colors">Reports & Analytics</Link></li>
+                  <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-semibold mb-3 text-white">Company</h4>
                 <ul className="space-y-2">
-                  <li><Link href="/about" className="hover:text-orange-400 transition-colors">About</Link></li>
-                  <li><a href="mailto:hypetorch@gmail.com" className="hover:text-orange-400 transition-colors">Contact</a></li>
+                  <li><Link href="/contact" className="hover:text-orange-400 transition-colors">Contact</Link></li>
+                  <li><a href="mailto:hypetorch@gmail.com" className="hover:text-orange-400 transition-colors">Email</a></li>
                 </ul>
               </div>
             </div>

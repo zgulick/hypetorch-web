@@ -24,53 +24,52 @@ export default function PricingPage() {
       name: "Custom Report",
       price: "$500",
       billing: "One-time",
-      description: "Perfect for testing our value",
+      description: "One-time YouTube-based analytics report",
       popular: false,
       features: [
-        "One-time custom analytics report",
+        "One-time YouTube-based analytics report",
         "JORDN & RODMN scores for your entities",
         "Professional PDF with charts and insights",
         "5-7 business day delivery",
-        "Perfect for testing our value"
+        "Raw data appendix"
       ],
-      cta: "Get Custom Report",
-      ctaAction: () => openContactModal('sales', 'Custom Report - $500')
+      cta: "Get Started",
+      ctaAction: () => window.open('/pricing/custom-report', '_blank')
     },
     {
-      name: "Monthly Intelligence",
+      name: "Recurring Intelligence",
       price: "$1,500",
       billing: "per month",
-      description: "Automated insights with API access",
-      popular: false,
+      description: "Weekly automated reports plus API access",
+      popular: true,
       features: [
         "Weekly automated reports",
         "Basic API access (500 calls/month)",
         "Email support",
-        "JORDN & RODMN tracking",
         "Historical trend analysis",
         "Cancel anytime"
       ],
-      cta: "Start Monthly Plan",
-      ctaAction: () => openContactModal('sales', 'Monthly Intelligence - $1,500/month')
+      cta: "Configure Intelligence",
+      ctaAction: () => window.open('/pricing/recurring', '_blank')
     },
     {
       name: "Full Platform Access",
       price: "$3,500",
       billing: "per month",
-      description: "Enterprise solution with early access",
-      popular: true,
+      description: "Everything plus unlimited API and early access",
+      popular: false,
       earlyAccess: true,
       features: [
-        "Everything in Monthly Intelligence",
+        "Everything in Recurring Intelligence",
         "Unlimited API access",
         "Priority support & monthly consultation calls",
         "EARLY ACCESS: New metrics as we develop them",
         "BETA: RNALDO Score (Social + Traditional + JORDN hybrid)",
-        "Custom entity tracking",
-        "White-label report options"
+        "White-label options"
       ],
-      cta: "Get Full Access",
-      ctaAction: () => openContactModal('sales', 'Full Platform Access - $3,500/month')
+      cta: "Schedule Technical Demo",
+      ctaAction: () => window.open('/pricing/demo', '_blank'),
+      hasApiDocs: true
     }
   ];
 
@@ -119,7 +118,7 @@ export default function PricingPage() {
             transition={{ delay: 0.5, duration: 1 }}
             className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-4 font-medium"
           >
-            Start with a custom report, scale to full API access
+            YouTube-based analytics for sports media and beyond
           </motion.h2>
 
           <motion.p
@@ -128,7 +127,7 @@ export default function PricingPage() {
             transition={{ delay: 0.7, duration: 1 }}
             className="text-lg text-gray-400 max-w-2xl mx-auto mb-8"
           >
-            No enterprise sales calls. Choose your tier and get started immediately.
+            Choose your analytics tier and get started immediately
           </motion.p>
 
           <motion.div
@@ -137,9 +136,9 @@ export default function PricingPage() {
             transition={{ delay: 0.9, duration: 0.8 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/demo">
+            <Link href="/reports">
               <button className="px-8 py-3 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold flex items-center gap-2 transition-colors">
-                <Eye size={18} /> View Demo First
+                <Eye size={18} /> See How It Works
               </button>
             </Link>
           </motion.div>
@@ -198,24 +197,121 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                <button
-                  onClick={tier.ctaAction}
-                  className={`w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
-                    tier.popular
-                      ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105'
-                      : 'bg-gray-700 text-white hover:bg-gray-600'
-                  }`}
-                >
-                  {tier.cta}
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={tier.ctaAction}
+                    className={`w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
+                      tier.popular
+                        ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105'
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                    }`}
+                  >
+                    {tier.cta}
+                  </button>
+                  {tier.hasApiDocs && (
+                    <button
+                      onClick={() => document.getElementById('api-docs')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="w-full py-3 bg-transparent border border-gray-600 hover:border-orange-500 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      <BarChart3 size={16} />
+                      View API Documentation
+                    </button>
+                  )}
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* API Documentation Section */}
+      <section id="api-docs" className="relative w-full px-6 py-16 bg-gradient-to-r from-gray-900/50 to-black/50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold mb-6 text-white">API Documentation</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
+              Access our analytics programmatically with RESTful APIs
+            </p>
+            <p className="text-orange-400 font-semibold">Available to Tier 3 customers only</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Sample Endpoints */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-gray-800/50 rounded-lg p-6 border border-gray-700"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">Sample Endpoints</h3>
+              <div className="space-y-4">
+                <div className="bg-gray-900/50 rounded p-4 font-mono text-sm">
+                  <div className="text-green-400">GET</div>
+                  <div className="text-gray-300">/api/v1/entities/{"entity_id"}/scores</div>
+                  <div className="text-gray-500 text-xs mt-2">Get JORDN and RODMN scores for an entity</div>
+                </div>
+                <div className="bg-gray-900/50 rounded p-4 font-mono text-sm">
+                  <div className="text-blue-400">POST</div>
+                  <div className="text-gray-300">/api/v1/reports/generate</div>
+                  <div className="text-gray-500 text-xs mt-2">Generate custom report for specified entities</div>
+                </div>
+                <div className="bg-gray-900/50 rounded p-4 font-mono text-sm">
+                  <div className="text-green-400">GET</div>
+                  <div className="text-gray-300">/api/v1/trends/weekly</div>
+                  <div className="text-gray-500 text-xs mt-2">Get weekly trending entities and scores</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Authentication & Limits */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800/50 rounded-lg p-6 border border-gray-700"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">Authentication & Limits</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-orange-400 font-semibold mb-2">API Key Authentication</h4>
+                  <div className="bg-gray-900/50 rounded p-3 font-mono text-sm text-gray-300">
+                    Authorization: Bearer your_api_key_here
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-orange-400 font-semibold mb-2">Rate Limits</h4>
+                  <ul className="space-y-1 text-gray-300 text-sm">
+                    <li>• Tier 2: 500 calls/month</li>
+                    <li>• Tier 3: Unlimited calls</li>
+                    <li>• Rate: 10 requests/second max</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-orange-400 font-semibold mb-2">Response Format</h4>
+                  <div className="bg-gray-900/50 rounded p-3 font-mono text-xs text-gray-300">
+                    {`{
+  "status": "success",
+  "data": {...},
+  "timestamp": "2025-01-15T10:30:00Z"
+}`}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Future Analytics Section */}
-      <section className="relative w-full px-6 py-16 bg-gradient-to-r from-gray-900/50 to-black/50">
+      <section className="relative w-full px-6 py-16 bg-gradient-to-b from-gray-950 to-black">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}

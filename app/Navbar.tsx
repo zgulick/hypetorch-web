@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Activity, Eye, Info, Code2, DollarSign } from "lucide-react";
+import { Menu, X, Activity, BarChart3, DollarSign, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
@@ -54,26 +54,15 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
-              href="/demo" 
+              href="/reports" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/demo') 
+                isActiveRoute('/reports') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
                   : 'text-gray-300 hover:text-orange-400'
               }`}
             >
-              <Eye size={16} />
-              <span>Platform Demo</span>
-            </Link>
-            <Link 
-              href="/about" 
-              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/about') 
-                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
-                  : 'text-gray-300 hover:text-orange-400'
-              }`}
-            >
-              <Info size={16} />
-              <span>About</span>
+              <BarChart3 size={16} />
+              <span>Reports & Analytics</span>
             </Link>
             <Link 
               href="/pricing" 
@@ -87,15 +76,15 @@ export default function Navbar() {
               <span>Pricing</span>
             </Link>
             <Link 
-              href="/docs" 
+              href="/contact" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/docs') 
+                isActiveRoute('/contact') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
                   : 'text-gray-300 hover:text-orange-400'
               }`}
             >
-              <Code2 size={16} />
-              <span>API Docs</span>
+              <MessageCircle size={16} />
+              <span>Contact</span>
             </Link>
             {isAuthenticated() && (
               <Link 
@@ -112,7 +101,7 @@ export default function Navbar() {
             )}
             <Link href="/pricing">
               <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
-                See Pricing
+                Get Started
               </button>
             </Link>
           </div>
@@ -149,24 +138,14 @@ export default function Navbar() {
             
             <div className="flex flex-col space-y-4 text-lg">
               <Link 
-                href="/demo" 
+                href="/reports" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/demo') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                  isActiveRoute('/reports') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
-                <Eye size={20} />
-                <span>Platform Demo</span>
-              </Link>
-              <Link 
-                href="/about" 
-                onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/about') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
-                }`}
-              >
-                <Info size={20} />
-                <span>About</span>
+                <BarChart3 size={20} />
+                <span>Reports & Analytics</span>
               </Link>
               <Link 
                 href="/pricing" 
@@ -179,14 +158,14 @@ export default function Navbar() {
                 <span>Pricing</span>
               </Link>
               <Link 
-                href="/docs" 
+                href="/contact" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/docs') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                  isActiveRoute('/contact') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
-                <Code2 size={20} />
-                <span>API Docs</span>
+                <MessageCircle size={20} />
+                <span>Contact</span>
               </Link>
               {isAuthenticated() && (
                 <Link 
@@ -202,7 +181,7 @@ export default function Navbar() {
               )}
               <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
                 <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full">
-                  See Pricing
+                  Get Started
                 </button>
               </Link>
             </div>
