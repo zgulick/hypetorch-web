@@ -82,18 +82,6 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
     }
   };
 
-  const formatEmailBody = (data: typeof formData): string => {
-    return `Name: ${data.name}
-Company: ${data.company}
-Email: ${data.email}
-Inquiry Type: ${data.inquiryType}
-
-Message:
-${data.message}
-
----
-Sent from HypeTorch website contact form`;
-  };
 
   const isFormValid = formData.name && formData.email && formData.company && formData.message && gdprConsent;
 
