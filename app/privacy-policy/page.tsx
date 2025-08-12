@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">1. Data Controller</h2>
             <p>
-              HypeTorch ("we", "our", or "us") is the data controller responsible for your personal data. 
+              HypeTorch (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is the data controller responsible for your personal data. 
               We are committed to protecting your privacy and complying with the General Data Protection Regulation (GDPR) 
               and other applicable privacy laws.
             </p>
@@ -140,7 +140,7 @@ export default function PrivacyPolicy() {
                 </div>
                 <div className="p-3 bg-gray-800 rounded border-l-4 border-orange-500">
                   <h4 className="font-medium text-orange-400">Right to Erasure</h4>
-                  <p className="text-xs mt-1">Request deletion of your personal data ("right to be forgotten").</p>
+                  <p className="text-xs mt-1">Request deletion of your personal data (&quot;right to be forgotten&quot;).</p>
                 </div>
                 <div className="p-3 bg-gray-800 rounded border-l-4 border-orange-500">
                   <h4 className="font-medium text-orange-400">Right to Portability</h4>
@@ -162,7 +162,7 @@ export default function PrivacyPolicy() {
                   <a href="mailto:hypetorch@gmail.com" className="text-orange-400 hover:underline">
                     hypetorch@gmail.com
                   </a>{" "}
-                  with "Data Request" in the subject line. We will respond within 30 days.
+                  with &quot;Data Request&quot; in the subject line. We will respond within 30 days.
                 </p>
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function PrivacyPolicy() {
                   </a>
                 </p>
                 <p className="text-sm">
-                  <strong>Subject Line:</strong> "Data Protection Request"
+                  <strong>Subject Line:</strong> &quot;Data Protection Request&quot;
                 </p>
               </div>
               
@@ -237,7 +237,7 @@ export default function PrivacyPolicy() {
                 We will notify you of significant changes by:
               </p>
               <ul className="list-disc pl-6 space-y-1">
-                <li>Updating the "Last updated" date below</li>
+                <li>Updating the &quot;Last updated&quot; date below</li>
                 <li>Displaying a notice on our website</li>
                 <li>Sending an email notification (if we have your contact information)</li>
               </ul>
