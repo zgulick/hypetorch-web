@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Mail, Building, User, MessageSquare, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Building, User, MessageSquare, Send, CheckCircle, AlertCircle, Loader2, Shield } from 'lucide-react';
+import Link from 'next/link';
 
 interface ContactFormProps {
   title: string;
@@ -18,6 +19,7 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
     inquiryType: inquiryType,
     message: ''
   });
+  const [gdprConsent, setGdprConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -34,27 +36,38 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
     setErrorMessage('');
 
     try {
-      // In a real implementation, this would send to your backend
-      // For now, we'll simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const formspreeUrl = 'https://formspree.io/f/xzzvojja';
       
-      // For now, we'll create a mailto link as fallback
-      const subject = getSubjectForInquiry(inquiryType);
-      const body = formatEmailBody(formData);
-      const mailtoLink = `mailto:hypetorch@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      window.location.href = mailtoLink;
-      
-      setStatus('success');
-      
-      // Auto-close form after success
-      setTimeout(() => {
-        if (onClose) onClose();
-      }, 2000);
+      const response = await fetch(formspreeUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          inquiryType: formData.inquiryType,
+          message: formData.message,
+          subject: getSubjectForInquiry(inquiryType),
+          gdprConsent: gdprConsent
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        
+        // Auto-close form after success
+        setTimeout(() => {
+          if (onClose) onClose();
+        }, 3000);
+      } else {
+        throw new Error('Form submission failed');
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       setStatus('error');
-      setErrorMessage('Failed to submit form. Please try again.');
+      setErrorMessage('Failed to submit form. Please try again or email us directly at hypetorch@gmail.com');
     }
   };
 
@@ -82,7 +95,7 @@ ${data.message}
 Sent from HypeTorch website contact form`;
   };
 
-  const isFormValid = formData.name && formData.email && formData.company && formData.message;
+  const isFormValid = formData.name && formData.email && formData.company && formData.message && gdprConsent;
 
   return (
     <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full">
@@ -177,6 +190,27 @@ Sent from HypeTorch website contact form`;
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               placeholder={getPlaceholderForInquiry(inquiryType)}
             />
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="gdprConsent"
+                checked={gdprConsent}
+                onChange={(e) => setGdprConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500 focus:ring-2"
+                required
+              />
+              <label htmlFor="gdprConsent" className="text-sm text-gray-300 flex-1">
+                <Shield className="w-4 h-4 inline mr-1" />
+                I consent to the processing of my personal data as described in the{" "}
+                <Link href="/privacy-policy" className="text-orange-400 hover:underline">
+                  Privacy Policy
+                </Link>
+                . This includes storing and using the information I provide to respond to my inquiry. *
+              </label>
+            </div>
           </div>
 
           {status === 'error' && (
