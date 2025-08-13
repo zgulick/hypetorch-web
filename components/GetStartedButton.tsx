@@ -42,16 +42,19 @@ export default function GetStartedButton({
   
   const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${shadowClass} ${responsiveWidth} ${className}`.trim();
   
-  const ButtonComponent = animated ? motion.button : 'button';
-  const motionProps = animated ? {
-    whileHover: { scale: 1.05 },
-    whileTap: { scale: 0.95 }
-  } : {};
-  
-  const button = (
-    <ButtonComponent className={buttonClasses} {...motionProps} {...props}>
+  const button = animated ? (
+    <motion.button 
+      className={buttonClasses} 
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      {...(props as any)}
+    >
       {children}
-    </ButtonComponent>
+    </motion.button>
+  ) : (
+    <button className={buttonClasses} {...props}>
+      {children}
+    </button>
   );
   
   if (href) {
