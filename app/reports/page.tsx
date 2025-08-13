@@ -10,6 +10,7 @@ import { BarChart3, TrendingUp, Users, Calendar, Target } from "lucide-react";
 import DemoDashboard from '@/components/DemoDashboard';
 import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
 import HeadToHeadComparison from '@/components/HeadToHeadComparison';
+import GetStartedButton from '@/components/GetStartedButton';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
@@ -149,16 +150,8 @@ export default function ReportsPage() {
               Get personalized reports, custom dashboards, and direct access to our analytics team.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact">
-                <button className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
-                  Get Started Today
-                </button>
-              </Link>
-              <Link href="/contact">
-                <button className="px-8 py-4 bg-transparent border border-gray-600 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
-                  Schedule Demo
-                </button>
-              </Link>
+              <GetStartedButton size="lg">Get Started Today</GetStartedButton>
+              <GetStartedButton href="/contact" variant="secondary" size="lg">Schedule Demo</GetStartedButton>
             </div>
           </div>
         </div>
