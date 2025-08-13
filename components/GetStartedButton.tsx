@@ -19,7 +19,10 @@ export default function GetStartedButton({
   fullWidth = false,
   animated = false,
   className = '',
-  ...props 
+  onClick,
+  disabled,
+  type,
+  ...otherProps 
 }: GetStartedButtonProps) {
   const baseClasses = animated 
     ? 'font-semibold rounded-lg flex items-center justify-center gap-2'
@@ -47,12 +50,20 @@ export default function GetStartedButton({
       className={buttonClasses} 
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      {...(props as any)}
+      onClick={onClick}
+      disabled={disabled}
+      type={type}
     >
       {children}
     </motion.button>
   ) : (
-    <button className={buttonClasses} {...props}>
+    <button 
+      className={buttonClasses} 
+      onClick={onClick}
+      disabled={disabled}
+      type={type}
+      {...otherProps}
+    >
       {children}
     </button>
   );
