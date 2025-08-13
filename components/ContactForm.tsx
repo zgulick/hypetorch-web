@@ -55,6 +55,9 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
       const response = await fetch(formspreeUrl, {
         method: 'POST',
         body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
+        },
       });
 
       console.log('Response status:', response.status);
@@ -66,8 +69,20 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
       
-      const responseData = await response.json();
-      console.log('Success response:', responseData);
+      // Check if we got JSON response or if it's a redirect
+      const contentType = response.headers.get('content-type');
+      console.log('Response content type:', contentType);
+      
+      let responseData;
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+        console.log('Success response (JSON):', responseData);
+      } else {
+        // Handle non-JSON response (likely a redirect or HTML)
+        const responseText = await response.text();
+        console.log('Success response (Text):', responseText.substring(0, 200) + '...');
+        responseData = { success: true };
+      }
       
       setStatus('success');
       
