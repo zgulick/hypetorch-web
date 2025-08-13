@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
+import StructuredData from "@/components/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -9,8 +10,50 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "HypeTorch",
-  description: "Advanced analytics for off-court performance",
+  title: "HypeTorch - Athlete Influence Intelligence for Marketing Teams",
+  description: "Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views. Optimize sports marketing ROI with objective influence scores and partnership intelligence.",
+  keywords: "athlete analytics, sports marketing, influence measurement, athletic partnerships, sports media analytics, endorsement ROI, athlete data intelligence",
+  authors: [{ name: "HypeTorch" }],
+  creator: "HypeTorch",
+  publisher: "HypeTorch",
+  metadataBase: new URL('https://hypetorch.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://hypetorch.com',
+    title: 'HypeTorch - Athlete Influence Intelligence for Marketing Teams',
+    description: 'Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views. Optimize sports marketing ROI with objective influence scores.',
+    siteName: 'HypeTorch',
+    images: [
+      {
+        url: '/hypetorch-logo.svg',
+        width: 1200,
+        height: 630,
+        alt: 'HypeTorch - Athlete Influence Intelligence',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'HypeTorch - Athlete Influence Intelligence for Marketing Teams',
+    description: 'Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views.',
+    images: ['/hypetorch-logo.svg'],
+    creator: '@hypetorch',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: "/hypetorch-logo.svg",
     shortcut: "/favicon.svg",
@@ -25,6 +68,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <StructuredData />
+      </head>
       <body className={`${geistSans.variable} antialiased`}>
         {children}
         <CookieConsent />
