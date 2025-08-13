@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Metadata } from 'next';
 import Navbar from "../Navbar";
 import { BarChart3, TrendingUp, Users, Calendar, Target, Zap, Eye } from "lucide-react";
 
@@ -14,21 +13,6 @@ import HeadToHeadComparison from '@/components/HeadToHeadComparison';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
-
-// SEO Metadata for this page
-export const metadata: Metadata = {
-  title: "Sports Analytics Reports & Dashboards | HypeTorch",
-  description: "View comprehensive athlete influence analytics, HYPE scores, and sports marketing intelligence reports. Track athlete performance and marketing ROI with data-driven insights.",
-  keywords: "sports analytics reports, athlete performance dashboards, HYPE scores, sports marketing analytics, athlete influence reports",
-  openGraph: {
-    title: "Sports Analytics Reports & Dashboards | HypeTorch", 
-    description: "View comprehensive athlete influence analytics, HYPE scores, and sports marketing intelligence reports.",
-    url: "https://hypetorch.com/reports",
-  },
-  alternates: {
-    canonical: '/reports',
-  },
-};
 
 export default function ReportsPage() {
   const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
