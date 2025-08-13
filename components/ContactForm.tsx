@@ -106,7 +106,7 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h4 className="text-lg font-semibold text-green-400 mb-2">Thank You!</h4>
           <p className="text-gray-300 text-sm">
-            Your inquiry has been submitted. We&apos;ll get back to you within 24 hours.
+            Your inquiry has been submitted. We&rsquo;ll get back to you within 24 hours.
           </p>
         </div>
       ) : (
@@ -228,7 +228,7 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
           </button>
 
           <p className="text-xs text-gray-500 text-center">
-            We&apos;ll respond within 24 hours during business days
+            We&rsquo;ll respond within 24 hours during business days
           </p>
         </form>
       )}

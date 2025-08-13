@@ -122,7 +122,7 @@ export default function Home() {
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-64 sm:w-auto"
               >
-                <DollarSign size={20} /> Get Started
+                Get Started
               </motion.button>
             </Link>
             <Link href="/reports">

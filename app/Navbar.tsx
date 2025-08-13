@@ -65,17 +65,6 @@ export default function Navbar() {
               <span>Reports & Analytics</span>
             </Link>
             <Link 
-              href="/pricing" 
-              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/pricing') 
-                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
-                  : 'text-gray-300 hover:text-orange-400'
-              }`}
-            >
-              <DollarSign size={16} />
-              <span>Pricing</span>
-            </Link>
-            <Link 
               href="/contact" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
                 isActiveRoute('/contact') 
@@ -99,7 +88,7 @@ export default function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-            <Link href="/pricing">
+            <Link href="/contact">
               <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
                 Get Started
               </button>
@@ -148,16 +137,6 @@ export default function Navbar() {
                 <span>Reports & Analytics</span>
               </Link>
               <Link 
-                href="/pricing" 
-                onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/pricing') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
-                }`}
-              >
-                <DollarSign size={20} />
-                <span>Pricing</span>
-              </Link>
-              <Link 
                 href="/contact" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
@@ -179,7 +158,7 @@ export default function Navbar() {
                   <span>Admin</span>
                 </Link>
               )}
-              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
                 <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full">
                   Get Started
                 </button>
