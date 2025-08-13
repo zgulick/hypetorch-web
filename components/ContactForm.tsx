@@ -38,20 +38,19 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
     try {
       const formspreeUrl = 'https://formspree.io/f/xzzvojja';
       
+      // Create form data for Formspree
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('company', formData.company);
+      formDataToSend.append('inquiryType', formData.inquiryType);
+      formDataToSend.append('message', formData.message);
+      formDataToSend.append('subject', getSubjectForInquiry(inquiryType));
+      formDataToSend.append('gdprConsent', gdprConsent ? 'Yes' : 'No');
+      
       const response = await fetch(formspreeUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          company: formData.company,
-          inquiryType: formData.inquiryType,
-          message: formData.message,
-          subject: getSubjectForInquiry(inquiryType),
-          gdprConsent: gdprConsent
-        }),
+        body: formDataToSend,
       });
 
       if (response.ok) {
