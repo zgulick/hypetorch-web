@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
-import { BarChart2, Target, Zap, Eye, Calendar, DollarSign } from "lucide-react";
+import { BarChart2, Target, Zap, Eye, Calendar } from "lucide-react";
 import Image from "next/image";
 
 // Import new components

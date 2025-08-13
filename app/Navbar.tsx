@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Activity, BarChart3, DollarSign, MessageCircle } from "lucide-react";
+import { Menu, X, Activity, BarChart3, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
