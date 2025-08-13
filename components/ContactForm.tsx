@@ -38,6 +38,10 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
     try {
       const formspreeUrl = 'https://formspree.io/f/xzzvojja';
       
+      console.log('Submitting to Formspree:', formspreeUrl);
+      console.log('Form data:', formData);
+      console.log('GDPR consent:', gdprConsent);
+      
       // Create form data for Formspree
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
@@ -53,20 +57,41 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
         body: formDataToSend,
       });
 
-      if (response.ok) {
-        setStatus('success');
-        
-        // Auto-close form after success
-        setTimeout(() => {
-          if (onClose) onClose();
-        }, 3000);
-      } else {
-        throw new Error('Form submission failed');
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
+      
+      const responseData = await response.json();
+      console.log('Success response:', responseData);
+      
+      setStatus('success');
+      
+      // Auto-close form after success
+      setTimeout(() => {
+        if (onClose) onClose();
+      }, 3000);
+      
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Detailed error submitting form:', error);
       setStatus('error');
-      setErrorMessage('Failed to submit form. Please try again or email us directly at hypetorch@gmail.com');
+      
+      // More specific error message
+      let errorMsg = 'Failed to submit form. Please try again or email us directly at hypetorch@gmail.com';
+      if (error instanceof Error) {
+        if (error.message.includes('404')) {
+          errorMsg = 'Form endpoint not found. Please email us directly at hypetorch@gmail.com';
+        } else if (error.message.includes('403')) {
+          errorMsg = 'Form submission blocked. Please email us directly at hypetorch@gmail.com';
+        } else if (error.message.includes('422')) {
+          errorMsg = 'Please check all required fields and try again.';
+        }
+      }
+      setErrorMessage(errorMsg);
     }
   };
 
