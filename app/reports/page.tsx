@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Navbar from "../Navbar";
-import { BarChart3, TrendingUp, Users, Calendar, Target, Zap, Eye } from "lucide-react";
+import { BarChart3, TrendingUp, Users, Calendar, Target } from "lucide-react";
 
 // Import existing components
 import DemoDashboard from '@/components/DemoDashboard';
