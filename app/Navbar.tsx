@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
 import ContactModal from '@/components/ContactModal';
+import GetStartedButton from '@/components/GetStartedButton';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -88,11 +89,7 @@ export default function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-            <Link href="/pricing">
-              <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
-                Get Started
-              </button>
-            </Link>
+            <GetStartedButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -158,11 +155,9 @@ export default function Navbar() {
                   <span>Admin</span>
                 </Link>
               )}
-              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
-                <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full">
-                  Get Started
-                </button>
-              </Link>
+              <div onClick={() => setMobileMenuOpen(false)}>
+                <GetStartedButton fullWidth className="mt-2" />
+              </div>
             </div>
           </motion.div>
         )}

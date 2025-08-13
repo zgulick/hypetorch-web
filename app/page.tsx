@@ -11,6 +11,7 @@ import Image from "next/image";
 import PlayerShowcase from '@/components/PlayerShowcase';
 import TopMoversWidget from '@/components/TopMoversWidget';
 import IntelligenceDashboard from '@/components/IntelligenceDashboard';
+import GetStartedButton from '@/components/GetStartedButton';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
@@ -116,15 +117,9 @@ export default function Home() {
             transition={{ delay: 1.0, duration: 0.8 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/pricing">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-64 sm:w-auto"
-              >
-                Get Started
-              </motion.button>
-            </Link>
+            <GetStartedButton size="lg" animated>
+              Get Started
+            </GetStartedButton>
             <Link href="/reports">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -295,15 +290,9 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/pricing">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg shadow-lg shadow-orange-900/30"
-              >
-                Get Started
-              </motion.button>
-            </Link>
+            <GetStartedButton size="lg" animated>
+              Get Started
+            </GetStartedButton>
             <Link href="/contact">
               <button className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
                 Contact Us

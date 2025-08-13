@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "../Navbar";
 import { Check, Star, Zap, BarChart3, Crown, ChevronDown, ChevronRight, Eye } from "lucide-react";
 import ContactModal from '@/components/ContactModal';
+import GetStartedButton from '@/components/GetStartedButton';
 
 export default function PricingPage() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -461,12 +462,13 @@ export default function PricingPage() {
             viewport={{ once: true }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <button
+            <GetStartedButton 
+              size="lg"
               onClick={() => openContactModal('sales', 'Get Started - Custom Pricing')}
-              className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105"
+              href=""
             >
               Get Started Today
-            </button>
+            </GetStartedButton>
             <Link href="/demo">
               <button className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
                 View Demo First

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Navbar from "../Navbar";
 import { BarChart3, TrendingUp, Users, Calendar, Target } from "lucide-react";
 
