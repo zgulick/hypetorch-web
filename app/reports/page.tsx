@@ -128,7 +128,7 @@ export default function ReportsPage() {
           <h2 className="text-3xl font-bold text-center mb-8 text-white">
             Athlete Comparison Tool
           </h2>
-          <HeadToHeadComparison playerOne="Caitlin Clark" playerTwo="A'ja Wilson" />
+          <HeadToHeadComparison playerOne="Caitlin Clark" playerTwo="Angel Reese" />
         </div>
       </motion.section>
 

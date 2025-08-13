@@ -88,7 +88,7 @@ export default function Navbar() {
                 <span>Admin</span>
               </Link>
             )}
-            <Link href="/contact">
+            <Link href="/pricing">
               <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-sm hover:shadow-lg hover:shadow-orange-500/25 transition-all duration-200 hover:scale-105">
                 Get Started
               </button>
@@ -158,7 +158,7 @@ export default function Navbar() {
                   <span>Admin</span>
                 </Link>
               )}
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
                 <button className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-center mt-2 hover:shadow-lg hover:shadow-orange-500/25 transition-all w-full">
                   Get Started
                 </button>
