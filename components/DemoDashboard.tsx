@@ -106,7 +106,23 @@ export default function DemoDashboard() {
     async function loadAllMetrics() {
       try {
         setLoading(true);
-        const metricsData = await getRecentMetrics('current', undefined, [
+        // Only show Unrivaled/WNBA players for the demo
+        const unrivaledPlayers = [
+          'Caitlin Clark',
+          'Angel Reese', 
+          'Alyssa Thomas',
+          'Allisha Gray',
+          'Jackie Young',
+          'Kelsey Plum',
+          'Chelsea Gray',
+          'Breanna Stewart',
+          'Satou Sabally',
+          'Rhyne Howard',
+          'Kayla McBride',
+          'Stefanie Dolson'
+        ];
+        
+        const metricsData = await getRecentMetrics('current', unrivaledPlayers, [
           'hype_score', 
           'rodmn_score', 
           'mentions', 
