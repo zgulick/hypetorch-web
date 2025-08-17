@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Activity, BarChart3, MessageCircle } from "lucide-react";
+import { Menu, X, Activity, BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { isAuthenticated } from './lib/auth';
 import ContactModal from '@/components/ContactModal';
 import GetStartedButton from '@/components/GetStartedButton';
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,8 +26,43 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Handle hash navigation on page load
+  useEffect(() => {
+    if (pathname === '/' && window.location.hash === '#how-it-works') {
+      // Small delay to ensure page is fully rendered
+      setTimeout(() => {
+        scrollToSection('how-it-works');
+      }, 300); // Increased delay for better reliability
+    }
+  }, [pathname]);
+
   // Helper function to check if a route is active
   const isActiveRoute = (route: string) => pathname === route;
+
+  // Helper function to scroll to section with navbar offset
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navbarHeight = 80; // Approximate navbar height
+      const elementPosition = element.offsetTop - navbarHeight;
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Helper function to handle How It Works navigation
+  const handleHowItWorksClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (pathname === '/') {
+      // We're on home page, just scroll to section
+      scrollToSection('how-it-works');
+    } else {
+      // We're on another page, navigate to home page with hash
+      router.push('/#how-it-works');
+    }
+  };
 
   return (
     <>
@@ -54,27 +90,33 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
+            <a 
+              href="#how-it-works" 
+              className="font-medium text-sm tracking-wide transition-colors duration-200 text-gray-300 hover:text-orange-400"
+              onClick={handleHowItWorksClick}
+            >
+              How It Works
+            </a>
             <Link 
-              href="/reports" 
+              href="/demo" 
               className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/reports') 
+                isActiveRoute('/demo') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
                   : 'text-gray-300 hover:text-orange-400'
               }`}
             >
               <BarChart3 size={16} />
-              <span>Reports & Analytics</span>
+              <span>Live Demo</span>
             </Link>
             <Link 
-              href="/contact" 
-              className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
-                isActiveRoute('/contact') 
+              href="/about" 
+              className={`font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/about') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
                   : 'text-gray-300 hover:text-orange-400'
               }`}
             >
-              <MessageCircle size={16} />
-              <span>Contact</span>
+              About
             </Link>
             {isAuthenticated() && (
               <Link 
@@ -123,25 +165,34 @@ export default function Navbar() {
             </div>
             
             <div className="flex flex-col space-y-4 text-lg">
+              <a 
+                href="#how-it-works" 
+                onClick={(e) => {
+                  handleHowItWorksClick(e);
+                  setMobileMenuOpen(false);
+                }}
+                className="font-medium py-2 border-b border-gray-700 transition-colors text-gray-300 hover:text-orange-400"
+              >
+                How It Works
+              </a>
               <Link 
-                href="/reports" 
+                href="/demo" 
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/reports') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                  isActiveRoute('/demo') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
                 <BarChart3 size={20} />
-                <span>Reports & Analytics</span>
+                <span>Live Demo</span>
               </Link>
               <Link 
-                href="/contact" 
+                href="/about" 
                 onClick={() => setMobileMenuOpen(false)} 
-                className={`flex items-center space-x-3 font-medium py-2 border-b border-gray-700 transition-colors ${
-                  isActiveRoute('/contact') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                className={`font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/about') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
                 }`}
               >
-                <MessageCircle size={20} />
-                <span>Contact</span>
+                About
               </Link>
               {isAuthenticated() && (
                 <Link 

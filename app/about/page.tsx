@@ -6,10 +6,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import ContactModal from '@/components/ContactModal';
+import GetStartedButton from '@/components/GetStartedButton';
 import { 
   BarChart2, TrendingUp, 
   LineChart, Target, Database, Brain, Users, 
-  Calendar, ChevronRight, DollarSign
+  Calendar, ChevronRight
 } from "lucide-react";
 
 export default function About() {
@@ -52,7 +53,7 @@ export default function About() {
             className="text-xl text-gray-300 max-w-4xl mx-auto mb-10"
           >
             Just as Bill James revolutionized baseball with sabermetrics, we&apos;re bringing 
-            advanced analytics to sports media. <span className="text-orange-400">The next generation of sports intelligence is here.</span>
+            advanced analytics to narrative intelligence across industries. <span className="text-orange-400">Universal methodology, proven across sports, crypto, and entertainment.</span>
           </motion.p>
         </div>
       </section>
@@ -219,30 +220,105 @@ export default function About() {
                   <h3 className="text-xl font-bold text-white">The Vision</h3>
                 </div>
                 <blockquote className="text-lg text-gray-300 italic mb-6 leading-relaxed">
-                  &quot;What if sports media companies could identify the next big storyline before it explodes? 
-                  What if they could measure not just engagement, but influence and narrative momentum?&quot;
+                  &quot;The universal narrative intelligence platform that tracks influence across every platform, 
+                  every industry, every conversation—from podcasts to TikTok, sports to politics, 
+                  entertainment to crypto. Real-time narrative intelligence at global scale.&quot;
                 </blockquote>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-400 mb-1">37+</div>
-                    <div className="text-xs text-gray-400">Players Tracked</div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-gradient-to-r from-red-900/30 to-pink-900/30 rounded-lg border border-red-500/20">
+                      <div className="text-lg font-bold text-red-400 mb-1">All Platforms</div>
+                      <div className="text-xs text-gray-400">TikTok, X, Instagram, Twitch, YouTube, Meta</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-lg border border-blue-500/20">
+                      <div className="text-lg font-bold text-blue-400 mb-1">All Industries</div>
+                      <div className="text-xs text-gray-400">Sports, Entertainment, Politics, Crypto, Business</div>
+                    </div>
                   </div>
-                  <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-400 mb-1">8</div>
-                    <div className="text-xs text-gray-400">Advanced Metrics</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-gradient-to-r from-green-900/30 to-teal-900/30 rounded-lg border border-green-500/20">
+                      <div className="text-lg font-bold text-green-400 mb-1">Real-Time</div>
+                      <div className="text-xs text-gray-400">Live narrative tracking & instant alerts</div>
+                    </div>
+                    <div className="text-center p-4 bg-gradient-to-r from-orange-900/30 to-amber-900/30 rounded-lg border border-orange-500/20">
+                      <div className="text-lg font-bold text-orange-400 mb-1">Global Scale</div>
+                      <div className="text-xs text-gray-400">Millions of entities across all markets</div>
+                    </div>
                   </div>
-                  <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-400 mb-1">5+</div>
-                    <div className="text-xs text-gray-400">Data Sources</div>
-                  </div>
-                  <div className="text-center p-4 bg-gray-800/50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-400 mb-1">Weekly</div>
-                    <div className="text-xs text-gray-400">Analysis Updates</div>
+                  <div className="text-center p-3 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-500/20">
+                    <div className="text-sm text-purple-300 font-semibold">Today: Podcasts + Sports. Tomorrow: Everything, Everywhere.</div>
                   </div>
                 </div>
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Universal Narrative Intelligence Section */}
+      <section className="py-20 px-6 bg-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl font-bold text-white mb-6">
+              Universal Narrative Intelligence
+            </h2>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h3 className="text-orange-400 text-xl mb-4">The Problem We Solve</h3>
+              <p className="text-gray-300 mb-4">
+                Traditional metrics miss the story. Likes, views, and follower counts 
+                tell you what happened, not what&apos;s driving real influence or what&apos;s coming next.
+              </p>
+              <p className="text-gray-300">
+                Podcast conversations contain the most authentic, long-form discussions 
+                about entities across every vertical. Our AI processes these conversations 
+                to generate actionable intelligence.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <h3 className="text-orange-400 text-xl mb-4">Proven Results</h3>
+              <ul className="text-gray-300 space-y-2">
+                <li>🏀 <strong>Sports:</strong> Predicted Caitlin Clark momentum 2 weeks before mainstream coverage</li>
+                <li>🏈 <strong>NFL:</strong> Identified narrative gaps in Chicago Bears player coverage</li>
+                <li>💰 <strong>Crypto:</strong> Quantified discussion volume vs price action correlations</li>
+                <li>🎬 <strong>Entertainment:</strong> Early controversy detection for talent management</li>
+              </ul>
+            </motion.div>
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 p-6 bg-gray-800/50 rounded-lg"
+          >
+            <h4 className="text-white font-semibold mb-2">Why WNBA as Our Live Demo?</h4>
+            <p className="text-gray-400">
+              We chose WNBA/Unrivaled as our public showcase because it&apos;s a rapidly evolving league 
+              with passionate podcast coverage. It perfectly demonstrates our algorithms in action. 
+              The same technology that tracks Caitlin Clark&apos;s narrative momentum can measure 
+              Bitcoin discussion patterns, NFL player perception, or Hollywood star controversies.
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -259,7 +335,7 @@ export default function About() {
               Advanced Analytics for Narrative Intelligence
             </h2>
             <p className="text-lg text-gray-400 max-w-4xl mx-auto">
-              Just as advanced metrics revolutionized player evaluation, our algorithms are transforming sports media intelligence.
+              Just as advanced metrics revolutionized player evaluation, our algorithms are transforming narrative intelligence across all industries.
             </p>
           </motion.div>
 
@@ -478,12 +554,9 @@ export default function About() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Link href="/pricing">
-              <button className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 shadow-lg shadow-orange-900/30 w-full sm:w-auto">
-                <DollarSign size={20} />
-                See Pricing
-              </button>
-            </Link>
+            <GetStartedButton size="lg" href="/pricing">
+              Get Started
+            </GetStartedButton>
             
             <button 
               onClick={() => setPartnerModalOpen(true)}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Mail, Building, User, MessageSquare, Send, CheckCircle, AlertCircle, Loader2, Shield } from 'lucide-react';
+import { Mail, Building, User, MessageSquare, Send, CheckCircle, AlertCircle, Loader2, Shield, Phone, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 interface ContactFormProps {
@@ -15,23 +15,75 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     company: '',
     inquiryType: inquiryType,
-    message: ''
+    message: '',
+    preferredDate: ''
   });
   const [gdprConsent, setGdprConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
+
+  const validatePhone = (phone: string): boolean => {
+    // Allow various phone formats: +1234567890, (123) 456-7890, 123-456-7890, 1234567890
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$|^[\+]?[(]?[\d\s\-\(\)]{10,}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+  };
+
+  const validateForm = (): boolean => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    if (formData.phone && !validatePhone(formData.phone)) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+    
+    if (!formData.company.trim()) {
+      errors.company = 'Company is required';
+    }
+    
+    if (!formData.message.trim()) {
+      errors.message = 'Message is required';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Clear validation error for this field
+    if (validationErrors[name]) {
+      setValidationErrors({
+        ...validationErrors,
+        [name]: ''
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setStatus('submitting');
     setErrorMessage('');
 
@@ -46,9 +98,11 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
       formDataToSend.append('email', formData.email);
+      formDataToSend.append('phone', formData.phone);
       formDataToSend.append('company', formData.company);
       formDataToSend.append('inquiryType', formData.inquiryType);
       formDataToSend.append('message', formData.message);
+      formDataToSend.append('preferredDate', formData.preferredDate);
       formDataToSend.append('subject', getSubjectForInquiry(inquiryType));
       formDataToSend.append('gdprConsent', gdprConsent ? 'Yes' : 'No');
       
@@ -125,7 +179,7 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
   const isFormValid = formData.name && formData.email && formData.company && formData.message && gdprConsent;
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full">
+    <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 w-full max-h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-xl font-bold text-white">{title}</h3>
@@ -163,9 +217,14 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className={`w-full bg-gray-700 border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                validationErrors.name ? 'border-red-500' : 'border-gray-600'
+              }`}
               placeholder="Your full name"
             />
+            {validationErrors.name && (
+              <p className="text-red-400 text-xs mt-1">{validationErrors.name}</p>
+            )}
           </div>
 
           <div>
@@ -180,9 +239,35 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className={`w-full bg-gray-700 border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                validationErrors.email ? 'border-red-500' : 'border-gray-600'
+              }`}
               placeholder="your@company.com"
             />
+            {validationErrors.email && (
+              <p className="text-red-400 text-xs mt-1">{validationErrors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+              <Phone className="w-4 h-4 inline mr-1" />
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className={`w-full bg-gray-700 border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                validationErrors.phone ? 'border-red-500' : 'border-gray-600'
+              }`}
+              placeholder="+1 (555) 123-4567"
+            />
+            {validationErrors.phone && (
+              <p className="text-red-400 text-xs mt-1">{validationErrors.phone}</p>
+            )}
           </div>
 
           <div>
@@ -197,10 +282,36 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
               value={formData.company}
               onChange={handleInputChange}
               required
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className={`w-full bg-gray-700 border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                validationErrors.company ? 'border-red-500' : 'border-gray-600'
+              }`}
               placeholder="Your company name"
             />
+            {validationErrors.company && (
+              <p className="text-red-400 text-xs mt-1">{validationErrors.company}</p>
+            )}
           </div>
+
+          {inquiryType === 'demo' && (
+            <div>
+              <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-300 mb-2">
+                <Calendar className="w-4 h-4 inline mr-1" />
+                Preferred Demo Date
+              </label>
+              <input
+                type="date"
+                id="preferredDate"
+                name="preferredDate"
+                value={formData.preferredDate}
+                onChange={handleInputChange}
+                min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                We&apos;ll contact you to schedule a time that works for both of us
+              </p>
+            </div>
+          )}
 
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
@@ -214,9 +325,14 @@ export default function ContactForm({ title, subtitle, inquiryType, onClose }: C
               onChange={handleInputChange}
               required
               rows={4}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className={`w-full bg-gray-700 border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                validationErrors.message ? 'border-red-500' : 'border-gray-600'
+              }`}
               placeholder={getPlaceholderForInquiry(inquiryType)}
             />
+            {validationErrors.message && (
+              <p className="text-red-400 text-xs mt-1">{validationErrors.message}</p>
+            )}
           </div>
 
           <div className="space-y-3">

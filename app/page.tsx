@@ -57,8 +57,8 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500 leading-tight mb-6"
           >
-            Athlete Influence Intelligence<br/>
-            <span className="text-4xl md:text-6xl">for Marketing Teams</span>
+            Turn Podcast Conversations<br/>
+            <span className="text-4xl md:text-6xl">into Competitive Intelligence</span>
           </motion.h1>
 
           <motion.h2
@@ -67,10 +67,35 @@ export default function Home() {
             transition={{ delay: 0.5, duration: 1 }}
             className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto mb-8 font-medium"
           >
-            What WAR was to RBIs and batting average, our algorithms are to likes, views, and impressions.
+            What WAR was to RBIs, our algorithms are to likes and views.
             <br className="hidden md:block"/>
-            <span className="text-orange-400">Data-driven partnership decisions that maximize ROI.</span>
+            <span className="text-orange-400">Narrative intelligence across sports, entertainment, crypto, and business.</span>
           </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+            className="mb-8"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="text-center">
+                <p className="text-lg text-gray-300 font-medium">
+                  <span className="text-green-400">Live Demo:</span> WNBA tracking
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg text-gray-300 font-medium">
+                  <span className="text-blue-400">Proven:</span> NFL, crypto, entertainment
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg text-gray-300 font-medium">
+                  <span className="text-orange-400">Universal:</span> Any industry
+                </p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Three Value Propositions */}
           <motion.div
@@ -81,8 +106,8 @@ export default function Home() {
           >
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <Target className="w-8 h-8 text-orange-400 mb-3 mx-auto" />
-              <h3 className="font-semibold text-white mb-2">Identify Rising Talent</h3>
-              <p className="text-gray-400 text-sm">Before your competition signs them</p>
+              <h3 className="font-semibold text-white mb-2">Identify Rising Influence</h3>
+              <p className="text-gray-400 text-sm">Spot trending entities before mainstream coverage</p>
             </div>
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <BarChart2 className="w-8 h-8 text-red-400 mb-3 mx-auto" />
@@ -91,8 +116,8 @@ export default function Home() {
             </div>
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <Zap className="w-8 h-8 text-amber-400 mb-3 mx-auto" />
-              <h3 className="font-semibold text-white mb-2">Maximize Marketing ROI</h3>
-              <p className="text-gray-400 text-sm">Data-driven sponsorship and partnership decisions</p>
+              <h3 className="font-semibold text-white mb-2">Strategic Intelligence</h3>
+              <p className="text-gray-400 text-sm">Data-driven decisions across any industry vertical</p>
             </div>
           </motion.div>
 
@@ -104,7 +129,7 @@ export default function Home() {
             className="mb-8"
           >
             <p className="text-lg text-gray-300 text-center">
-              Advanced YouTube-based analytics starting at <span className="text-orange-400 font-semibold">$500</span> for custom reports
+              Advanced podcast-based analytics starting at <span className="text-orange-400 font-semibold">$2,500</span> for custom reports
               <br className="hidden sm:block"/>
               JORDN & RODMN scores from podcast transcript analysis
             </p>
@@ -120,7 +145,7 @@ export default function Home() {
             <GetStartedButton size="lg" animated>
               Get Started
             </GetStartedButton>
-            <Link href="/reports">
+            <Link href="/demo">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -128,6 +153,239 @@ export default function Home() {
               >
                 <Eye size={20} /> See How It Works
               </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-gray-900">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-white text-center mb-4">
+              How It Works: From Conversations to Intelligence
+            </h2>
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Simple 4-step process that works for any industry
+            </p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Step 1 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-xl">1</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Define Your Entities</h3>
+              <p className="text-gray-400 text-sm">
+                Tell us who/what to track: athletes, actors, cryptocurrencies, 
+                politicians, brands, etc.
+              </p>
+            </motion.div>
+            
+            {/* Step 2 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-xl">2</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Identify Podcast Sources</h3>
+              <p className="text-gray-400 text-sm">
+                We find the YouTube channels and podcasts where real conversations 
+                about your entities happen.
+              </p>
+            </motion.div>
+            
+            {/* Step 3 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-xl">3</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Algorithm Analysis</h3>
+              <p className="text-gray-400 text-sm">
+                Our JORDN & RODMN algorithms process hours of content, 
+                measuring influence and controversy patterns.
+              </p>
+            </motion.div>
+            
+            {/* Step 4 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-xl">4</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Intelligence Delivery</h3>
+              <p className="text-gray-400 text-sm">
+                Receive professional reports with scores, trends, insights, 
+                and raw data for your decision-making.
+              </p>
+            </motion.div>
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            className="text-center mt-12 p-6 bg-gray-800/50 rounded-lg"
+          >
+            <h4 className="text-white font-semibold mb-2">Example Industries We&apos;ve Analyzed:</h4>
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-300">
+              <span className="bg-orange-600/20 px-3 py-1 rounded">WNBA Players</span>
+              <span className="bg-orange-600/20 px-3 py-1 rounded">NFL Teams</span>
+              <span className="bg-orange-600/20 px-3 py-1 rounded">Cryptocurrency</span>
+              <span className="bg-orange-600/20 px-3 py-1 rounded">Entertainment</span>
+              <span className="bg-orange-600/20 px-3 py-1 rounded">Politics</span>
+              <span className="bg-orange-600/20 px-3 py-1 rounded">Your Industry?</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Industry Examples Section */}
+      <section id="sample-reports" className="w-full py-20 bg-black">
+        <div className="max-w-6xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-white text-center mb-4">
+              Proven Across Industries
+            </h2>
+            <p className="text-center text-gray-400 mb-12 text-lg">
+              Same algorithms, different verticals. Here&apos;s what we&apos;ve delivered:
+            </p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* WNBA Live Example */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-gray-800 p-6 rounded-lg border border-orange-600"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
+                <span className="text-green-400 text-sm font-semibold">LIVE DEMO</span>
+              </div>
+              <h3 className="text-orange-400 text-xl font-semibold mb-4">WNBA/Unrivaled Intelligence</h3>
+              <ul className="text-gray-300 text-sm space-y-1 mb-4">
+                <li>• 50+ players tracked across 16 weeks</li>
+                <li>• Real-time JORDN & RODMN scores</li>
+                <li>• Weekly narrative momentum analysis</li>
+                <li>• Live production environment</li>
+              </ul>
+              <a 
+                href="/demo" 
+                className="w-full bg-orange-600 text-white py-2 rounded font-semibold inline-block text-center hover:bg-orange-700 transition-colors"
+              >
+                View Live Dashboard →
+              </a>
+            </motion.div>
+            
+            {/* NFL Example */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-gray-800 p-6 rounded-lg"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-blue-400 rounded-full mr-2"></div>
+                <span className="text-blue-400 text-sm font-semibold">SAMPLE REPORT</span>
+              </div>
+              <h3 className="text-blue-400 text-xl font-semibold mb-4">NFL Team Analysis</h3>
+              <ul className="text-gray-300 text-sm space-y-1 mb-4">
+                <li>• Chicago Bears 2-week deep dive</li>
+                <li>• 14 players + coaching staff tracked</li>
+                <li>• 65+ podcast episodes analyzed</li>
+                <li>• 5.7M video views processed</li>
+              </ul>
+              <a 
+                href="/reports/customer-intelligence-report.pdf" 
+                download="HypeTorch_Sample_Intelligence_Report.pdf"
+                className="w-full border border-blue-400 text-blue-400 py-2 rounded font-semibold inline-block text-center hover:bg-blue-400/10 transition-colors"
+              >
+                Download Sample PDF →
+              </a>
+            </motion.div>
+            
+            {/* Crypto Example */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-gray-800 p-6 rounded-lg"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-3 h-3 bg-yellow-400 rounded-full mr-2"></div>
+                <span className="text-yellow-400 text-sm font-semibold">SAMPLE REPORT</span>
+              </div>
+              <h3 className="text-yellow-400 text-xl font-semibold mb-4">Cryptocurrency Intelligence</h3>
+              <ul className="text-gray-300 text-sm space-y-1 mb-4">
+                <li>• 19 digital assets analyzed</li>
+                <li>• 109 minutes of crypto content</li>
+                <li>• Mainstream vs meme coin comparison</li>
+                <li>• Market risk assessment included</li>
+              </ul>
+              <a 
+                href="/reports/crypto-intelligence-report.pdf" 
+                download="HypeTorch_Crypto_Intelligence_Report.pdf"
+                className="w-full border border-yellow-400 text-yellow-400 py-2 rounded font-semibold inline-block text-center hover:bg-yellow-400/10 transition-colors"
+              >
+                Download Sample PDF →
+              </a>
+            </motion.div>
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="text-center mt-12"
+          >
+            <h4 className="text-white text-xl mb-4">Ready for Your Industry?</h4>
+            <p className="text-gray-400 mb-6">
+              Custom analysis starting at $2,500. Same methodology, your entities.
+            </p>
+            <Link href="/pricing">
+              <button className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg font-semibold text-lg">
+                Get Custom Analysis Quote
+              </button>
             </Link>
           </motion.div>
         </div>

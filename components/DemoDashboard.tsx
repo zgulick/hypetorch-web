@@ -206,28 +206,57 @@ export default function DemoDashboard() {
         </p>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
-        {tiles.map((tile, index) => (
-          <motion.div
-            key={tile.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-          >
-            <MetricTile
-              title={tile.title}
-              icon={tile.icon}
-              data={tile.data}
-              formatValue={tile.formatValue}
-              valueKey={tile.valueKey}
-              color={tile.color}
-              loading={loading}
-              error={error}
-            />
-          </motion.div>
-        ))}
+      {/* Metrics Grid - Pyramid Layout */}
+      <div className="space-y-6">
+        {/* Top row - 3 tiles */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tiles.slice(0, 3).map((tile, index) => (
+            <motion.div
+              key={tile.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+            >
+              <MetricTile
+                title={tile.title}
+                icon={tile.icon}
+                data={tile.data}
+                formatValue={tile.formatValue}
+                valueKey={tile.valueKey}
+                color={tile.color}
+                loading={loading}
+                error={error}
+              />
+            </motion.div>
+          ))}
+        </div>
+        
+        {/* Bottom row - 2 tiles centered */}
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ width: 'calc(66.666667% + 0.75rem)' }}>
+          {tiles.slice(3, 5).map((tile, index) => (
+            <motion.div
+              key={tile.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: (index + 3) * 0.1 }}
+            >
+              <MetricTile
+                title={tile.title}
+                icon={tile.icon}
+                data={tile.data}
+                formatValue={tile.formatValue}
+                valueKey={tile.valueKey}
+                color={tile.color}
+                loading={loading}
+                error={error}
+              />
+            </motion.div>
+          ))}
+          </div>
+        </div>
       </div>
 
       {/* Insights Section */}

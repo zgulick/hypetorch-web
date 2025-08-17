@@ -10,9 +10,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "HypeTorch - Athlete Influence Intelligence for Marketing Teams",
-  description: "Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views. Optimize sports marketing ROI with objective influence scores and partnership intelligence.",
-  keywords: "athlete analytics, sports marketing, influence measurement, athletic partnerships, sports media analytics, endorsement ROI, athlete data intelligence",
+  title: "HypeTorch - Turn Podcast Conversations into Competitive Intelligence",
+  description: "Universal narrative intelligence platform. Turn podcast conversations into competitive intelligence across sports, entertainment, crypto, and business. JORDN & RODMN algorithms measure real influence beyond social metrics.",
+  keywords: "podcast analysis, narrative intelligence, competitive intelligence, influence measurement, JORDN algorithm, RODMN algorithm, crypto intelligence, sports analytics, entertainment analytics",
   authors: [{ name: "HypeTorch" }],
   creator: "HypeTorch",
   publisher: "HypeTorch",
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://hypetorch.com',
-    title: 'HypeTorch - Athlete Influence Intelligence for Marketing Teams',
-    description: 'Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views. Optimize sports marketing ROI with objective influence scores.',
+    title: 'HypeTorch - Turn Podcast Conversations into Competitive Intelligence',
+    description: 'Universal narrative intelligence platform. Turn podcast conversations into competitive intelligence across sports, entertainment, crypto, and business.',
     siteName: 'HypeTorch',
     images: [
       {
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'HypeTorch - Athlete Influence Intelligence for Marketing Teams',
-    description: 'Data-driven athlete analytics platform for marketing teams. Measure real influence beyond likes and views.',
+    title: 'HypeTorch - Turn Podcast Conversations into Competitive Intelligence',
+    description: 'Universal narrative intelligence platform. Turn podcast conversations into competitive intelligence across industries.',
     images: ['/hypetorch-logo.svg'],
     creator: '@hypetorch',
   },

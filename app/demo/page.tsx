@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Eye, 
   Calendar,
   Zap,
   Target,
@@ -11,10 +10,10 @@ import {
   Activity,
   LineChart,
   Database,
-  ChevronRight,
-  DollarSign
+  ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '../Navbar';
 import ContactModal from '@/components/ContactModal';
 import GetStartedButton from '@/components/GetStartedButton';
@@ -169,10 +168,10 @@ export default function PlatformDemo() {
 
           {/* Chart Component */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.3 }}
           >
             <WeeklyEvolutionChart 
               players={['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young']}
@@ -329,69 +328,89 @@ export default function PlatformDemo() {
             </motion.div>
           </div>
 
-          {/* API Access CTA */}
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="relative w-full py-20 bg-gradient-to-b from-gray-900 to-black">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-6"
+          >
+            <span className="text-orange-400">Ready to Optimize Your Campaign?</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-gray-400 mb-10 text-lg max-w-2xl mx-auto"
+          >
+            This demo showcases just a fraction of HypeTorch&apos;s capabilities. 
+            See how our complete analytics intelligence platform can transform your sports media coverage.
+          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="text-center mt-12"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-8 border border-gray-600">
-              <h3 className="text-2xl font-bold text-white mb-4">Ready to Optimize Your Campaigns?</h3>
-              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-                Get access to our comprehensive API documentation and start building 
-                athlete influence intelligence into your marketing operations.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/docs">
-                  <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold hover:shadow-lg transition-all">
-                    View API Documentation
-                  </button>
-                </Link>
-                <button 
-                  onClick={() => setApiModalOpen(true)}
-                  className="px-8 py-3 border border-gray-600 hover:border-orange-500 rounded-lg text-white font-semibold transition-colors"
-                >
-                  Request API Access
-                </button>
-              </div>
-            </div>
+            <GetStartedButton size="lg" animated>
+              Get Started
+            </GetStartedButton>
+            <button 
+              onClick={() => setDemoModalOpen(true)}
+              className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors"
+            >
+              Contact Us
+            </button>
           </motion.div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 px-6 bg-gradient-to-b from-gray-950 to-black">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              <span className="text-orange-400">Experience the Full Platform</span>
-            </h2>
-            <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-              This demo showcases just a fraction of HypeTorch&apos;s capabilities. 
-              See how our complete analytics intelligence platform can transform your sports media coverage.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <GetStartedButton size="lg" className="shadow-lg hover:shadow-xl flex items-center justify-center">
-                <DollarSign className="w-5 h-5 mr-2" />
-                Get Started - See Pricing
-              </GetStartedButton>
-              <button 
-                onClick={() => setDemoModalOpen(true)}
-                className="px-10 py-4 border border-gray-600 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors flex items-center justify-center"
-              >
-                <Eye className="w-5 h-5 mr-2" />
-                Schedule Full Demo
-              </button>
+      {/* Footer */}
+      <footer className="w-full py-12 bg-gray-950 text-gray-400">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-8 md:mb-0">
+              <div className="flex items-center">
+                <Image 
+                  src="/hypetorch-logo.svg" 
+                  alt="HypeTorch Logo" 
+                  width={40} 
+                  height={40} 
+                  className="mr-3"
+                />
+                <span className="text-xl font-bold text-white">HypeTorch</span>
+              </div>
+              <p className="mt-2 text-sm">Advanced Analytics Intelligence for Sports Media</p>
             </div>
-          </motion.div>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div>
+                <h4 className="font-semibold mb-3 text-white">Platform</h4>
+                <ul className="space-y-2">
+                  <li><Link href="/reports" className="hover:text-orange-400 transition-colors">Reports & Analytics</Link></li>
+                  <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3 text-white">Company</h4>
+                <ul className="space-y-2">
+                  <li><Link href="/contact" className="hover:text-orange-400 transition-colors">Contact</Link></li>
+                  <li><a href="mailto:hypetorch@gmail.com" className="hover:text-orange-400 transition-colors">Email</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm">
+            <p>© {new Date().getFullYear()} HypeTorch. Professional sports media analytics platform.</p>
+          </div>
         </div>
-      </section>
+      </footer>
       
       {/* Contact Modals */}
       <ContactModal

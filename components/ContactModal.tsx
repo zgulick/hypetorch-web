@@ -27,7 +27,7 @@ export default function ContactModal({ isOpen, onClose, title, subtitle, inquiry
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black/75 backdrop-blur-sm"
@@ -35,7 +35,7 @@ export default function ContactModal({ isOpen, onClose, title, subtitle, inquiry
       />
       
       {/* Modal */}
-      <div className="relative z-10 max-w-md w-full">
+      <div className="relative z-10 max-w-lg w-full my-8">
         <ContactForm
           title={title}
           subtitle={subtitle}

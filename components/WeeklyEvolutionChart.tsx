@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   LineChart, 
   Line, 
@@ -58,6 +57,7 @@ export default function WeeklyEvolutionChart({
   const [, setError] = useState<string | null>(null);
   const [, setAvailablePeriods] = useState<TimePeriod[]>([]);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>(players);
+  const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
     async function loadEvolutionData() {
@@ -134,6 +134,15 @@ export default function WeeklyEvolutionChart({
     loadEvolutionData();
   }, [selectedPlayers, periods, metric]);
 
+  // Ensure chart renders properly after component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const getMetricLabel = (metricType: string) => {
     switch (metricType) {
       case 'hype_score': return 'HYPE Score';
@@ -209,12 +218,7 @@ export default function WeeklyEvolutionChart({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 ${className}`}
-    >
+    <div className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -232,8 +236,9 @@ export default function WeeklyEvolutionChart({
 
       {/* Chart */}
       <div className="mb-6">
-        <ResponsiveContainer width="100%" height={height}>
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+        {isVisible && (
+          <ResponsiveContainer width="100%" height={height}>
+            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
             <XAxis 
               dataKey="display_label" 
@@ -287,8 +292,16 @@ export default function WeeklyEvolutionChart({
                 connectNulls={false}
               />
             ))}
-          </LineChart>
-        </ResponsiveContainer>
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+        {!isVisible && (
+          <div className="bg-gray-700 rounded animate-pulse" style={{ height: height }}>
+            <div className="flex items-center justify-center h-full text-gray-400">
+              <BarChart3 className="w-8 h-8" />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Player Selection */}
@@ -366,6 +379,6 @@ export default function WeeklyEvolutionChart({
           Data collected from 8 sources including podcasts, social media, news, and search trends
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }
