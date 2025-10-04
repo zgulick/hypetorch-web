@@ -22,6 +22,7 @@ import GetStartedButton from '@/components/GetStartedButton';
 import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
 import DemoDashboard from '@/components/DemoDashboard';
 import HeadToHeadComparison from '@/components/HeadToHeadComparison';
+import VerticalSelector from '@/components/VerticalSelector';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
@@ -29,6 +30,7 @@ import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unif
 export default function PlatformDemo() {
   const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
   const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score'>('hype_score');
+  const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [apiModalOpen, setApiModalOpen] = useState(false);
   
@@ -91,6 +93,38 @@ export default function PlatformDemo() {
                 API Integration
               </a>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Vertical Selector Section */}
+      <section className="py-8 px-6 bg-gray-800/30">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8"
+          >
+            <VerticalSelector
+              selected={selectedVertical}
+              onChange={setSelectedVertical}
+              className="justify-center mb-6"
+            />
+
+            {/* Dynamic content based on selection */}
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              {selectedVertical === null
+                ? 'Cross-Vertical Analytics Demo'
+                : `${selectedVertical} Intelligence Dashboard`}
+            </h2>
+
+            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+              {selectedVertical === null
+                ? 'Experience our algorithms across all sports and categories. Use the tabs above to explore specific verticals.'
+                : `Deep dive into ${selectedVertical} podcast analytics, narrative trends, and influence metrics.`}
+            </p>
           </motion.div>
         </div>
       </section>
@@ -177,7 +211,7 @@ export default function PlatformDemo() {
               periods={5}
               metric={selectedMetric}
               height={450}
-              subcategory="Unrivaled"
+              subcategory={selectedVertical}
             />
           </motion.div>
         </div>
@@ -186,7 +220,7 @@ export default function PlatformDemo() {
       {/* Key Metrics Dashboard */}
       <section id="metrics-dashboard" className="py-16 px-6 bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          <DemoDashboard />
+          <DemoDashboard subcategory={selectedVertical} />
         </div>
       </section>
 
@@ -217,9 +251,17 @@ export default function PlatformDemo() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <HeadToHeadComparison 
-              playerOne="Caitlin Clark"
-              playerTwo="Angel Reese"
+            <HeadToHeadComparison
+              playerOne={
+                selectedVertical === 'NBA' ? 'LeBron James' :
+                selectedVertical === 'Unrivaled' ? 'Caitlin Clark' :
+                'Caitlin Clark' // Default for cross-vertical
+              }
+              playerTwo={
+                selectedVertical === 'NBA' ? 'Stephen Curry' :
+                selectedVertical === 'Unrivaled' ? 'Angel Reese' :
+                'Angel Reese' // Default for cross-vertical
+              }
             />
           </motion.div>
         </div>
