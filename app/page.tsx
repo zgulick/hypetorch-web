@@ -402,14 +402,14 @@ export default function Home() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">
-              This Week&apos;s Intelligence Report
+              Cross-Vertical Intelligence Dashboard
             </h2>
             <div className="flex items-center justify-center text-gray-400 mb-6">
               <Calendar className="w-5 h-5 mr-2" />
               <span>Data Accurate As Of: {formatPeriodLabel(currentPeriod)}</span>
             </div>
             <p className="text-gray-400 max-w-3xl mx-auto">
-              Real-time insights from our advanced analytics platform. Track narrative evolution, 
+              Real-time insights across WNBA, NBA, crypto, and emerging verticals. Track narrative evolution,
               identify trending storylines, and discover content opportunities before your competition.
             </p>
           </motion.div>
@@ -422,11 +422,12 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12"
           >
-            <TopMoversWidget 
+            <TopMoversWidget
               title="Most Hype This Week"
               limit={5}
+              subcategory={null}
             />
-            <IntelligenceDashboard />
+            <IntelligenceDashboard subcategory={null} />
           </motion.div>
 
           {/* Featured Players Section */}
@@ -438,9 +439,9 @@ export default function Home() {
             className="mb-12"
           >
             <h3 className="text-2xl font-bold text-center mb-8 text-white">
-              Featured Player Intelligence
+              Top Performers Across All Verticals
             </h3>
-            <PlayerShowcase />
+            <PlayerShowcase subcategory={null} />
           </motion.div>
 
           {/* Platform Capabilities Section */}

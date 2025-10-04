@@ -91,6 +91,37 @@ export interface ComparisonResult {
   };
 }
 
+/**
+ * Parameters for filtering entity metrics
+ */
+export interface MetricsParams {
+  limit?: number;              // Max number of results
+  subcategory?: string | null; // Filter by vertical (e.g., "NBA", "Unrivaled")
+  category?: string | null;    // Filter by category (e.g., "Sports", "Crypto")
+  time_period?: string | null; // Filter by time period (e.g., "week_2025_10_04")
+  sort_by?: string;           // Metric to sort by (e.g., "hype_score", "rodmn_score")
+  sort_order?: string;        // Sort direction ("asc" or "desc")
+}
+
+/**
+ * Entity with metrics response from API
+ */
+interface EntityWithMetricsResponse {
+  name: string;
+  category: string;
+  subcategory: string;
+  metrics: {
+    hype_score?: number;
+    rodmn_score?: number;
+    mention_count?: number;
+    talk_time?: number;
+    sentiment_score?: number;
+    wikipedia_views?: number;
+    reddit_mentions?: number;
+    google_trends?: number;
+  };
+}
+
 // ==================== CORE ENTITY FUNCTIONS ====================
 
 /**
@@ -223,6 +254,94 @@ export async function getRecentMetrics(
     return response.data;
   } catch (error) {
     console.error('Error fetching recent metrics:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get entities with their current metrics, with optional filtering
+ *
+ * Fetches entities with their current metrics from the /v2/entities/metrics API.
+ * Supports filtering by vertical (subcategory), category, and limiting results.
+ * This is the new filtering-enabled function for modern components.
+ *
+ * @param params - Optional filter parameters
+ * @param params.limit - Maximum number of entities to return
+ * @param params.subcategory - Filter by vertical (e.g., "NBA", "Unrivaled", null for all)
+ * @param params.category - Filter by category (e.g., "Sports", "Crypto")
+ * @param params.time_period - Filter by specific time period
+ *
+ * @returns Promise<EntityData[]> - Array of entities with metrics
+ *
+ * @example
+ * // Get all entities
+ * const allEntities = await getEntitiesWithMetrics();
+ *
+ * // Get only NBA entities
+ * const nbaEntities = await getEntitiesWithMetrics({ subcategory: "NBA" });
+ *
+ * // Get top 10 WNBA entities
+ * const wnbaTop10 = await getEntitiesWithMetrics({ subcategory: "Unrivaled", limit: 10 });
+ */
+export async function getEntitiesWithMetrics(params?: MetricsParams): Promise<EntityData[]> {
+  try {
+    // Build query parameters object for axios
+    const queryParams: Record<string, string | number> = {};
+
+    if (params?.limit) {
+      queryParams.limit = params.limit;
+    }
+
+    if (params?.subcategory !== null && params?.subcategory !== undefined) {
+      queryParams.subcategory = params.subcategory;
+    }
+
+    // Debug logging
+    console.log('getEntitiesWithMetrics called with:', params);
+    console.log('Query params being sent:', queryParams);
+
+    if (params?.category) {
+      queryParams.category = params.category;
+    }
+
+    if (params?.time_period) {
+      queryParams.time_period = params.time_period;
+    }
+
+    if (params?.sort_by) {
+      queryParams.sort_by = params.sort_by;
+    }
+
+    if (params?.sort_order) {
+      queryParams.sort_order = params.sort_order;
+    }
+
+    // Make API request to the new entities/metrics endpoint
+    const response = await apiV2.get('/entities/metrics', { params: queryParams });
+
+    if (!response.data?.entities) {
+      console.error('Invalid entities/metrics response:', response.data);
+      return [];
+    }
+
+    // Transform API response to EntityData format
+    return response.data.entities.map((entity: EntityWithMetricsResponse) => ({
+      name: entity.name,  // Keep 'name' field as EntityData uses 'name'
+      category: entity.category,
+      subcategory: entity.subcategory,
+      metrics: {
+        hype_score: entity.metrics?.hype_score || 0,
+        rodmn_score: entity.metrics?.rodmn_score || 0,
+        mentions: entity.metrics?.mention_count || 0,  // Map mention_count to mentions
+        talk_time: entity.metrics?.talk_time || 0,
+        wikipedia_views: entity.metrics?.wikipedia_views || 0,
+        reddit_mentions: entity.metrics?.reddit_mentions || 0,
+        google_trends: entity.metrics?.google_trends || 0
+      }
+    }));
+
+  } catch (error) {
+    console.error('Error fetching entities with metrics:', error);
     throw error;
   }
 }
@@ -430,6 +549,7 @@ const dataServiceUnified = {
   getEntityBulk,
   getTrendingEntities,
   getRecentMetrics,
+  getEntitiesWithMetrics,
   getDashboardWidgets,
   getTimePeriods,
   compareEntities,

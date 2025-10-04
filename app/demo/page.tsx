@@ -173,11 +173,11 @@ export default function PlatformDemo() {
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
           >
-            <WeeklyEvolutionChart 
-              players={['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young']}
+            <WeeklyEvolutionChart
               periods={5}
               metric={selectedMetric}
               height={450}
+              subcategory="Unrivaled"
             />
           </motion.div>
         </div>

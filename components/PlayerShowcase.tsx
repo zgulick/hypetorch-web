@@ -5,13 +5,19 @@ import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Activity, MessageCircle, Clock, User } from 'lucide-react';
 
 // Import the unified data service
-import { getFeaturedPlayers, EntityData } from '@/app/lib/dataService_unified';
+import { getEntitiesWithMetrics, EntityData } from '@/app/lib/dataService_unified';
 
 interface PlayerShowcaseProps {
   className?: string;
+  subcategory?: string | null;
+  limit?: number;
 }
 
-export default function PlayerShowcase({ className = "" }: PlayerShowcaseProps) {
+export default function PlayerShowcase({
+  className = "",
+  subcategory = null,
+  limit = 5
+}: PlayerShowcaseProps) {
   const [players, setPlayers] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
@@ -20,41 +26,48 @@ export default function PlayerShowcase({ className = "" }: PlayerShowcaseProps) 
     async function loadFeaturedPlayers() {
       try {
         setLoading(true);
-        const featuredData = await getFeaturedPlayers();
+
+        // Hardcoded featured players as requested
+        const featuredPlayerNames = ['Lebron James', 'Caitlin Clark'];
+
+        // Get data for these specific players
+        const allData = await getEntitiesWithMetrics({
+          subcategory,
+          limit: 100
+        });
+
+        // Filter to only show the hardcoded players, then fill with top players if needed
+        const featuredData = featuredPlayerNames
+          .map(name => allData.find(player =>
+            player.name.toLowerCase() === name.toLowerCase()
+          ))
+          .filter(Boolean) as EntityData[];
+
+        // If we need more players to reach the limit, add top players by hype_score
+        if (featuredData.length < limit) {
+          const remainingSlots = limit - featuredData.length;
+          const topPlayers = allData
+            .filter(player => !featuredPlayerNames.some(name =>
+              name.toLowerCase() === player.name.toLowerCase()
+            ))
+            .sort((a, b) => (b.metrics?.hype_score || 0) - (a.metrics?.hype_score || 0))
+            .slice(0, remainingSlots);
+
+          featuredData.push(...topPlayers);
+        }
+
         setPlayers(featuredData);
+        setError(null);
       } catch (err) {
         console.error('Error loading featured players:', err);
         setError('Failed to load player data');
-        // Fallback data for development/testing
-        setPlayers([
-          {
-            name: 'Caitlin Clark',
-            metrics: { hype_score: 89.2, rodmn_score: 34.1, mentions: 156, talk_time: 12.3 }
-          },
-          {
-            name: 'Angel Reese',
-            metrics: { hype_score: 78.5, rodmn_score: 42.8, mentions: 134, talk_time: 9.7 }
-          },
-          {
-            name: 'Alyssa Thomas',
-            metrics: { hype_score: 65.3, rodmn_score: 18.2, mentions: 89, talk_time: 7.1 }
-          },
-          {
-            name: 'Allisha Gray',
-            metrics: { hype_score: 58.7, rodmn_score: 25.6, mentions: 67, talk_time: 5.8 }
-          },
-          {
-            name: 'Jackie Young',
-            metrics: { hype_score: 52.4, rodmn_score: 21.3, mentions: 54, talk_time: 4.9 }
-          }
-        ]);
       } finally {
         setLoading(false);
       }
     }
 
     loadFeaturedPlayers();
-  }, []);
+  }, [subcategory, limit]);
 
   const getScoreColor = (score: number, type: 'hype' | 'rodmn') => {
     if (type === 'hype') {

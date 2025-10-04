@@ -5,64 +5,67 @@ import { motion } from 'framer-motion';
 import { AlertTriangle, TrendingUp } from 'lucide-react';
 
 // Import the unified data service
-import { getDashboardWidgets, DashboardWidgets } from '@/app/lib/dataService_unified';
+import { getEntitiesWithMetrics, EntityData } from '@/app/lib/dataService_unified';
 
-// Define WNBA/Unrivaled entities - entities that should appear on the public website
-const WNBA_UNRIVALED_ENTITIES = [
-  // Core WNBA/Unrivaled players from entities.json "Unrivaled" subcategory
-  'Satou Sabally', 'Dijonai Carrington', 'Caitlin Clark', 'Courtney Vandersloot',
-  'Stefanie Dolson', 'Rae Burrell', 'Aaliyah Edwards', 'Rickea Jackson', 
-  'Kahleah Copper', 'Jackie Young', 'Courtney Williams', 'Rhyne Howard',
-  'Angel Reese', 'Kamilla Cardoso', 'Chelsea Gray', 'Lexie Hull', 'Marina Mabrey',
-  'Shakira Austin', 'Jordin Canada', 'Katie Lou Samuelson', 'Allisha Gray', 
-  'Aliyah Boston', 'Breanna Stewart', 'Dearica Hamby', 'Napheesa Collier',
-  'Kayla Mcbride', 'Azura Stevens', 'Jewell Loyd', 'Brittney Griner', 'Alyssa Thomas'
-  // Add other WNBA/Unrivaled entities as needed
-];
-
-// Filter function to check if entity should be displayed on public website  
-const isWNBAUnrivaledEntity = (entityName: string): boolean => {
-  return WNBA_UNRIVALED_ENTITIES.some(name => 
-    name.toLowerCase() === entityName.toLowerCase() ||
-    entityName.toLowerCase().includes(name.toLowerCase()) ||
-    name.toLowerCase().includes(entityName.toLowerCase())
-  );
-};
 
 interface IntelligenceDashboardProps {
   className?: string;
+  subcategory?: string | null;
 }
 
-export default function IntelligenceDashboard({ className = "" }: IntelligenceDashboardProps) {
-  const [widgets, setWidgets] = useState<DashboardWidgets | null>(null);
+export default function IntelligenceDashboard({
+  className = "",
+  subcategory = null
+}: IntelligenceDashboardProps) {
+  const [topMovers, setTopMovers] = useState<EntityData[]>([]);
+  const [narrativeAlerts, setNarrativeAlerts] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadDashboardWidgets() {
+    async function loadDashboardData() {
       try {
         setLoading(true);
-        const widgetData = await getDashboardWidgets();
-        
-        // Filter dashboard widgets to only show WNBA/Unrivaled entities
-        const filteredWidgets: DashboardWidgets = {
-          ...widgetData,
-          top_movers: widgetData.top_movers.filter(mover => isWNBAUnrivaledEntity(mover.name)),
-          narrative_alerts: widgetData.narrative_alerts.filter(alert => isWNBAUnrivaledEntity(alert.name))
-        };
-        
-        setWidgets(filteredWidgets);
+        // Get top movers (sorted by hype_score, descending)
+        const topMoversData = await getEntitiesWithMetrics({
+          subcategory,
+          limit: 3,
+          sort_by: "hype_score",
+          sort_order: "desc"
+        });
+
+        // Get narrative alerts (sorted by rodmn_score, descending)
+        const narrativeData = await getEntitiesWithMetrics({
+          subcategory,
+          limit: 5,
+          sort_by: "rodmn_score",
+          sort_order: "desc"
+        });
+
+        // Filter entities with valid metrics
+        const topMoversList = topMoversData.filter(entity =>
+          entity.metrics?.hype_score !== null &&
+          entity.metrics?.hype_score !== undefined
+        );
+
+        const narrativeAlertsList = narrativeData.filter(entity =>
+          entity.metrics?.rodmn_score !== null &&
+          entity.metrics?.rodmn_score !== undefined
+        );
+
+        setTopMovers(topMoversList);
+        setNarrativeAlerts(narrativeAlertsList);
+        setError(null);
       } catch (err) {
-        console.error('Error loading dashboard widgets:', err);
+        console.error('Error loading dashboard data:', err);
         setError('Failed to load dashboard data');
-        // No fallback data - show error state
       } finally {
         setLoading(false);
       }
     }
 
-    loadDashboardWidgets();
-  }, []);
+    loadDashboardData();
+  }, [subcategory]);
 
   const getAlertColor = (level: string) => {
     switch (level) {
@@ -89,7 +92,7 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
     );
   }
 
-  if (error || !widgets) {
+  if (error) {
     return (
       <div className={`text-center py-8 ${className}`}>
         <div className="bg-red-900/20 border border-red-500/20 rounded-xl p-6">
@@ -119,22 +122,20 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
           <h3 className="text-lg font-semibold text-white">Top Movers</h3>
         </div>
         <div className="space-y-3 flex-grow">
-          {widgets.top_movers.slice(0, 3).map((mover) => (
+          {topMovers.slice(0, 3).map((mover) => (
             <div key={mover.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
               <div>
                 <p className="font-medium text-white text-sm">{mover.name}</p>
-                <p className="text-xs text-gray-400">HYPE Score: {mover.current_score.toFixed(1)}</p>
+                <p className="text-xs text-gray-400">HYPE Score: {(mover.metrics?.hype_score || 0).toFixed(1)}</p>
               </div>
-              <div className={`flex items-center text-sm font-bold ${
-                mover.trend === 'up' ? 'text-green-400' : 'text-red-400'
-              }`}>
-                {mover.change > 0 ? '+' : ''}{mover.change.toFixed(1)}%
+              <div className="flex items-center text-sm font-bold text-green-400">
+                <span className="text-orange-400">#{topMovers.indexOf(mover) + 1}</span>
               </div>
             </div>
           ))}
         </div>
         <p className="text-xs text-gray-500 mt-4">
-          Biggest percentage changes this period
+          Highest HYPE scores this period
         </p>
       </motion.div>
 
@@ -150,14 +151,14 @@ export default function IntelligenceDashboard({ className = "" }: IntelligenceDa
           <h3 className="text-lg font-semibold text-white">Narrative Monitor</h3>
         </div>
         <div className="space-y-3 flex-grow">
-          {widgets.narrative_alerts.slice(0, 5).map((alert) => (
+          {narrativeAlerts.slice(0, 5).map((alert) => (
             <div key={alert.name} className="flex items-start justify-between p-3 rounded-lg bg-gray-800/50">
               <div className="flex-1">
                 <p className="font-medium text-white text-sm">{alert.name}</p>
-                <p className="text-xs text-gray-400 mt-1">{alert.context}</p>
+                <p className="text-xs text-gray-400 mt-1">High RODMN activity detected</p>
               </div>
-              <div className={`px-2 py-1 rounded text-xs font-bold ${getAlertColor(alert.alert_level)}`}>
-                {alert.rodmn_score.toFixed(1)}
+              <div className={`px-2 py-1 rounded text-xs font-bold ${getAlertColor('medium')}`}>
+                {(alert.metrics?.rodmn_score || 0).toFixed(1)}
               </div>
             </div>
           ))}

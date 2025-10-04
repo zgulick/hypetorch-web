@@ -12,18 +12,18 @@ import {
   ResponsiveContainer,
   ReferenceLine 
 } from 'recharts';
-import { TrendingUp, Calendar, Users, Info, BarChart3 } from 'lucide-react';
+import { TrendingUp, Calendar, Users, Info, BarChart3, Shuffle } from 'lucide-react';
 
 // Import data service
-import { getWeeklyEvolutionData, getTimePeriods, TimePeriod } from '@/app/lib/dataService_unified';
+import { getWeeklyEvolutionData, getTimePeriods, getEntitiesWithMetrics, TimePeriod } from '@/app/lib/dataService_unified';
 
 interface WeeklyEvolutionChartProps {
-  players?: string[];
   periods?: number;
   metric?: string;
   className?: string;
   title?: string;
   height?: number;
+  subcategory?: string | null;
 }
 
 interface EvolutionDataPoint {
@@ -45,32 +45,76 @@ const PLAYER_COLORS = [
 ];
 
 export default function WeeklyEvolutionChart({
-  players = ['Caitlin Clark', 'Angel Reese', 'Alyssa Thomas', 'Allisha Gray', 'Jackie Young'],
   periods = 5,
   metric = 'hype_score',
   className = "",
   title = "Weekly Evolution Tracker",
-  height = 400
+  height = 400,
+  subcategory = null
 }: WeeklyEvolutionChartProps) {
   const [data, setData] = useState<EvolutionDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
   const [, setAvailablePeriods] = useState<TimePeriod[]>([]);
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>(players);
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const [allAvailablePlayers, setAllAvailablePlayers] = useState<string[]>([]);
   const [isVisible, setIsVisible] = useState(false);
-  
+  const [randomizing, setRandomizing] = useState(false);
+
+  // Function to select random players from available players
+  const selectRandomPlayers = async (playerList?: string[]) => {
+    try {
+      // Use provided list or fetch from API
+      const players = playerList || (await getEntitiesWithMetrics({ subcategory, limit: 50 })).map(e => e.name);
+
+      // Randomly shuffle and pick 5
+      const shuffled = [...players].sort(() => 0.5 - Math.random());
+      const randomSelected = shuffled.slice(0, 5);
+
+      setSelectedPlayers(randomSelected);
+      setAllAvailablePlayers(players);
+
+      return randomSelected;
+    } catch (error) {
+      console.error('Error selecting random players:', error);
+      throw error;
+    }
+  };
+
+  // Handler for randomize button
+  const handleRandomizePlayers = async () => {
+    try {
+      setRandomizing(true);
+      const newRandomPlayers = await selectRandomPlayers(allAvailablePlayers);
+
+      // Load new evolution data for the random players
+      const periodsData = await getTimePeriods();
+      setAvailablePeriods(periodsData);
+
+      const evolutionData = await getWeeklyEvolutionData(newRandomPlayers, periods, metric);
+      setData(evolutionData);
+    } catch (error) {
+      console.error('Error randomizing players:', error);
+    } finally {
+      setRandomizing(false);
+    }
+  };
+
   useEffect(() => {
     async function loadEvolutionData() {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Get available periods first
         const periodsData = await getTimePeriods();
         setAvailablePeriods(periodsData);
-        
+
+        // Select random players if none selected yet
+        const playersToUse = selectedPlayers.length > 0 ? selectedPlayers : await selectRandomPlayers();
+
         // Get evolution data
-        const evolutionData = await getWeeklyEvolutionData(selectedPlayers, periods, metric);
+        const evolutionData = await getWeeklyEvolutionData(playersToUse, periods, metric);
         setData(evolutionData);
         
       } catch (err) {
@@ -132,7 +176,8 @@ export default function WeeklyEvolutionChart({
     }
 
     loadEvolutionData();
-  }, [selectedPlayers, periods, metric]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [periods, metric, subcategory]);
 
   // Ensure chart renders properly after component mounts
   useEffect(() => {
@@ -194,10 +239,16 @@ export default function WeeklyEvolutionChart({
   const handlePlayerToggle = (player: string) => {
     if (selectedPlayers.includes(player)) {
       if (selectedPlayers.length > 1) {
-        setSelectedPlayers(selectedPlayers.filter(p => p !== player));
+        const newPlayers = selectedPlayers.filter(p => p !== player);
+        setSelectedPlayers(newPlayers);
+        // Reload data with updated player list
+        getWeeklyEvolutionData(newPlayers, periods, metric).then(setData);
       }
     } else {
-      setSelectedPlayers([...selectedPlayers, player]);
+      const newPlayers = [...selectedPlayers, player];
+      setSelectedPlayers(newPlayers);
+      // Reload data with updated player list
+      getWeeklyEvolutionData(newPlayers, periods, metric).then(setData);
     }
   };
 
@@ -306,30 +357,32 @@ export default function WeeklyEvolutionChart({
 
       {/* Player Selection */}
       <div className="mb-6">
-        <div className="flex items-center mb-3">
-          <Users className="w-4 h-4 text-gray-400 mr-2" />
-          <span className="text-sm text-gray-400">Select Players to Display:</span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center">
+            <Users className="w-4 h-4 text-gray-400 mr-2" />
+            <span className="text-sm text-gray-400">Selected Players:</span>
+          </div>
+          <button
+            onClick={handleRandomizePlayers}
+            disabled={randomizing}
+            className="flex items-center px-3 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            <Shuffle className="w-4 h-4 mr-2" />
+            {randomizing ? 'Randomizing...' : 'Randomize Players'}
+          </button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {players.map((player, index) => (
+          {selectedPlayers.map((player, index) => (
             <button
               key={player}
               onClick={() => handlePlayerToggle(player)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                selectedPlayers.includes(player)
-                  ? 'text-white border-2'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border-2 border-transparent'
-              }`}
+              className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-white border-2"
               style={{
-                backgroundColor: selectedPlayers.includes(player) 
-                  ? `${PLAYER_COLORS[index % PLAYER_COLORS.length]}20` 
-                  : undefined,
-                borderColor: selectedPlayers.includes(player) 
-                  ? PLAYER_COLORS[index % PLAYER_COLORS.length] 
-                  : undefined
+                backgroundColor: `${PLAYER_COLORS[index % PLAYER_COLORS.length]}20`,
+                borderColor: PLAYER_COLORS[index % PLAYER_COLORS.length]
               }}
             >
-              <span 
+              <span
                 className="inline-block w-3 h-3 rounded-full mr-2"
                 style={{ backgroundColor: PLAYER_COLORS[index % PLAYER_COLORS.length] }}
               />
@@ -337,6 +390,29 @@ export default function WeeklyEvolutionChart({
             </button>
           ))}
         </div>
+
+        {/* Available Players to Add */}
+        {allAvailablePlayers.length > selectedPlayers.length && (
+          <div className="mt-4">
+            <div className="flex items-center mb-2">
+              <span className="text-xs text-gray-500">Available Players (click to add):</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {allAvailablePlayers
+                .filter(player => !selectedPlayers.includes(player))
+                .slice(0, 10) // Show max 10 available players
+                .map((player) => (
+                  <button
+                    key={player}
+                    onClick={() => handlePlayerToggle(player)}
+                    className="px-2 py-1 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded text-xs transition-colors"
+                  >
+                    + {player}
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Insights */}

@@ -5,40 +5,20 @@ import { motion } from 'framer-motion';
 import { TrendingUp } from 'lucide-react';
 
 // Import the unified data service
-import { getRecentMetrics, EntityData } from '@/app/lib/dataService_unified';
-
-// Define WNBA/Unrivaled entities - entities that should appear on the public website
-const WNBA_UNRIVALED_ENTITIES = [
-  // Core WNBA/Unrivaled players from entities.json "Unrivaled" subcategory
-  'Satou Sabally', 'Dijonai Carrington', 'Caitlin Clark', 'Courtney Vandersloot',
-  'Stefanie Dolson', 'Rae Burrell', 'Aaliyah Edwards', 'Rickea Jackson', 
-  'Kahleah Copper', 'Jackie Young', 'Courtney Williams', 'Rhyne Howard',
-  'Angel Reese', 'Kamilla Cardoso', 'Chelsea Gray', 'Lexie Hull', 'Marina Mabrey',
-  'Shakira Austin', 'Jordin Canada', 'Katie Lou Samuelson', 'Allisha Gray', 
-  'Aliyah Boston', 'Breanna Stewart', 'Dearica Hamby', 'Napheesa Collier',
-  'Kayla Mcbride', 'Azura Stevens', 'Jewell Loyd', 'Brittney Griner', 'Alyssa Thomas'
-  // Add other WNBA/Unrivaled entities as needed
-];
-
-// Filter function to check if entity should be displayed on public website  
-const isWNBAUnrivaledEntity = (entityName: string): boolean => {
-  return WNBA_UNRIVALED_ENTITIES.some(name => 
-    name.toLowerCase() === entityName.toLowerCase() ||
-    entityName.toLowerCase().includes(name.toLowerCase()) ||
-    name.toLowerCase().includes(entityName.toLowerCase())
-  );
-};
+import { getEntitiesWithMetrics, EntityData } from '@/app/lib/dataService_unified';
 
 interface TopMoversWidgetProps {
   className?: string;
   limit?: number;
   title?: string;
+  subcategory?: string | null;
 }
 
-export default function TopMoversWidget({ 
+export default function TopMoversWidget({
   className = "",
   limit = 5,
-  title = "Top 5 JORDN Scores This Week"
+  title = "Top 5 JORDN Scores This Week",
+  subcategory = null
 }: TopMoversWidgetProps) {
   const [topScores, setTopScores] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,25 +28,32 @@ export default function TopMoversWidget({
     async function loadTopScores() {
       try {
         setLoading(true);
-        const metricsData = await getRecentMetrics('current', undefined, ['hype_score'], 100);
-        // Filter for WNBA/Unrivaled entities only, then sort by hype_score and take top N
-        const sortedData = metricsData
-          .filter(item => item.metrics?.hype_score !== undefined && item.metrics.hype_score !== null)
-          .filter(item => isWNBAUnrivaledEntity(item.name)) // Filter out non-WNBA/Unrivaled entities
-          .sort((a, b) => (b.metrics?.hype_score || 0) - (a.metrics?.hype_score || 0))
-          .slice(0, limit);
-        setTopScores(sortedData);
+        const metricsData = await getEntitiesWithMetrics({
+          subcategory,
+          limit: limit,
+          sort_by: "hype_score",
+          sort_order: "desc"
+        });
+
+        console.log('TopMoversWidget received data:', metricsData);
+        console.log('TopMoversWidget subcategory prop:', subcategory);
+
+        // Filter out entities without hype_score (API sorting handles the rest)
+        const validData = metricsData
+          .filter(item => item.metrics?.hype_score !== undefined && item.metrics.hype_score !== null);
+
+        console.log('TopMoversWidget filtered data:', validData);
+        setTopScores(validData);
       } catch (err) {
         console.error('Error loading top scores:', err);
         setError('Failed to load JORDN scores');
-        // No fallback data - show error state
       } finally {
         setLoading(false);
       }
     }
 
     loadTopScores();
-  }, [limit]);
+  }, [limit, subcategory]);
 
 
   if (loading) {

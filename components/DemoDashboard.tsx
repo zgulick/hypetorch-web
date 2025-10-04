@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, MessageSquare, Clock, Eye, BarChart3 } from 'lucide-react';
 
 // Import the unified data service
-import { getRecentMetrics, EntityData } from '@/app/lib/dataService_unified';
+import { getEntitiesWithMetrics, EntityData } from '@/app/lib/dataService_unified';
 
 interface MetricTileProps {
   title: string;
@@ -97,7 +97,15 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
   );
 }
 
-export default function DemoDashboard() {
+interface DemoDashboardProps {
+  className?: string;
+  subcategory?: string | null;
+}
+
+export default function DemoDashboard({
+  className = '',
+  subcategory = null
+}: DemoDashboardProps) {
   const [allData, setAllData] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -106,30 +114,12 @@ export default function DemoDashboard() {
     async function loadAllMetrics() {
       try {
         setLoading(true);
-        // Only show Unrivaled/WNBA players for the demo
-        const unrivaledPlayers = [
-          'Caitlin Clark',
-          'Angel Reese', 
-          'Alyssa Thomas',
-          'Allisha Gray',
-          'Jackie Young',
-          'Kelsey Plum',
-          'Chelsea Gray',
-          'Breanna Stewart',
-          'Satou Sabally',
-          'Rhyne Howard',
-          'Kayla McBride',
-          'Stefanie Dolson'
-        ];
-        
-        const metricsData = await getRecentMetrics('current', unrivaledPlayers, [
-          'hype_score', 
-          'rodmn_score', 
-          'mentions', 
-          'talk_time', 
-          'wikipedia_views'
-        ], 100);
+        const metricsData = await getEntitiesWithMetrics({
+          subcategory,
+          limit: 100
+        });
         setAllData(metricsData);
+        setError(null);
       } catch (err) {
         console.error('Error loading all metrics:', err);
         setError('Failed to load metrics data');
@@ -139,7 +129,7 @@ export default function DemoDashboard() {
     }
 
     loadAllMetrics();
-  }, []);
+  }, [subcategory]);
 
   // Helper functions for data processing
   const getTopByMetric = (metric: keyof NonNullable<EntityData['metrics']>, limit: number = 5): EntityData[] => {
@@ -208,7 +198,7 @@ export default function DemoDashboard() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="space-y-8"
+      className={`space-y-8 ${className}`}
     >
       {/* Header */}
       <div className="text-center">
