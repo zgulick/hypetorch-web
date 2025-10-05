@@ -26,32 +26,38 @@ export default function IntelligenceDashboard({
     async function loadDashboardData() {
       try {
         setLoading(true);
-        // Get top movers (sorted by hype_score, descending)
+        // Get top movers (sorted by hype_score, descending) - get more to ensure proper sorting
         const topMoversData = await getEntitiesWithMetrics({
           subcategory,
-          limit: 3,
+          limit: 50,
           sort_by: "hype_score",
           sort_order: "desc"
         });
 
-        // Get narrative alerts (sorted by rodmn_score, descending)
+        // Get narrative alerts (sorted by rodmn_score, descending) - get more to ensure proper sorting
         const narrativeData = await getEntitiesWithMetrics({
           subcategory,
-          limit: 5,
+          limit: 50,
           sort_by: "rodmn_score",
           sort_order: "desc"
         });
 
-        // Filter entities with valid metrics
-        const topMoversList = topMoversData.filter(entity =>
-          entity.metrics?.hype_score !== null &&
-          entity.metrics?.hype_score !== undefined
-        );
+        // Filter entities with valid metrics and apply client-side sorting as backup
+        const topMoversList = topMoversData
+          .filter(entity =>
+            entity.metrics?.hype_score !== null &&
+            entity.metrics?.hype_score !== undefined
+          )
+          .sort((a, b) => (b.metrics?.hype_score || 0) - (a.metrics?.hype_score || 0))
+          .slice(0, 3);
 
-        const narrativeAlertsList = narrativeData.filter(entity =>
-          entity.metrics?.rodmn_score !== null &&
-          entity.metrics?.rodmn_score !== undefined
-        );
+        const narrativeAlertsList = narrativeData
+          .filter(entity =>
+            entity.metrics?.rodmn_score !== null &&
+            entity.metrics?.rodmn_score !== undefined
+          )
+          .sort((a, b) => (b.metrics?.rodmn_score || 0) - (a.metrics?.rodmn_score || 0))
+          .slice(0, 5);
 
         setTopMovers(topMoversList);
         setNarrativeAlerts(narrativeAlertsList);

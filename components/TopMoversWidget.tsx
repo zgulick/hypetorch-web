@@ -28,9 +28,10 @@ export default function TopMoversWidget({
     async function loadTopScores() {
       try {
         setLoading(true);
+        // Explicitly sort on frontend as backup until API sorting is fixed
         const metricsData = await getEntitiesWithMetrics({
           subcategory,
-          limit: limit,
+          limit: 50, // Get more to ensure we capture highest scores
           sort_by: "hype_score",
           sort_order: "desc"
         });
@@ -38,11 +39,13 @@ export default function TopMoversWidget({
         console.log('TopMoversWidget received data:', metricsData);
         console.log('TopMoversWidget subcategory prop:', subcategory);
 
-        // Filter out entities without hype_score (API sorting handles the rest)
+        // Filter out entities without hype_score and sort as backup
         const validData = metricsData
-          .filter(item => item.metrics?.hype_score !== undefined && item.metrics.hype_score !== null);
+          .filter(item => item.metrics?.hype_score !== undefined && item.metrics.hype_score !== null)
+          .sort((a, b) => (b.metrics?.hype_score || 0) - (a.metrics?.hype_score || 0))
+          .slice(0, limit);
 
-        console.log('TopMoversWidget filtered data:', validData);
+        console.log('TopMoversWidget sorted data:', validData);
         setTopScores(validData);
       } catch (err) {
         console.error('Error loading top scores:', err);

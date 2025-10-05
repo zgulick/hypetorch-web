@@ -110,8 +110,8 @@ export default function WeeklyEvolutionChart({
         const periodsData = await getTimePeriods();
         setAvailablePeriods(periodsData);
 
-        // Select random players if none selected yet
-        const playersToUse = selectedPlayers.length > 0 ? selectedPlayers : await selectRandomPlayers();
+        // Always select new random players when subcategory changes
+        const playersToUse = await selectRandomPlayers();
 
         // Get evolution data
         const evolutionData = await getWeeklyEvolutionData(playersToUse, periods, metric);
