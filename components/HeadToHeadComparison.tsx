@@ -104,26 +104,36 @@ export default function HeadToHeadComparison({
     async function loadPlayersData() {
       try {
         setLoading(true);
-        const metricsData = await getRecentMetrics('current', undefined, [
-          'hype_score', 
-          'rodmn_score', 
-          'mentions', 
-          'talk_time', 
+        setError(null);
+
+        // Use entity names filter to get specific players
+        const metricsData = await getRecentMetrics('current', [playerOne, playerTwo], [
+          'hype_score',
+          'rodmn_score',
+          'mentions',
+          'talk_time',
           'wikipedia_views',
           'reddit_mentions',
           'google_trends',
           'google_news_mentions'
         ], 50);
-        
-        // Filter for our two players
-        const filteredData = metricsData.filter(player => 
-          player.name === playerOne || player.name === playerTwo
+
+        console.log('HeadToHead: Loaded data for', playerOne, 'and', playerTwo, ':', metricsData);
+
+        // Filter for our two players (case-insensitive)
+        const filteredData = metricsData.filter(player =>
+          player.name.toLowerCase() === playerOne.toLowerCase() ||
+          player.name.toLowerCase() === playerTwo.toLowerCase()
         );
-        
+
+        if (filteredData.length < 2) {
+          console.warn('HeadToHead: Only found', filteredData.length, 'players. Looking for:', playerOne, playerTwo);
+        }
+
         setPlayersData(filteredData);
       } catch (err) {
         console.error('Error loading players data:', err);
-        setError('Failed to load comparison data');
+        setError(`Failed to load data for ${playerOne} and ${playerTwo}`);
       } finally {
         setLoading(false);
       }
