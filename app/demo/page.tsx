@@ -45,11 +45,6 @@ export default function PlatformDemo() {
     loadDemoData();
   }, []);
 
-  const formatPeriodLabel = (period: TimePeriod | null) => {
-    if (!period) return "Latest Analysis Period";
-    return period.display_label;
-  };
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
       <Navbar />
