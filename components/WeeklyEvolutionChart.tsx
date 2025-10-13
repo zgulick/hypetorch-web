@@ -201,7 +201,7 @@ export default function WeeklyEvolutionChart({
   const getYAxisDomain = (metricType: string): [number | string, number | string] => {
     switch (metricType) {
       case 'hype_score':
-        return [0, 100];
+        return [0, 'dataMax + 20']; // Allow scores above 100 (average)
       case 'rodmn_score':
         return [0, 10];
       case 'mentions':
@@ -313,11 +313,11 @@ export default function WeeklyEvolutionChart({
             
             {/* Reference line for average */}
             {metric === 'hype_score' && (
-              <ReferenceLine 
-                y={50} 
-                stroke="#6B7280" 
-                strokeDasharray="2 2" 
-                label={{ value: "Average", position: "top" }}
+              <ReferenceLine
+                y={100}
+                stroke="#6B7280"
+                strokeDasharray="2 2"
+                label={{ value: "Average (100)", position: "top" }}
               />
             )}
             

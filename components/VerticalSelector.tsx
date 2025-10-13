@@ -57,7 +57,7 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
   // Loading state
   if (loading) {
     return (
-      <div className={`inline-flex rounded-lg bg-gray-800 p-1 gap-1 ${className}`}>
+      <div className={`flex flex-wrap justify-center rounded-lg bg-gray-800 p-1 gap-1 ${className}`}>
         {/* Loading skeleton */}
         {[1, 2, 3].map((i) => (
           <div
@@ -89,11 +89,11 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
   }
 
   return (
-    <div className={`inline-flex rounded-lg bg-gray-800 p-1 gap-1 ${className}`}>
+    <div className={`flex flex-wrap justify-center rounded-lg bg-gray-800 p-1 gap-1 ${className}`}>
       {/* "All Verticals" button */}
       <button
         onClick={() => onChange(null)}
-        className={`px-6 py-3 rounded-md font-semibold transition-all ${
+        className={`px-4 sm:px-6 py-3 rounded-md font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
           selected === null
             ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg shadow-orange-900/50'
             : 'text-gray-400 hover:text-white hover:bg-gray-700'
@@ -107,7 +107,7 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
         <button
           key={vertical.key}
           onClick={() => onChange(vertical.key)}
-          className={`px-6 py-3 rounded-md font-semibold transition-all ${
+          className={`px-4 sm:px-6 py-3 rounded-md font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
             selected === vertical.key
               ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg shadow-orange-900/50'
               : 'text-gray-400 hover:text-white hover:bg-gray-700'

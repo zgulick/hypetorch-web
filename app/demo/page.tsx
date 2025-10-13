@@ -2,12 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar,
+import {
   Zap,
-  Target,
   Users,
-  Activity,
   LineChart,
   Database,
   ChevronRight
@@ -22,7 +19,7 @@ import GetStartedButton from '@/components/GetStartedButton';
 import WeeklyEvolutionChart from '@/components/WeeklyEvolutionChart';
 import DemoDashboard from '@/components/DemoDashboard';
 import HeadToHeadComparison from '@/components/HeadToHeadComparison';
-import VerticalSelector from '@/components/VerticalSelector';
+import DemoControls from '@/components/DemoControls';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
@@ -56,49 +53,38 @@ export default function PlatformDemo() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
       <Navbar />
-      
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-16 px-6">
+
+      {/* Hero Section - Simplified */}
+      <section className="relative pt-24 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500">
               Platform Demo
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Experience HypeTorch&apos;s advanced analytics intelligence in action. 
-              See how we transform raw data into actionable sports media insights.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience HypeTorch&apos;s advanced analytics intelligence in action.
+              Use the controls below to explore different verticals and metrics.
             </p>
-            <div className="flex items-center justify-center text-gray-400 mb-8">
-              <Calendar className="w-5 h-5 mr-2" />
-              <span>Current Analysis Period: {formatPeriodLabel(currentPeriod)}</span>
-            </div>
-            
-            {/* Demo Navigation */}
-            <div className="flex flex-wrap justify-center gap-4">
-              <a href="#evolution-chart" className="px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors">
-                Weekly Evolution
-              </a>
-              <a href="#metrics-dashboard" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
-                Key Metrics Dashboard  
-              </a>
-              <a href="#player-comparison" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
-                Player Comparison
-              </a>
-              <a href="#api-preview" className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors">
-                API Integration
-              </a>
-            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Vertical Selector Section */}
-      <section className="py-8 px-6 bg-gray-800/30">
+      {/* Sticky Control Panel */}
+      <DemoControls
+        selectedVertical={selectedVertical}
+        onVerticalChange={setSelectedVertical}
+        selectedMetric={selectedMetric}
+        onMetricChange={setSelectedMetric}
+        currentPeriod={currentPeriod}
+      />
+
+      {/* Weekly Evolution Chart */}
+      <section id="evolution-chart" className="py-12 px-6 bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -107,97 +93,13 @@ export default function PlatformDemo() {
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
-            <VerticalSelector
-              selected={selectedVertical}
-              onChange={setSelectedVertical}
-              className="justify-center mb-6"
-            />
-
-            {/* Dynamic content based on selection */}
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              {selectedVertical === null
-                ? 'Cross-Vertical Analytics Demo'
-                : `${selectedVertical} Intelligence Dashboard`}
-            </h2>
-
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              {selectedVertical === null
-                ? 'Experience our algorithms across all sports and categories. Use the tabs above to explore specific verticals.'
-                : `Deep dive into ${selectedVertical} podcast analytics, narrative trends, and influence metrics.`}
+            <div className="flex items-center justify-center mb-3">
+              <LineChart className="w-7 h-7 text-orange-400 mr-3" />
+              <h2 className="text-2xl md:text-3xl font-bold text-white">Weekly Evolution Tracker</h2>
+            </div>
+            <p className="text-base text-gray-400 max-w-2xl mx-auto">
+              Track how player narratives evolve over time. Identify trending storylines before they become mainstream news.
             </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Weekly Evolution Chart - Signature Feature */}
-      <section id="evolution-chart" className="py-16 px-6 bg-gray-950">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <LineChart className="w-8 h-8 text-orange-400 mr-3" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white">Weekly Evolution Tracker</h2>
-            </div>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-              Our signature feature reveals how player narratives evolve over time. 
-              Watch HYPE scores change as storylines develop, helping you identify trending players before they become mainstream news.
-            </p>
-            
-            {/* Feature Highlights */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                <Target className="w-6 h-6 text-orange-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white mb-1">Spot Trends Early</h3>
-                <p className="text-sm text-gray-400">Identify rising storylines before competitors</p>
-              </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                <Activity className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white mb-1">Multi-Player Tracking</h3>
-                <p className="text-sm text-gray-400">Compare up to 5 players simultaneously</p>
-              </div>
-              <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                <Database className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                <h3 className="font-semibold text-white mb-1">Historical Context</h3>
-                <p className="text-sm text-gray-400">5+ weeks of narrative evolution data</p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Metric Toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex justify-center mb-8"
-          >
-            <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
-              <button
-                onClick={() => setSelectedMetric('hype_score')}
-                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                  selectedMetric === 'hype_score' 
-                    ? 'bg-orange-600 text-white' 
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                JORDN Score Evolution
-              </button>
-              <button
-                onClick={() => setSelectedMetric('rodmn_score')}
-                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                  selectedMetric === 'rodmn_score' 
-                    ? 'bg-red-600 text-white' 
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                RODMN Score Evolution
-              </button>
-            </div>
           </motion.div>
 
           {/* Chart Component */}
@@ -218,29 +120,27 @@ export default function PlatformDemo() {
       </section>
 
       {/* Key Metrics Dashboard */}
-      <section id="metrics-dashboard" className="py-16 px-6 bg-gray-900">
+      <section id="metrics-dashboard" className="py-12 px-6 bg-gray-900">
         <div className="max-w-7xl mx-auto">
           <DemoDashboard subcategory={selectedVertical} />
         </div>
       </section>
 
       {/* Player Deep Dive Comparison */}
-      <section id="player-comparison" className="py-16 px-6 bg-gray-950">
+      <section id="player-comparison" className="py-12 px-6 bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
-            <div className="flex items-center justify-center mb-4">
-              <Users className="w-8 h-8 text-purple-400 mr-3" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white">Player Intelligence Comparison</h2>
+            <div className="flex items-center justify-center mb-3">
+              <Users className="w-7 h-7 text-purple-400 mr-3" />
+              <h2 className="text-2xl md:text-3xl font-bold text-white">Head-to-Head Comparison</h2>
             </div>
-            <h3 className="text-2xl text-orange-400 mb-4">Caitlin Clark vs Angel Reese: The Data Behind the Rivalry</h3>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              Deep-dive analysis comparing two of the most talked-about players. 
-              Our multi-dimensional metrics reveal the full story behind the headlines.
+            <p className="text-base text-gray-400 max-w-2xl mx-auto">
+              Multi-dimensional analysis comparing top players side by side.
             </p>
           </motion.div>
 
