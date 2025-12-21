@@ -2,10 +2,154 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, MessageSquare, Clock, Eye, BarChart3 } from 'lucide-react';
+import { TrendingUp, MessageSquare, Clock, BarChart3, AlertTriangle } from 'lucide-react';
 
 // Import the unified data service
-import { getEntitiesWithMetrics, EntityData } from '@/app/lib/dataService_unified';
+import { getRecentMetrics, EntityData } from '@/app/lib/dataService_unified';
+
+interface PIPNTileProps {
+  data: EntityData[];
+  loading: boolean;
+  error: string | null;
+  subcategory: string | null;
+}
+
+function PIPNTile({ data, loading, subcategory }: PIPNTileProps) {
+  // If crypto vertical (any crypto subcategory), hide or gray out
+  const cryptoSubcategories = ['Crypto', 'Bitcoin', 'Altcoins', 'Memecoins', 'Major Coins'];
+  const isCrypto = cryptoSubcategories.includes(subcategory || '');
+
+  if (isCrypto) {
+    return (
+      <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700/50 opacity-50">
+        <div className="flex items-center mb-4">
+          <BarChart3 className="w-5 h-5 text-gray-500 mr-2" />
+          <h3 className="text-lg font-semibold text-gray-500">Attention Efficiency</h3>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-gray-500">PIPN available for athletes only</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-700 rounded w-32"></div>
+          <div className="h-3 bg-gray-700 rounded w-24"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get undervalued (positive PIPN)
+  const undervalued = data
+    .filter(item => {
+      const pipn = item.metrics?.pipn_score;
+      return pipn !== null && pipn !== undefined && pipn > 0;
+    })
+    .sort((a, b) => (b.metrics?.pipn_score || 0) - (a.metrics?.pipn_score || 0))
+    .slice(0, 3);
+
+  // Get overvalued (negative PIPN)
+  const overvalued = data
+    .filter(item => {
+      const pipn = item.metrics?.pipn_score;
+      return pipn !== null && pipn !== undefined && pipn < 0;
+    })
+    .sort((a, b) => (a.metrics?.pipn_score || 0) - (b.metrics?.pipn_score || 0))
+    .slice(0, 3);
+
+  // Debug logging
+  if (typeof window !== 'undefined' && data.length > 0) {
+    console.log('PIPN Tile Debug:', {
+      totalEntities: data.length,
+      entitiesWithPIPN: data.filter(item => item.metrics?.pipn_score !== null && item.metrics?.pipn_score !== undefined).length,
+      undervaluedCount: undervalued.length,
+      overvaluedCount: overvalued.length,
+      sampleEntity: data[0],
+      subcategory
+    });
+  }
+
+  // Partial data quality warning icon (only used in PIPN tile)
+  const PartialDataIcon = () => (
+    <AlertTriangle className="w-3 h-3 text-yellow-500 ml-1" />
+  );
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 h-full flex flex-col">
+      <div className="flex items-center mb-4">
+        <BarChart3 className="w-5 h-5 text-cyan-400 mr-2" />
+        <h3 className="text-lg font-semibold text-white">💎 Attention Efficiency</h3>
+      </div>
+
+      {/* Rising Stars Section - Mobile: stacks vertically */}
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-green-400 mb-2 flex items-center">
+          ▲ RISING STARS (Undervalued)
+        </h4>
+        <div className="space-y-2">
+          {undervalued.length > 0 ? (
+            undervalued.map((player, index) => (
+              <div
+                key={player.name}
+                className="flex items-center justify-between p-2 rounded-lg bg-cyan-900/20 hover:bg-cyan-900/30 transition-colors"
+              >
+                <div className="flex items-center">
+                  <span className="text-cyan-400 font-bold text-xs mr-2">{index + 1}.</span>
+                  <span className="text-white text-sm">{player.name}</span>
+                  {player.metrics?.social_data_quality === 'partial' && <PartialDataIcon />}
+                </div>
+                <span className="font-bold text-cyan-400 text-sm">
+                  +{player.metrics?.pipn_score?.toFixed(0)}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm text-center py-2">No data available</p>
+          )}
+        </div>
+      </div>
+
+      {/* Overexposed Section */}
+      <div>
+        <h4 className="text-sm font-semibold text-red-400 mb-2 flex items-center">
+          ▼ OVEREXPOSED (Overvalued)
+        </h4>
+        <div className="space-y-2">
+          {overvalued.length > 0 ? (
+            overvalued.map((player, index) => (
+              <div
+                key={player.name}
+                className="flex items-center justify-between p-2 rounded-lg bg-red-900/20 hover:bg-red-900/30 transition-colors"
+              >
+                <div className="flex items-center">
+                  <span className="text-red-400 font-bold text-xs mr-2">{index + 1}.</span>
+                  <span className="text-white text-sm">{player.name}</span>
+                  {player.metrics?.social_data_quality === 'partial' && <PartialDataIcon />}
+                </div>
+                <span className="font-bold text-red-400 text-sm">
+                  {player.metrics?.pipn_score?.toFixed(0)}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm text-center py-2">No data available</p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 pt-4 border-t border-gray-700">
+        <p className="text-xs text-gray-500 text-center">
+          Attention efficiency relative to social reach
+        </p>
+      </div>
+    </div>
+  );
+}
 
 interface MetricTileProps {
   title: string;
@@ -114,11 +258,28 @@ export default function DemoDashboard({
     async function loadAllMetrics() {
       try {
         setLoading(true);
-        const metricsData = await getEntitiesWithMetrics({
-          subcategory,
-          limit: 100
-        });
-        setAllData(metricsData);
+        // Use getRecentMetrics instead to get PIPN data
+        const metricsData = await getRecentMetrics(
+          'current',
+          undefined, // Get all entities
+          [
+            'hype_score',
+            'rodmn_score',
+            'pipn_score',
+            'reach_score',
+            'mentions',
+            'talk_time',
+            'wikipedia_views'
+          ],
+          100
+        );
+
+        // Filter by subcategory if specified
+        const filteredData = subcategory
+          ? metricsData.filter(entity => entity.subcategory === subcategory)
+          : metricsData;
+
+        setAllData(filteredData);
         setError(null);
       } catch (err) {
         console.error('Error loading all metrics:', err);
@@ -143,11 +304,6 @@ export default function DemoDashboard({
   const formatScore = (value: number) => value.toFixed(1);
   const formatCount = (value: number) => value.toLocaleString();
   const formatTime = (value: number) => `${value.toFixed(1)}m`;
-  const formatViews = (value: number) => {
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
-    return value.toLocaleString();
-  };
 
   const tiles = [
     {
@@ -159,7 +315,7 @@ export default function DemoDashboard({
       color: 'orange'
     },
     {
-      title: "Top 5 RODMN Scores", 
+      title: "Top 5 RODMN Scores",
       icon: <BarChart3 className="w-5 h-5" />,
       data: getTopByMetric('rodmn_score'),
       formatValue: formatScore,
@@ -181,14 +337,6 @@ export default function DemoDashboard({
       formatValue: formatTime,
       valueKey: 'talk_time' as const,
       color: 'green'
-    },
-    {
-      title: "Top 5 Wikipedia Views",
-      icon: <Eye className="w-5 h-5" />,
-      data: getTopByMetric('wikipedia_views'),
-      formatValue: formatViews,
-      valueKey: 'wikipedia_views' as const,
-      color: 'purple'
     }
   ];
 
@@ -237,30 +385,43 @@ export default function DemoDashboard({
             </motion.div>
           ))}
         </div>
-        
-        {/* Bottom row - 2 tiles centered */}
+
+        {/* Bottom row - 2 tiles: Talk Time and PIPN */}
         <div className="flex justify-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ width: 'calc(66.666667% + 0.75rem)' }}>
-          {tiles.slice(3, 5).map((tile, index) => (
+            {/* Talk Time Tile */}
             <motion.div
-              key={tile.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: (index + 3) * 0.1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               <MetricTile
-                title={tile.title}
-                icon={tile.icon}
-                data={tile.data}
-                formatValue={tile.formatValue}
-                valueKey={tile.valueKey}
-                color={tile.color}
+                title={tiles[3].title}
+                icon={tiles[3].icon}
+                data={tiles[3].data}
+                formatValue={tiles[3].formatValue}
+                valueKey={tiles[3].valueKey}
+                color={tiles[3].color}
                 loading={loading}
                 error={error}
               />
             </motion.div>
-          ))}
+
+            {/* PIPN Tile */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <PIPNTile
+                data={allData}
+                loading={loading}
+                error={error}
+                subcategory={subcategory}
+              />
+            </motion.div>
           </div>
         </div>
       </div>

@@ -21,6 +21,10 @@ export interface EntityData {
     reddit_mentions?: number;
     google_trends?: number;
     google_news_mentions?: number;
+    pipn_score?: number | null;
+    reach_score?: number | null;
+    jordn_percentile?: number | null;
+    reach_percentile?: number | null;
   };
   history?: {
     [metric: string]: Array<{
@@ -113,12 +117,16 @@ interface EntityWithMetricsResponse {
   metrics: {
     hype_score?: number;
     rodmn_score?: number;
+    pipn_score?: number | null;
+    reach_score?: number | null;
+    social_data_quality?: string;
     mention_count?: number;
     talk_time?: number;
     sentiment_score?: number;
     wikipedia_views?: number;
     reddit_mentions?: number;
     google_trends?: number;
+    google_news_mentions?: number;
   };
 }
 
@@ -324,6 +332,12 @@ export async function getEntitiesWithMetrics(params?: MetricsParams): Promise<En
       return [];
     }
 
+    // Debug: Log first entity from API to see raw structure
+    if (response.data.entities.length > 0) {
+      console.log('First entity from API (raw):', response.data.entities[0]);
+      console.log('PIPN in first entity:', response.data.entities[0].metrics?.pipn_score);
+    }
+
     // Transform API response to EntityData format
     return response.data.entities.map((entity: EntityWithMetricsResponse) => ({
       name: entity.name,  // Keep 'name' field as EntityData uses 'name'
@@ -332,11 +346,15 @@ export async function getEntitiesWithMetrics(params?: MetricsParams): Promise<En
       metrics: {
         hype_score: entity.metrics?.hype_score || 0,
         rodmn_score: entity.metrics?.rodmn_score || 0,
+        pipn_score: entity.metrics?.pipn_score ?? null,
+        reach_score: entity.metrics?.reach_score ?? null,
+        social_data_quality: entity.metrics?.social_data_quality,
         mentions: entity.metrics?.mention_count || 0,  // Map mention_count to mentions
         talk_time: entity.metrics?.talk_time || 0,
         wikipedia_views: entity.metrics?.wikipedia_views || 0,
         reddit_mentions: entity.metrics?.reddit_mentions || 0,
-        google_trends: entity.metrics?.google_trends || 0
+        google_trends: entity.metrics?.google_trends || 0,
+        google_news_mentions: entity.metrics?.google_news_mentions || 0
       }
     }));
 

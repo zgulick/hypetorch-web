@@ -26,7 +26,7 @@ import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unif
 
 export default function PlatformDemo() {
   const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
-  const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score'>('hype_score');
+  const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score' | 'pipn_score'>('hype_score');
   const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [apiModalOpen, setApiModalOpen] = useState(false);
@@ -199,6 +199,8 @@ export default function PlatformDemo() {
     "metrics": {
       "hype_score": 89.2,
       "rodmn_score": 34.1,
+      "pipn_score": 12.5,
+      "reach_score": 28.3,
       "mentions": 156,
       "talk_time": 12.3,
       "wikipedia_views": 45230,

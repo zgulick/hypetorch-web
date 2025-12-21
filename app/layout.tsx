@@ -11,7 +11,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: "HypeTorch - Turn Podcast Conversations into Competitive Intelligence",
-  description: "Universal narrative intelligence platform. Turn podcast conversations into competitive intelligence across sports, entertainment, crypto, and business. JORDN & RODMN algorithms measure real influence beyond social metrics.",
+  description: "Universal narrative intelligence platform. Turn podcast conversations into competitive intelligence across sports, entertainment, crypto, and business. JORDN, RODMN & PIPN algorithms measure real influence beyond social metrics.",
   keywords: "podcast analysis, narrative intelligence, competitive intelligence, influence measurement, JORDN algorithm, RODMN algorithm, crypto intelligence, sports analytics, entertainment analytics",
   authors: [{ name: "HypeTorch" }],
   creator: "HypeTorch",

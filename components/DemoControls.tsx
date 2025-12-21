@@ -9,8 +9,8 @@ import { TimePeriod } from '@/app/lib/dataService_unified';
 interface DemoControlsProps {
   selectedVertical: string | null;
   onVerticalChange: (vertical: string | null) => void;
-  selectedMetric: 'hype_score' | 'rodmn_score';
-  onMetricChange: (metric: 'hype_score' | 'rodmn_score') => void;
+  selectedMetric: 'hype_score' | 'rodmn_score' | 'pipn_score';
+  onMetricChange: (metric: 'hype_score' | 'rodmn_score' | 'pipn_score') => void;
   currentPeriod: TimePeriod | null;
   className?: string;
 }
@@ -89,6 +89,17 @@ export const DemoControls: React.FC<DemoControlsProps> = ({
                 <BarChart3 className="w-4 h-4" />
                 <span>RODMN</span>
               </button>
+              <button
+                onClick={() => onMetricChange('pipn_score')}
+                className={`px-4 sm:px-6 py-2 rounded-md font-semibold transition-all text-sm whitespace-nowrap flex items-center gap-2 ${
+                  selectedMetric === 'pipn_score'
+                    ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow-lg'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>PIPN</span>
+              </button>
             </div>
           </div>
 
@@ -114,7 +125,7 @@ export const DemoControls: React.FC<DemoControlsProps> = ({
               {selectedVertical || 'All Verticals'}
             </div>
             <div className="px-2 py-1 bg-red-500/20 border border-red-500/30 rounded text-xs text-red-400">
-              {selectedMetric === 'hype_score' ? 'JORDN Score' : 'RODMN Score'}
+              {selectedMetric === 'hype_score' ? 'JORDN Score' : selectedMetric === 'rodmn_score' ? 'RODMN Score' : 'PIPN Score'}
             </div>
           </div>
         </div>

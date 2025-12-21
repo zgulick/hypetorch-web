@@ -2,15 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  TrendingUp, 
-  MessageSquare, 
-  Clock, 
-  Eye, 
-  BarChart3,
-  Hash,
-  Search,
-  FileText
+import {
+  TrendingUp,
+  MessageSquare,
+  Clock,
+  Eye,
+  BarChart3
 } from 'lucide-react';
 
 // Import the unified data service
@@ -32,20 +29,34 @@ interface MetricComparisonProps {
   color: string;
 }
 
-function MetricComparison({ 
-  icon, 
-  label, 
-  playerOneValue, 
-  playerTwoValue, 
-  playerOneName, 
-  playerTwoName, 
+function MetricComparison({
+  icon,
+  label,
+  playerOneValue,
+  playerTwoValue,
+  playerOneName,
+  playerTwoName,
   formatValue,
-  color 
+  color
 }: MetricComparisonProps) {
-  const total = playerOneValue + playerTwoValue;
-  const playerOnePercent = total > 0 ? (playerOneValue / total) * 100 : 50;
-  const playerTwoPercent = total > 0 ? (playerTwoValue / total) * 100 : 50;
-  
+  // Special handling for PIPN which can be negative
+  let playerOnePercent: number;
+  let playerTwoPercent: number;
+
+  if (label === 'PIPN') {
+    // For PIPN, normalize to 0-100 scale since values range from -100 to +100
+    // Convert -100 to +100 range into 0 to 100 percentage
+    const p1Normalized = ((playerOneValue + 100) / 200) * 100; // -100 becomes 0%, +100 becomes 100%
+    const p2Normalized = ((playerTwoValue + 100) / 200) * 100;
+    playerOnePercent = p1Normalized;
+    playerTwoPercent = p2Normalized;
+  } else {
+    // Standard calculation for positive metrics
+    const total = playerOneValue + playerTwoValue;
+    playerOnePercent = total > 0 ? (playerOneValue / total) * 100 : 50;
+    playerTwoPercent = total > 0 ? (playerTwoValue / total) * 100 : 50;
+  }
+
   const leader = playerOneValue > playerTwoValue ? playerOneName : playerTwoName;
   const leadingValue = Math.max(playerOneValue, playerTwoValue);
   
@@ -110,6 +121,8 @@ export default function HeadToHeadComparison({
         const metricsData = await getRecentMetrics('current', [playerOne, playerTwo], [
           'hype_score',
           'rodmn_score',
+          'pipn_score',
+          'reach_score',
           'mentions',
           'talk_time',
           'wikipedia_views',
@@ -208,30 +221,34 @@ export default function HeadToHeadComparison({
 
   const metrics = [
     {
+      key: 'hype_score',
       icon: <TrendingUp className="w-4 h-4" />,
-      label: "JORDN Score",
+      label: "JORDN",
       playerOneValue: playerOneData.metrics?.hype_score || 0,
       playerTwoValue: playerTwoData.metrics?.hype_score || 0,
       formatValue: formatScore,
       color: 'orange'
     },
     {
+      key: 'rodmn_score',
       icon: <BarChart3 className="w-4 h-4" />,
-      label: "RODMN Score",
+      label: "RODMN",
       playerOneValue: playerOneData.metrics?.rodmn_score || 0,
       playerTwoValue: playerTwoData.metrics?.rodmn_score || 0,
       formatValue: formatScore,
       color: 'red'
     },
     {
-      icon: <MessageSquare className="w-4 h-4" />,
-      label: "Mentions",
-      playerOneValue: playerOneData.metrics?.mentions || 0,
-      playerTwoValue: playerTwoData.metrics?.mentions || 0,
-      formatValue: formatCount,
-      color: 'blue'
+      key: 'pipn_score',
+      icon: <BarChart3 className="w-4 h-4" />,
+      label: "PIPN",
+      playerOneValue: playerOneData.metrics?.pipn_score ?? null,
+      playerTwoValue: playerTwoData.metrics?.pipn_score ?? null,
+      formatValue: formatScore,
+      color: 'cyan'
     },
     {
+      key: 'talk_time',
       icon: <Clock className="w-4 h-4" />,
       label: "Talk Time",
       playerOneValue: playerOneData.metrics?.talk_time || 0,
@@ -240,36 +257,22 @@ export default function HeadToHeadComparison({
       color: 'green'
     },
     {
+      key: 'mentions',
+      icon: <MessageSquare className="w-4 h-4" />,
+      label: "Mentions",
+      playerOneValue: playerOneData.metrics?.mentions || 0,
+      playerTwoValue: playerTwoData.metrics?.mentions || 0,
+      formatValue: formatCount,
+      color: 'blue'
+    },
+    {
+      key: 'wikipedia_views',
       icon: <Eye className="w-4 h-4" />,
-      label: "Wikipedia Views",
+      label: "Wiki Views",
       playerOneValue: playerOneData.metrics?.wikipedia_views || 0,
       playerTwoValue: playerTwoData.metrics?.wikipedia_views || 0,
       formatValue: formatViews,
       color: 'purple'
-    },
-    {
-      icon: <Hash className="w-4 h-4" />,
-      label: "Reddit Mentions",
-      playerOneValue: playerOneData.metrics?.reddit_mentions || 0,
-      playerTwoValue: playerTwoData.metrics?.reddit_mentions || 0,
-      formatValue: formatCount,
-      color: 'indigo'
-    },
-    {
-      icon: <Search className="w-4 h-4" />,
-      label: "Google Trends",
-      playerOneValue: playerOneData.metrics?.google_trends || 0,
-      playerTwoValue: playerTwoData.metrics?.google_trends || 0,
-      formatValue: formatCount,
-      color: 'cyan'
-    },
-    {
-      icon: <FileText className="w-4 h-4" />,
-      label: "Google News",
-      playerOneValue: playerOneData.metrics?.google_news_mentions || 0,
-      playerTwoValue: playerTwoData.metrics?.google_news_mentions || 0,
-      formatValue: formatCount,
-      color: 'teal'
     }
   ];
 
@@ -284,7 +287,7 @@ export default function HeadToHeadComparison({
       {/* Header */}
       <div className="text-center mb-6">
         <h4 className="text-xl font-semibold text-white mb-2">
-          Head-to-Head: All 8 Analytics Dimensions
+          Head-to-Head Comparison
         </h4>
         <div className="flex items-center justify-center gap-8">
           <div className="flex items-center">
@@ -299,28 +302,46 @@ export default function HeadToHeadComparison({
         </div>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {metrics.map((metric, index) => (
-          <motion.div
-            key={metric.label}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
-          >
-            <MetricComparison
-              icon={metric.icon}
-              label={metric.label}
-              playerOneValue={metric.playerOneValue}
-              playerTwoValue={metric.playerTwoValue}
-              playerOneName={playerOne}
-              playerTwoName={playerTwo}
-              formatValue={metric.formatValue}
-              color={metric.color}
-            />
-          </motion.div>
-        ))}
+      {/* Metrics Grid - 3x3 layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {metrics.map((metric, index) => {
+          const playerOneValue = metric.playerOneValue;
+          const playerTwoValue = metric.playerTwoValue;
+
+          // Handle NULL PIPN for crypto entities
+          const isNullPIPN = metric.key === 'pipn_score' && (
+            playerOneValue === null || playerTwoValue === null
+          );
+
+          if (isNullPIPN) {
+            return (
+              <div key={metric.key} className="text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <p className="text-sm text-gray-500">{metric.label}: N/A</p>
+              </div>
+            );
+          }
+
+          return (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <MetricComparison
+                icon={metric.icon}
+                label={metric.label}
+                playerOneValue={playerOneValue as number}
+                playerTwoValue={playerTwoValue as number}
+                playerOneName={playerOne}
+                playerTwoName={playerTwo}
+                formatValue={metric.formatValue}
+                color={metric.color}
+              />
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Summary */}

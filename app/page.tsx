@@ -131,7 +131,7 @@ export default function Home() {
             <p className="text-lg text-gray-300 text-center">
               Advanced podcast-based analytics starting at <span className="text-orange-400 font-semibold">$2,500</span> for custom reports
               <br className="hidden sm:block"/>
-              JORDN & RODMN scores from podcast transcript analysis
+              JORDN, RODMN & PIPN scores from podcast transcript analysis
             </p>
           </motion.div>
 
@@ -225,7 +225,7 @@ export default function Home() {
               </div>
               <h3 className="text-white font-semibold mb-2">Algorithm Analysis</h3>
               <p className="text-gray-400 text-sm">
-                Our JORDN & RODMN algorithms process hours of content, 
+                Our proprietary algorithms process hours of content, 
                 measuring influence and controversy patterns.
               </p>
             </motion.div>
@@ -249,21 +249,56 @@ export default function Home() {
             </motion.div>
           </div>
           
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.6 }}
-            className="text-center mt-12 p-6 bg-gray-800/50 rounded-lg"
+            className="mt-12 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-8 border border-gray-700"
           >
-            <h4 className="text-white font-semibold mb-2">Example Industries We&apos;ve Analyzed:</h4>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-300">
-              <span className="bg-orange-600/20 px-3 py-1 rounded">WNBA Players</span>
-              <span className="bg-orange-600/20 px-3 py-1 rounded">NFL Teams</span>
-              <span className="bg-orange-600/20 px-3 py-1 rounded">Cryptocurrency</span>
-              <span className="bg-orange-600/20 px-3 py-1 rounded">Entertainment</span>
-              <span className="bg-orange-600/20 px-3 py-1 rounded">Politics</span>
-              <span className="bg-orange-600/20 px-3 py-1 rounded">Your Industry?</span>
+            <h4 className="text-2xl font-bold text-white mb-6 text-center">Our Proprietary Algorithms</h4>
+            <p className="text-gray-400 text-center mb-8">Three complementary metrics that tell the complete story</p>
+
+            {/* JORDN */}
+            <div className="mb-6 pb-6 border-b border-gray-700">
+              <h5 className="text-xl font-bold text-orange-400 mb-2">
+                JORDN - Judge Of Relevance & Digital Notability
+              </h5>
+              <p className="text-gray-300 mb-2">
+                Measures who&apos;s getting talked about right now. Combines podcast mentions,
+                talk time, social signals, and search interest into a single popularity score.
+              </p>
+              <p className="text-sm text-gray-500">
+                Scale: 0-200+ (100 = average)
+              </p>
+            </div>
+
+            {/* RODMN */}
+            <div className="mb-6 pb-6 border-b border-gray-700">
+              <h5 className="text-xl font-bold text-red-400 mb-2">
+                RODMN - Rating Of Divisive Media Narratives
+              </h5>
+              <p className="text-gray-300 mb-2">
+                Measures who&apos;s generating controversy and polarizing opinions.
+                Identifies athletes driving heated debate.
+              </p>
+              <p className="text-sm text-gray-500">
+                Scale: 0-10 (higher = more divisive)
+              </p>
+            </div>
+
+            {/* PIPN */}
+            <div>
+              <h5 className="text-xl font-bold text-cyan-400 mb-2">
+                PIPN - Popularity Index Per Network
+              </h5>
+              <p className="text-gray-300 mb-2">
+                Measures attention efficiency - who&apos;s over or undervalued relative to
+                their social media reach. Find the bargains and spot the overexposed.
+              </p>
+              <p className="text-sm text-gray-500">
+                Scale: -100 to +100 (0 = fairly valued)
+              </p>
             </div>
           </motion.div>
         </div>
@@ -302,7 +337,7 @@ export default function Home() {
               <h3 className="text-orange-400 text-xl font-semibold mb-4">WNBA/Unrivaled Intelligence</h3>
               <ul className="text-gray-300 text-sm space-y-1 mb-4">
                 <li>• 50+ players tracked across 16 weeks</li>
-                <li>• Real-time JORDN & RODMN scores</li>
+                <li>• Real-time JORDN, RODMN & PIPN scores</li>
                 <li>• Weekly narrative momentum analysis</li>
                 <li>• Live production environment</li>
               </ul>

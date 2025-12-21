@@ -1,3 +1,5 @@
+'use client';
+
 export default function StructuredData() {
   const structuredData = {
     "@context": "https://schema.org",
@@ -28,7 +30,7 @@ export default function StructuredData() {
         "description": "Data-driven measurement of athlete influence and marketing impact beyond traditional social media metrics"
       },
       {
-        "@type": "Service", 
+        "@type": "Service",
         "name": "Sports Marketing Intelligence",
         "description": "Comprehensive analytics platform for optimizing sports marketing ROI and partnership decisions"
       },
@@ -46,6 +48,7 @@ export default function StructuredData() {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      suppressHydrationWarning
     />
   );
 }

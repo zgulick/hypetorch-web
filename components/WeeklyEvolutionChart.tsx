@@ -190,8 +190,9 @@ export default function WeeklyEvolutionChart({
 
   const getMetricLabel = (metricType: string) => {
     switch (metricType) {
-      case 'hype_score': return 'HYPE Score';
+      case 'hype_score': return 'JORDN Score';
       case 'rodmn_score': return 'RODMN Score';
+      case 'pipn_score': return 'PIPN Score';
       case 'mentions': return 'Mentions';
       case 'talk_time': return 'Talk Time (min)';
       default: return metricType;
@@ -204,6 +205,8 @@ export default function WeeklyEvolutionChart({
         return [0, 'dataMax + 20']; // Allow scores above 100 (average)
       case 'rodmn_score':
         return [0, 10];
+      case 'pipn_score':
+        return [-100, 100]; // PIPN range: -100 to +100
       case 'mentions':
         return [0, 'dataMax + 50'];
       case 'talk_time':
@@ -318,6 +321,16 @@ export default function WeeklyEvolutionChart({
                 stroke="#6B7280"
                 strokeDasharray="2 2"
                 label={{ value: "Average (100)", position: "top" }}
+              />
+            )}
+
+            {/* Reference line for PIPN fairly valued */}
+            {metric === 'pipn_score' && (
+              <ReferenceLine
+                y={0}
+                stroke="#64748b"
+                strokeDasharray="3 3"
+                label={{ value: 'Fairly Valued', position: 'right', fill: '#64748b' }}
               />
             )}
             
