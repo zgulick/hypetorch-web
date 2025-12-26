@@ -30,8 +30,15 @@ export default function PlatformDemo() {
   const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [apiModalOpen, setApiModalOpen] = useState(false);
-  
+
   useEffect(() => {
+    // Read vertical from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const verticalParam = urlParams.get('vertical');
+    if (verticalParam) {
+      setSelectedVertical(verticalParam);
+    }
+
     async function loadDemoData() {
       try {
         // Load current period
@@ -41,7 +48,7 @@ export default function PlatformDemo() {
         console.error('Error loading demo data:', error);
       }
     }
-    
+
     loadDemoData();
   }, []);
 
