@@ -11,7 +11,6 @@ import Image from "next/image";
 import PlayerShowcase from '@/components/PlayerShowcase';
 import TopMoversWidget from '@/components/TopMoversWidget';
 import IntelligenceDashboard from '@/components/IntelligenceDashboard';
-import GetStartedButton from '@/components/GetStartedButton';
 
 // Import data service
 import { getCurrentAnalysisPeriod, TimePeriod } from '@/app/lib/dataService_unified';
