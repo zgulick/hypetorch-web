@@ -42,6 +42,9 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
         setLoading(true);
         setError(null);
         const data = await getAvailableVerticals();
+        console.log('🔍 Verticals loaded:', data);
+        console.log('📊 Verticals with recent data:', data.filter(v => v.has_recent_data).length);
+        console.log('⚠️ Verticals without recent data:', data.filter(v => !v.has_recent_data).map(v => v.key));
         setVerticals(data);
       } catch (err) {
         console.error('Error loading verticals:', err);
@@ -102,20 +105,23 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
         All Verticals
       </button>
 
-      {/* Dynamic vertical buttons from API */}
-      {verticals.map((vertical) => (
-        <button
-          key={vertical.key}
-          onClick={() => onChange(vertical.key)}
-          className={`px-4 sm:px-6 py-3 rounded-md font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
-            selected === vertical.key
-              ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg shadow-orange-900/50'
-              : 'text-gray-400 hover:text-white hover:bg-gray-700'
-          }`}
-        >
-          {vertical.label}
-        </button>
-      ))}
+      {/* Dynamic vertical buttons from API - only show verticals with recent data */}
+      {verticals
+        .filter(v => v.has_recent_data)
+        .map((vertical) => (
+          <button
+            key={vertical.key}
+            onClick={() => onChange(vertical.key)}
+            className={`px-4 sm:px-6 py-3 rounded-md font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
+              selected === vertical.key
+                ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg shadow-orange-900/50'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700'
+            }`}
+          >
+            {vertical.label}
+          </button>
+        ))
+      }
     </div>
   );
 };
