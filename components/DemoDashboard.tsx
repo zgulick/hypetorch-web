@@ -6,20 +6,22 @@ import { TrendingUp, MessageSquare, Clock, BarChart3, AlertTriangle } from 'luci
 
 // Import the unified data service
 import { getRecentMetrics, EntityData } from '@/app/lib/dataService_unified';
+import { Vertical, getAvailableVerticals } from '@/app/lib/verticals';
 
 interface PIPNTileProps {
   data: EntityData[];
   loading: boolean;
   error: string | null;
   subcategory: string | null;
+  verticals: Vertical[];
 }
 
-function PIPNTile({ data, loading, subcategory }: PIPNTileProps) {
-  // If crypto vertical (any crypto subcategory), hide or gray out
-  const cryptoSubcategories = ['Crypto', 'Bitcoin', 'Altcoins', 'Memecoins', 'Major Coins'];
-  const isCrypto = cryptoSubcategories.includes(subcategory || '');
+function PIPNTile({ data, loading, subcategory, verticals }: PIPNTileProps) {
+  // Get vertical metadata from verticals array
+  const currentVertical = verticals.find(v => v.key === subcategory);
+  const isNonPersonVertical = currentVertical && !currentVertical.has_person_entities;
 
-  if (isCrypto) {
+  if (isNonPersonVertical) {
     return (
       <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700/50 opacity-50">
         <div className="flex items-center mb-4">
@@ -27,7 +29,7 @@ function PIPNTile({ data, loading, subcategory }: PIPNTileProps) {
           <h3 className="text-lg font-semibold text-gray-500">Attention Efficiency</h3>
         </div>
         <div className="text-center py-8">
-          <p className="text-gray-500">PIPN available for athletes only</p>
+          <p className="text-gray-500">PIPN available for people only</p>
         </div>
       </div>
     );
@@ -226,7 +228,7 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
             </div>
             <div className="text-right">
               <p className={`font-bold text-${color}-400 text-sm`}>
-                {formatValue(typeof player.metrics?.[valueKey] === 'number' ? player.metrics[valueKey] : 0)}
+                {formatValue(player.metrics?.[valueKey] || 0)}
               </p>
             </div>
           </motion.div>
@@ -253,6 +255,20 @@ export default function DemoDashboard({
   const [allData, setAllData] = useState<EntityData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [verticals, setVerticals] = useState<Vertical[]>([]);
+
+  // Load verticals data on mount
+  useEffect(() => {
+    async function loadVerticals() {
+      try {
+        const verticalsData = await getAvailableVerticals();
+        setVerticals(verticalsData);
+      } catch (err) {
+        console.error('Error loading verticals:', err);
+      }
+    }
+    loadVerticals();
+  }, []);
 
   useEffect(() => {
     async function loadAllMetrics() {
@@ -420,6 +436,7 @@ export default function DemoDashboard({
                 loading={loading}
                 error={error}
                 subcategory={subcategory}
+                verticals={verticals}
               />
             </motion.div>
           </div>
