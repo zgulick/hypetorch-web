@@ -16,29 +16,40 @@ import apiV2 from './api_v2';
  * Represents a vertical/subcategory (e.g., NBA, Unrivaled, Bitcoin)
  */
 export interface Vertical {
-  key: string;           // Unique identifier (e.g., "NBA", "Unrivaled")
-  label: string;         // Display label (e.g., "NBA", "WNBA/Unrivaled")
-  category: string;      // Parent category (e.g., "Sports", "Crypto")
-  entity_count: number;  // Number of entities in this vertical
+  key: string;                    // Unique identifier (e.g., "NBA", "Unrivaled")
+  label: string;                  // Display label (e.g., "NBA", "WNBA/Unrivaled")
+  category: string;               // Parent category (e.g., "Sports", "Crypto")
+  entity_count: number;           // Number of entities in this vertical
+  has_recent_data: boolean;       // Whether vertical has data in last 30 days
+  last_updated: string | null;    // Last metric timestamp (ISO format)
+  has_person_entities: boolean;   // Whether vertical contains person-type entities
 }
+
+// Cache for verticals data
+let _verticalsCache: { data: Vertical[], timestamp: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Fetch available verticals from the API
  *
  * Makes a call to /v2/verticals endpoint to get all available subcategories
- * with their entity counts. This is typically called once on page load to
- * populate vertical selectors.
+ * with their entity counts. Results are cached for 5 minutes to reduce API calls.
  *
  * @returns Promise<Vertical[]> - Array of available verticals
  *
  * @example
  * const verticals = await getAvailableVerticals();
  * // Returns: [
- * //   { key: "NBA", label: "NBA", category: "Sports", entity_count: 16 },
- * //   { key: "Unrivaled", label: "Unrivaled", category: "Sports", entity_count: 37 }
+ * //   { key: "NBA", label: "NBA", category: "Sports", entity_count: 16, has_recent_data: true, ... },
+ * //   { key: "Unrivaled", label: "Unrivaled", category: "Sports", entity_count: 37, has_recent_data: true, ... }
  * // ]
  */
 export async function getAvailableVerticals(): Promise<Vertical[]> {
+  // Check cache first
+  if (_verticalsCache && Date.now() - _verticalsCache.timestamp < CACHE_TTL) {
+    return _verticalsCache.data;
+  }
+
   try {
     const response = await apiV2.get('/verticals');
 
@@ -48,10 +59,17 @@ export async function getAvailableVerticals(): Promise<Vertical[]> {
       return [];
     }
 
+    // Update cache
+    _verticalsCache = {
+      data: response.data.verticals,
+      timestamp: Date.now()
+    };
+
     return response.data.verticals;
   } catch (error) {
     console.error('Error fetching verticals:', error);
-    return [];
+    // Return cached data if available, even if expired
+    return _verticalsCache?.data || [];
   }
 }
 
