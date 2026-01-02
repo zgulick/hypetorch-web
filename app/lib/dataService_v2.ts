@@ -16,6 +16,10 @@ export interface EntityDataV2 {
     wikipedia_views?: number;
     reddit_mentions?: number;
     google_trends?: number;
+    pipn_score?: number;
+    jordn_percentile?: number;
+    reach_percentile?: number;
+    social_data_quality?: string;
   };
   related_entities?: {
     rivals?: Array<{

@@ -228,7 +228,7 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
             </div>
             <div className="text-right">
               <p className={`font-bold text-${color}-400 text-sm`}>
-                {formatValue(typeof player.metrics?.[valueKey] === 'number' ? player.metrics[valueKey] : 0)}
+                {formatValue(Number(player.metrics?.[valueKey] || 0))}
               </p>
             </div>
           </motion.div>

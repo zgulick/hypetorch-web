@@ -25,7 +25,7 @@ export interface EntityData {
     reach_score?: number | null;
     jordn_percentile?: number | null;
     reach_percentile?: number | null;
-    social_data_quality?: 'complete' | 'partial' | 'none' | null;
+    social_data_quality?: string;
   };
   history?: {
     [metric: string]: Array<{
