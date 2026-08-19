@@ -12,45 +12,16 @@ import GetStartedButton from '@/components/GetStartedButton';
 // Import client components
 import DemoPageClient from '@/components/DemoPageClient';
 
-// Import data service for server-side fetching
-import { getCurrentAnalysisPeriod, getWeeklyEvolutionData, getRecentMetrics, getEntitiesWithMetrics } from '@/app/lib/dataService_unified';
+// Force dynamic rendering (no static generation at build time)
+export const dynamic = 'force-dynamic';
 
 /**
- * Demo Page - Server Component with SSR
+ * Demo Page - Dynamic Server Component
  *
- * This page pre-fetches all data on the server for faster initial load.
- * Interactive features (controls, randomization) are handled by client components.
+ * Uses dynamic rendering to avoid build-time API calls.
+ * Data is fetched on the server at request time for better performance.
  */
-export default async function PlatformDemo() {
-  // Fetch all data server-side in parallel for optimal performance
-  const [currentPeriod, initialEntitiesData, initialMetricsData] = await Promise.all([
-    getCurrentAnalysisPeriod(),
-    // Get top entities for initial chart display (5 random entities)
-    getEntitiesWithMetrics({ limit: 50, category: 'Sports' }),
-    // Get metrics for dashboard
-    getRecentMetrics(
-      'current',
-      undefined,
-      [
-        'hype_score',
-        'rodmn_score',
-        'pipn_score',
-        'reach_score',
-        'mentions',
-        'talk_time',
-        'wikipedia_views'
-      ],
-      100,
-      'Sports'
-    )
-  ]);
-
-  // Select 5 random players for initial chart display
-  const shuffledEntities = [...initialEntitiesData].sort(() => 0.5 - Math.random());
-  const initialPlayerNames = shuffledEntities.slice(0, 5).map(e => e.name);
-
-  // Fetch initial evolution data for the selected players
-  const initialEvolutionData = await getWeeklyEvolutionData(initialPlayerNames, 5, 'hype_score');
+export default function PlatformDemo() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
@@ -72,13 +43,7 @@ export default async function PlatformDemo() {
       </section>
 
       {/* Client-side interactive components */}
-      <DemoPageClient
-        currentPeriod={currentPeriod}
-        initialEvolutionData={initialEvolutionData}
-        initialPlayerNames={initialPlayerNames}
-        allAvailableEntities={initialEntitiesData}
-        initialMetricsData={initialMetricsData}
-      />
+      <DemoPageClient />
 
       {/* API Preview Section - Static content */}
       <section id="api-preview" className="py-16 px-6 bg-gray-900">

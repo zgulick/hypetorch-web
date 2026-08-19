@@ -10,36 +10,22 @@ import DemoDashboard from '@/components/DemoDashboard';
 import HeadToHeadComparison from '@/components/HeadToHeadComparison';
 import DemoControls from '@/components/DemoControls';
 
-// Import types
-import { TimePeriod, EntityData } from '@/app/lib/dataService_unified';
-
-interface EvolutionDataPoint {
-  time_period: string;
-  display_label: string;
-  [playerName: string]: string | number;
-}
-
-interface DemoPageClientProps {
-  currentPeriod: TimePeriod | null;
-  initialEvolutionData: EvolutionDataPoint[];
-  initialPlayerNames: string[];
-  allAvailableEntities: EntityData[];
-  initialMetricsData: EntityData[];
-}
+// Import types and data fetching
+import { TimePeriod, getCurrentAnalysisPeriod } from '@/app/lib/dataService_unified';
 
 /**
  * DemoPageClient - Client Component for Interactive Demo Features
  *
- * Receives pre-fetched data from server component and handles all interactivity:
+ * Handles all interactivity client-side:
  * - Vertical/metric selection
  * - Chart randomization
  * - URL query parameter handling
+ * - Data fetching for current period info
  */
-export default function DemoPageClient({
-  currentPeriod
-}: DemoPageClientProps) {
+export default function DemoPageClient() {
   const [selectedMetric, setSelectedMetric] = useState<'hype_score' | 'rodmn_score' | 'pipn_score'>('hype_score');
   const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
+  const [currentPeriod, setCurrentPeriod] = useState<TimePeriod | null>(null);
 
   useEffect(() => {
     // Read vertical from URL query parameter
@@ -48,6 +34,17 @@ export default function DemoPageClient({
     if (verticalParam) {
       setSelectedVertical(verticalParam);
     }
+
+    // Fetch current period data
+    async function loadPeriod() {
+      try {
+        const period = await getCurrentAnalysisPeriod();
+        setCurrentPeriod(period);
+      } catch (error) {
+        console.error('Error loading current period:', error);
+      }
+    }
+    loadPeriod();
   }, []);
 
   return (
