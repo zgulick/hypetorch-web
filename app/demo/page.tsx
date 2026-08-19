@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import {
   Zap,
   Database,
@@ -8,20 +10,19 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '../Navbar';
 import GetStartedButton from '@/components/GetStartedButton';
+import ContactModal from '@/components/ContactModal';
 
 // Import client components
 import DemoPageClient from '@/components/DemoPageClient';
 
-// Force dynamic rendering (no static generation at build time)
-export const dynamic = 'force-dynamic';
-
 /**
- * Demo Page - Dynamic Server Component
+ * Demo Page - Client Component with Optimized Data Fetching
  *
- * Uses dynamic rendering to avoid build-time API calls.
- * Data is fetched on the server at request time for better performance.
+ * Fully client-rendered with data fetching handled in child components.
  */
 export default function PlatformDemo() {
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [apiModalOpen, setApiModalOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
@@ -201,6 +202,23 @@ export default function PlatformDemo() {
           </div>
         </div>
       </footer>
+
+      {/* Contact Modals */}
+      <ContactModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+        title="Schedule Full Demo"
+        subtitle="See the complete HypeTorch platform in action"
+        inquiryType="demo"
+      />
+
+      <ContactModal
+        isOpen={apiModalOpen}
+        onClose={() => setApiModalOpen(false)}
+        title="Request API Access"
+        subtitle="Get started with HypeTorch API integration"
+        inquiryType="api_access"
+      />
     </main>
   );
 }
