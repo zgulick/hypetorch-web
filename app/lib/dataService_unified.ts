@@ -252,13 +252,15 @@ export async function getRecentMetrics(
   period: string = 'current',
   entities?: string[],
   metrics?: string[],
-  limit: number = 20
+  limit: number = 20,
+  category: string = 'Sports'
 ): Promise<EntityData[]> {
   try {
     const params: Record<string, string | number> = { period, limit };
     if (entities) params.entities = entities.join(',');
     if (metrics) params.metrics = metrics.join(',');
-    
+    if (category) params.category = category;
+
     const response = await apiV2.get('/metrics/recent', { params });
     return response.data;
   } catch (error) {
@@ -309,8 +311,12 @@ export async function getEntitiesWithMetrics(params?: MetricsParams): Promise<En
     console.log('getEntitiesWithMetrics called with:', params);
     console.log('Query params being sent:', queryParams);
 
+    // Default to Sports category if not specified
     if (params?.category) {
       queryParams.category = params.category;
+    } else if (params?.category !== null) {
+      // Only add default if category wasn't explicitly set to null
+      queryParams.category = 'Sports';
     }
 
     if (params?.time_period) {
