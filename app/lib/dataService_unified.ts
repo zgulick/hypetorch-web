@@ -253,10 +253,42 @@ export async function getRecentMetrics(
   entities?: string[],
   metrics?: string[],
   limit: number = 20,
-  category: string = 'Sports'
+  category: string = 'Sports',
+  subcategory?: string | null
 ): Promise<EntityData[]> {
   try {
     const params: Record<string, string | number> = { period, limit };
+    if (entities) params.entities = entities.join(',');
+    if (metrics) params.metrics = metrics.join(',');
+    if (category) params.category = category;
+    if (subcategory) params.subcategory = subcategory;
+
+    const response = await apiV2.get('/metrics/recent', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching recent metrics:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get metrics for several time periods in a single request.
+ *
+ * Backed by the `periods` parameter on /v2/metrics/recent. Each returned row is
+ * one (entity, time_period) pair, so callers should key on both.
+ */
+export async function getRecentMetricsForPeriods(
+  periods: string[],
+  entities?: string[],
+  metrics?: string[],
+  limit: number = 100,
+  category: string = 'Sports'
+): Promise<EntityData[]> {
+  try {
+    const params: Record<string, string | number> = {
+      periods: periods.join(','),
+      limit
+    };
     if (entities) params.entities = entities.join(',');
     if (metrics) params.metrics = metrics.join(',');
     if (category) params.category = category;
@@ -264,7 +296,7 @@ export async function getRecentMetrics(
     const response = await apiV2.get('/metrics/recent', { params });
     return response.data;
   } catch (error) {
-    console.error('Error fetching recent metrics:', error);
+    console.error('Error fetching multi-period metrics:', error);
     throw error;
   }
 }
@@ -384,17 +416,42 @@ export async function getDashboardWidgets(): Promise<DashboardWidgets> {
   }
 }
 
+// /time-periods is one of the slowest endpoints and used to be requested three
+// times on a single /demo load. Cache the result, and — importantly — cache the
+// in-flight promise too, so components mounting in the same tick share one
+// request instead of racing and all missing an as-yet-unpopulated cache.
+const TIME_PERIODS_TTL = 5 * 60 * 1000;
+let _timePeriodsCache: { data: TimePeriod[]; timestamp: number } | null = null;
+let _timePeriodsInFlight: Promise<TimePeriod[]> | null = null;
+
 /**
  * Get available time periods
  */
 export async function getTimePeriods(): Promise<TimePeriod[]> {
-  try {
-    const response = await apiV2.get('/time-periods');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching time periods:', error);
-    throw error;
+  if (_timePeriodsCache && Date.now() - _timePeriodsCache.timestamp < TIME_PERIODS_TTL) {
+    return _timePeriodsCache.data;
   }
+
+  if (_timePeriodsInFlight) {
+    return _timePeriodsInFlight;
+  }
+
+  _timePeriodsInFlight = (async () => {
+    try {
+      const response = await apiV2.get('/time-periods');
+      _timePeriodsCache = { data: response.data, timestamp: Date.now() };
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching time periods:', error);
+      // Serve stale data rather than failing the page if we have any.
+      if (_timePeriodsCache) return _timePeriodsCache.data;
+      throw error;
+    } finally {
+      _timePeriodsInFlight = null;
+    }
+  })();
+
+  return _timePeriodsInFlight;
 }
 
 // ==================== COMPARISON & ANALYTICS ====================
@@ -486,34 +543,43 @@ export async function getWeeklyEvolutionData(
   metric: string = 'hype_score'
 ) {
   try {
-    // First get available time periods
+    // First get available time periods (memoized above)
     const timePeriods = await getTimePeriods();
     const recentPeriods = timePeriods.slice(0, periods);
-    
-    // Get data for each period
-    const evolutionData: Array<{ time_period: string; display_label: string; [key: string]: string | number }> = [];
-    
-    for (const period of recentPeriods) {
-      const periodData = await getRecentMetrics(
-        period.time_period,
-        playerNames,
-        [metric]
-      );
-      
+
+    if (recentPeriods.length === 0) return [];
+
+    // Fetch every period in ONE request. This used to be a `for` loop with an
+    // `await` inside it — one sequential round trip per period.
+    const allPeriodData = await getRecentMetricsForPeriods(
+      recentPeriods.map(p => p.time_period),
+      playerNames,
+      [metric]
+    );
+
+    // Index by "period::name" so each period entry is a cheap lookup.
+    const byPeriodAndName = new Map<string, EntityData>();
+    for (const row of allPeriodData) {
+      if (row.time_period) {
+        byPeriodAndName.set(`${row.time_period}::${row.name}`, row);
+      }
+    }
+
+    const evolutionData = recentPeriods.map(period => {
       const periodEntry: { time_period: string; display_label: string; [key: string]: string | number } = {
         time_period: period.time_period,
         display_label: period.display_label
       };
-      
+
       // Add each player's score for this period
       for (const player of playerNames) {
-        const playerData = periodData.find(p => p.name === player);
+        const playerData = byPeriodAndName.get(`${period.time_period}::${player}`);
         periodEntry[player] = playerData?.metrics?.[metric as keyof typeof playerData.metrics] || 0;
       }
-      
-      evolutionData.push(periodEntry);
-    }
-    
+
+      return periodEntry;
+    });
+
     return evolutionData.reverse(); // Show oldest to newest
   } catch (error) {
     console.error('Error fetching weekly evolution data:', error);
@@ -574,6 +640,7 @@ const dataServiceUnified = {
   getEntityBulk,
   getTrendingEntities,
   getRecentMetrics,
+  getRecentMetricsForPeriods,
   getEntitiesWithMetrics,
   getDashboardWidgets,
   getTimePeriods,

@@ -1,3 +1,9 @@
+'use client';
+
+// This component uses framer-motion and an onClick handler, so it must be a
+// client component. It previously relied on every importer already being one;
+// rendering it from a server component made `motion` resolve to undefined
+// ("Element type is invalid ... got: undefined").
 import Link from 'next/link';
 import { ButtonHTMLAttributes } from 'react';
 import { motion } from 'framer-motion';

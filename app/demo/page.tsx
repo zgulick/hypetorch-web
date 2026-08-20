@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Zap,
   Database,
@@ -10,19 +8,38 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '../Navbar';
 import GetStartedButton from '@/components/GetStartedButton';
-import ContactModal from '@/components/ContactModal';
+import DemoContactModals from '@/components/DemoContactModals';
 
 // Import client components
 import DemoPageClient from '@/components/DemoPageClient';
 
+// Import server-side data loading
+import { getDemoInitialData } from '@/app/lib/demoData.server';
+
 /**
- * Demo Page - Client Component with Optimized Data Fetching
+ * Demo Page - Server Component with cached server-side data fetching.
  *
- * Fully client-rendered with data fetching handled in child components.
+ * All of the page's data is fetched here, on the server, in two parallel waves
+ * and cached for an hour (the underlying analysis is regenerated weekly). The
+ * static marketing sections below ship zero JavaScript; only DemoPageClient and
+ * DemoContactModals hydrate.
+ *
+ * If the API is unreachable the loader returns `degraded: true` rather than
+ * throwing, so the build still succeeds and the client fetches after hydration.
+ *
+ * Note this page deliberately does NOT read `searchParams`. Doing so would opt
+ * it into dynamic rendering and forfeit the prerendered HTML. The default
+ * (cross-vertical) view is what nearly every visitor sees, so we statically
+ * render that; DemoPageClient still reads `?vertical=` on mount and refetches
+ * for the rarer deep-linked case.
  */
-export default function PlatformDemo() {
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
-  const [apiModalOpen, setApiModalOpen] = useState(false);
+// Must be a literal - Next.js statically analyses this export, so it cannot be
+// an imported constant. Keep in sync with DEMO_REVALIDATE_SECONDS in
+// app/lib/demoData.server.ts, which controls the upstream fetch cache.
+export const revalidate = 3600; // 1 hour
+
+export default async function PlatformDemo() {
+  const initialData = await getDemoInitialData();
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
@@ -43,8 +60,8 @@ export default function PlatformDemo() {
         </div>
       </section>
 
-      {/* Client-side interactive components */}
-      <DemoPageClient />
+      {/* Client-side interactive components, seeded with server-fetched data */}
+      <DemoPageClient initialData={initialData} />
 
       {/* API Preview Section - Static content */}
       <section id="api-preview" className="py-16 px-6 bg-gray-900">
@@ -203,22 +220,8 @@ export default function PlatformDemo() {
         </div>
       </footer>
 
-      {/* Contact Modals */}
-      <ContactModal
-        isOpen={demoModalOpen}
-        onClose={() => setDemoModalOpen(false)}
-        title="Schedule Full Demo"
-        subtitle="See the complete HypeTorch platform in action"
-        inquiryType="demo"
-      />
-
-      <ContactModal
-        isOpen={apiModalOpen}
-        onClose={() => setApiModalOpen(false)}
-        title="Request API Access"
-        subtitle="Get started with HypeTorch API integration"
-        inquiryType="api_access"
-      />
+      {/* Contact Modals (client island - they hold useState) */}
+      <DemoContactModals />
     </main>
   );
 }

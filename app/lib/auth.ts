@@ -1,11 +1,22 @@
 // Basic authentication for admin panel
 // This is a simple implementation for MVP purposes
-
-// The admin password (in production, use environment variables)
-const ADMIN_PASSWORD = "LetsGoHype!101";
+//
+// SECURITY NOTE: this is not a real authentication boundary. The comparison below
+// runs in the browser, and NEXT_PUBLIC_* values are inlined into the client bundle
+// at build time, so the password is readable by anyone who opens devtools. Moving
+// it here only keeps it out of the git repository. Gating anything that actually
+// matters requires server-side auth (a route handler or middleware validating a
+// session), which this module deliberately does not attempt.
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
 // Check if the password is correct
 export function validateAdminPassword(password: string): boolean {
+  // Fail closed: with no password configured, reject everything rather than
+  // letting an empty string through.
+  if (!ADMIN_PASSWORD) {
+    console.error('NEXT_PUBLIC_ADMIN_PASSWORD is not set - admin login is disabled.');
+    return false;
+  }
   return password === ADMIN_PASSWORD;
 }
 

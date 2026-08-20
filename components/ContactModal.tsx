@@ -1,7 +1,21 @@
 "use client";
 
 import { useEffect } from 'react';
-import ContactForm from './ContactForm';
+import dynamic from 'next/dynamic';
+
+// ContactForm is ~400 lines plus a dozen icons, and every page that mounts a
+// ContactModal (the demo page mounts three, all closed) was pulling it into the
+// initial bundle to render nothing. Load it only when a modal actually opens.
+const ContactForm = dynamic(() => import('./ContactForm'), {
+  ssr: false,
+  loading: () => (
+    <div className="p-8 space-y-4" aria-busy="true">
+      <div className="h-10 rounded bg-gray-700/60 animate-pulse" />
+      <div className="h-10 rounded bg-gray-700/60 animate-pulse" />
+      <div className="h-28 rounded bg-gray-700/60 animate-pulse" />
+    </div>
+  )
+});
 
 interface ContactModalProps {
   isOpen: boolean;

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Calendar, TrendingUp, BarChart3 } from 'lucide-react';
 import VerticalSelector from './VerticalSelector';
 import { TimePeriod } from '@/app/lib/dataService_unified';
+import type { Vertical } from '@/app/lib/verticals';
 
 interface DemoControlsProps {
   selectedVertical: string | null;
@@ -13,6 +14,8 @@ interface DemoControlsProps {
   onMetricChange: (metric: 'hype_score' | 'rodmn_score' | 'pipn_score') => void;
   currentPeriod: TimePeriod | null;
   className?: string;
+  /** Verticals prefetched on the server. */
+  initialVerticals?: Vertical[];
 }
 
 /**
@@ -31,7 +34,8 @@ export const DemoControls: React.FC<DemoControlsProps> = ({
   selectedMetric,
   onMetricChange,
   currentPeriod,
-  className = ''
+  className = '',
+  initialVerticals
 }) => {
   const formatPeriodLabel = (period: TimePeriod | null) => {
     if (!period) return "Latest Period";
@@ -58,6 +62,7 @@ export const DemoControls: React.FC<DemoControlsProps> = ({
               selected={selectedVertical}
               onChange={onVerticalChange}
               className="w-full"
+              initialVerticals={initialVerticals}
             />
           </div>
 

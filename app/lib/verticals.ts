@@ -27,6 +27,10 @@ export interface Vertical {
 
 // Cache for verticals data
 let _verticalsCache: { data: Vertical[], timestamp: number } | null = null;
+// Tracks an outstanding request so simultaneous callers share it. Without this,
+// VerticalSelector and DemoDashboard both mount in the same tick, both miss the
+// not-yet-populated cache, and both hit the network.
+let _verticalsInFlight: Promise<Vertical[]> | null = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
@@ -50,27 +54,38 @@ export async function getAvailableVerticals(): Promise<Vertical[]> {
     return _verticalsCache.data;
   }
 
-  try {
-    const response = await apiV2.get('/verticals');
-
-    // Validate response structure
-    if (!response.data?.verticals) {
-      console.error('Invalid verticals response:', response.data);
-      return [];
-    }
-
-    // Update cache
-    _verticalsCache = {
-      data: response.data.verticals,
-      timestamp: Date.now()
-    };
-
-    return response.data.verticals;
-  } catch (error) {
-    console.error('Error fetching verticals:', error);
-    // Return cached data if available, even if expired
-    return _verticalsCache?.data || [];
+  // Join an in-flight request rather than starting a second one
+  if (_verticalsInFlight) {
+    return _verticalsInFlight;
   }
+
+  _verticalsInFlight = (async () => {
+    try {
+      const response = await apiV2.get('/verticals');
+
+      // Validate response structure
+      if (!response.data?.verticals) {
+        console.error('Invalid verticals response:', response.data);
+        return [];
+      }
+
+      // Update cache
+      _verticalsCache = {
+        data: response.data.verticals,
+        timestamp: Date.now()
+      };
+
+      return response.data.verticals;
+    } catch (error) {
+      console.error('Error fetching verticals:', error);
+      // Return cached data if available, even if expired
+      return _verticalsCache?.data || [];
+    } finally {
+      _verticalsInFlight = null;
+    }
+  })();
+
+  return _verticalsInFlight;
 }
 
 /**

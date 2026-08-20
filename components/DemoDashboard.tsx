@@ -246,19 +246,31 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
 interface DemoDashboardProps {
   className?: string;
   subcategory?: string | null;
+  /** Metrics prefetched on the server for the default (no-vertical) view. */
+  initialData?: EntityData[];
+  /** Verticals prefetched on the server. */
+  initialVerticals?: Vertical[];
 }
 
 export default function DemoDashboard({
   className = '',
-  subcategory = null
+  subcategory = null,
+  initialData,
+  initialVerticals
 }: DemoDashboardProps) {
-  const [allData, setAllData] = useState<EntityData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [verticals, setVerticals] = useState<Vertical[]>([]);
+  // Server-provided data covers the initial (no-subcategory) render. Anything
+  // else - a vertical the server didn't prefetch - still loads client-side.
+  const hasServerData = Boolean(initialData?.length) && !subcategory;
 
-  // Load verticals data on mount
+  const [allData, setAllData] = useState<EntityData[]>(initialData || []);
+  const [loading, setLoading] = useState(!hasServerData);
+  const [error, setError] = useState<string | null>(null);
+  const [verticals, setVerticals] = useState<Vertical[]>(initialVerticals || []);
+
+  // Load verticals data on mount (skipped when the server already sent them)
   useEffect(() => {
+    if (initialVerticals?.length) return;
+
     async function loadVerticals() {
       try {
         const verticalsData = await getAvailableVerticals();
@@ -268,13 +280,24 @@ export default function DemoDashboard({
       }
     }
     loadVerticals();
-  }, []);
+  }, [initialVerticals]);
 
   useEffect(() => {
+    // Don't refetch what the server already rendered.
+    if (hasServerData) {
+      setAllData(initialData || []);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
     async function loadAllMetrics() {
       try {
         setLoading(true);
-        // Use getRecentMetrics instead to get PIPN data
+        // Use getRecentMetrics instead to get PIPN data. The subcategory filter
+        // is applied by the API now - it returns `subcategory` on each row, but
+        // filtering server-side avoids shipping the other verticals entirely.
         const metricsData = await getRecentMetrics(
           'current',
           undefined, // Get all entities
@@ -287,26 +310,26 @@ export default function DemoDashboard({
             'talk_time',
             'wikipedia_views'
           ],
-          100
+          100,
+          'Sports',
+          subcategory
         );
 
-        // Filter by subcategory if specified
-        const filteredData = subcategory
-          ? metricsData.filter(entity => entity.subcategory === subcategory)
-          : metricsData;
-
-        setAllData(filteredData);
+        if (cancelled) return;
+        setAllData(metricsData);
         setError(null);
       } catch (err) {
+        if (cancelled) return;
         console.error('Error loading all metrics:', err);
         setError('Failed to load metrics data');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadAllMetrics();
-  }, [subcategory]);
+    return () => { cancelled = true; };
+  }, [subcategory, hasServerData, initialData]);
 
   // Helper functions for data processing
   const getTopByMetric = (metric: keyof NonNullable<EntityData['metrics']>, limit: number = 5): EntityData[] => {

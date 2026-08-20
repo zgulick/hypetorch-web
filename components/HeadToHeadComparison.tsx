@@ -16,6 +16,8 @@ import { getRecentMetrics, EntityData } from '@/app/lib/dataService_unified';
 interface HeadToHeadProps {
   playerOne: string;
   playerTwo: string;
+  /** Metrics for these two players, prefetched on the server. */
+  initialData?: EntityData[];
 }
 
 interface MetricComparisonProps {
@@ -103,15 +105,39 @@ function MetricComparison({
   );
 }
 
-export default function HeadToHeadComparison({ 
-  playerOne = "Caitlin Clark", 
-  playerTwo = "Angel Reese" 
+/** Keep only the two players we're comparing (case-insensitive). */
+function matchPlayers(rows: EntityData[], playerOne: string, playerTwo: string): EntityData[] {
+  return rows.filter(player =>
+    player.name.toLowerCase() === playerOne.toLowerCase() ||
+    player.name.toLowerCase() === playerTwo.toLowerCase()
+  );
+}
+
+export default function HeadToHeadComparison({
+  playerOne = "Caitlin Clark",
+  playerTwo = "Angel Reese",
+  initialData
 }: HeadToHeadProps) {
-  const [playersData, setPlayersData] = useState<EntityData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const seeded = initialData ? matchPlayers(initialData, playerOne, playerTwo) : [];
+  const hasServerData = seeded.length > 0;
+
+  const [playersData, setPlayersData] = useState<EntityData[]>(seeded);
+  const [loading, setLoading] = useState(!hasServerData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // The server already fetched exactly these two players.
+    if (initialData) {
+      const matched = matchPlayers(initialData, playerOne, playerTwo);
+      if (matched.length > 0) {
+        setPlayersData(matched);
+        setLoading(false);
+        return;
+      }
+    }
+
+    let cancelled = false;
+
     async function loadPlayersData() {
       try {
         setLoading(true);
@@ -131,13 +157,10 @@ export default function HeadToHeadComparison({
           'google_news_mentions'
         ], 50);
 
-        console.log('HeadToHead: Loaded data for', playerOne, 'and', playerTwo, ':', metricsData);
+        if (cancelled) return;
 
         // Filter for our two players (case-insensitive)
-        const filteredData = metricsData.filter(player =>
-          player.name.toLowerCase() === playerOne.toLowerCase() ||
-          player.name.toLowerCase() === playerTwo.toLowerCase()
-        );
+        const filteredData = matchPlayers(metricsData, playerOne, playerTwo);
 
         if (filteredData.length < 2) {
           console.warn('HeadToHead: Only found', filteredData.length, 'players. Looking for:', playerOne, playerTwo);
@@ -145,15 +168,17 @@ export default function HeadToHeadComparison({
 
         setPlayersData(filteredData);
       } catch (err) {
+        if (cancelled) return;
         console.error('Error loading players data:', err);
         setError(`Failed to load data for ${playerOne} and ${playerTwo}`);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadPlayersData();
-  }, [playerOne, playerTwo]);
+    return () => { cancelled = true; };
+  }, [playerOne, playerTwo, initialData]);
 
   // Helper functions
   const getPlayerData = (playerName: string): EntityData | undefined => {

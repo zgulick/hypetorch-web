@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   LineChart, 
   Line, 
@@ -24,6 +24,12 @@ interface WeeklyEvolutionChartProps {
   title?: string;
   height?: number;
   subcategory?: string | null;
+  /** Chart series prefetched on the server, for the default metric/vertical. */
+  initialData?: EvolutionDataPoint[];
+  /** Players `initialData` was built for. */
+  initialPlayers?: string[];
+  /** Entity pool for the player picker, prefetched on the server. */
+  initialAvailablePlayers?: string[];
 }
 
 interface EvolutionDataPoint {
@@ -50,22 +56,35 @@ export default function WeeklyEvolutionChart({
   className = "",
   title = "Weekly Evolution Tracker",
   height = 400,
-  subcategory = null
+  subcategory = null,
+  initialData,
+  initialPlayers,
+  initialAvailablePlayers
 }: WeeklyEvolutionChartProps) {
-  const [data, setData] = useState<EvolutionDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
+  // The server prefetches the default view (no vertical, default metric).
+  // Anything else still loads client-side.
+  const hasServerData = Boolean(initialData?.length) && !subcategory && metric === 'hype_score';
+
+  const [data, setData] = useState<EvolutionDataPoint[]>(initialData || []);
+  const [loading, setLoading] = useState(!hasServerData);
   const [, setError] = useState<string | null>(null);
   const [, setAvailablePeriods] = useState<TimePeriod[]>([]);
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
-  const [allAvailablePlayers, setAllAvailablePlayers] = useState<string[]>([]);
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>(initialPlayers || []);
+  const [allAvailablePlayers, setAllAvailablePlayers] = useState<string[]>(initialAvailablePlayers || []);
   const [isVisible, setIsVisible] = useState(false);
   const [randomizing, setRandomizing] = useState(false);
+
+  // Guards against out-of-order responses. Rapid metric switches or player-chip
+  // clicks used to race, letting a stale response overwrite a newer one.
+  const requestIdRef = useRef(0);
 
   // Function to select random players from available players
   const selectRandomPlayers = async (playerList?: string[]) => {
     try {
       // Use provided list or fetch from API
-      const players = playerList || (await getEntitiesWithMetrics({ subcategory, limit: 50 })).map(e => e.name);
+      const players = playerList?.length
+        ? playerList
+        : (await getEntitiesWithMetrics({ subcategory, limit: 50 })).map(e => e.name);
 
       // Randomly shuffle and pick 5
       const shuffled = [...players].sort(() => 0.5 - Math.random());
@@ -83,41 +102,56 @@ export default function WeeklyEvolutionChart({
 
   // Handler for randomize button
   const handleRandomizePlayers = async () => {
+    const requestId = ++requestIdRef.current;
     try {
       setRandomizing(true);
       const newRandomPlayers = await selectRandomPlayers(allAvailablePlayers);
 
-      // Load new evolution data for the random players
-      const periodsData = await getTimePeriods();
-      setAvailablePeriods(periodsData);
-
       const evolutionData = await getWeeklyEvolutionData(newRandomPlayers, periods, metric);
-      setData(evolutionData);
+      if (requestId === requestIdRef.current) setData(evolutionData);
     } catch (error) {
       console.error('Error randomizing players:', error);
     } finally {
-      setRandomizing(false);
+      if (requestId === requestIdRef.current) setRandomizing(false);
     }
   };
 
   useEffect(() => {
+    // Server already rendered this exact view - don't refetch it.
+    if (hasServerData) {
+      setData(initialData || []);
+      if (initialPlayers?.length) setSelectedPlayers(initialPlayers);
+      if (initialAvailablePlayers?.length) setAllAvailablePlayers(initialAvailablePlayers);
+      setLoading(false);
+      return;
+    }
+
+    const requestId = ++requestIdRef.current;
+
     async function loadEvolutionData() {
       try {
         setLoading(true);
         setError(null);
 
-        // Get available periods first
+        // Get available periods (memoized in the data service)
         const periodsData = await getTimePeriods();
+        if (requestId !== requestIdRef.current) return;
         setAvailablePeriods(periodsData);
 
-        // Always select new random players when subcategory changes
-        const playersToUse = await selectRandomPlayers();
+        // Reuse the server-provided entity pool when we have it, so switching
+        // metric doesn't refetch the whole entity list.
+        const playersToUse = await selectRandomPlayers(
+          subcategory ? undefined : initialAvailablePlayers
+        );
+        if (requestId !== requestIdRef.current) return;
 
         // Get evolution data
         const evolutionData = await getWeeklyEvolutionData(playersToUse, periods, metric);
+        if (requestId !== requestIdRef.current) return;
         setData(evolutionData);
-        
+
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         console.error('Error loading evolution data:', err);
         setError('Failed to load evolution data');
         
@@ -171,13 +205,13 @@ export default function WeeklyEvolutionChart({
         ];
         setData(fallbackData);
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) setLoading(false);
       }
     }
 
     loadEvolutionData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [periods, metric, subcategory]);
+  }, [periods, metric, subcategory, hasServerData]);
 
   // Ensure chart renders properly after component mounts
   useEffect(() => {
@@ -240,19 +274,25 @@ export default function WeeklyEvolutionChart({
   };
 
   const handlePlayerToggle = (player: string) => {
-    if (selectedPlayers.includes(player)) {
-      if (selectedPlayers.length > 1) {
-        const newPlayers = selectedPlayers.filter(p => p !== player);
-        setSelectedPlayers(newPlayers);
-        // Reload data with updated player list
-        getWeeklyEvolutionData(newPlayers, periods, metric).then(setData);
-      }
-    } else {
-      const newPlayers = [...selectedPlayers, player];
-      setSelectedPlayers(newPlayers);
-      // Reload data with updated player list
-      getWeeklyEvolutionData(newPlayers, periods, metric).then(setData);
-    }
+    const isSelected = selectedPlayers.includes(player);
+
+    // Keep at least one player on the chart
+    if (isSelected && selectedPlayers.length <= 1) return;
+
+    const newPlayers = isSelected
+      ? selectedPlayers.filter(p => p !== player)
+      : [...selectedPlayers, player];
+
+    setSelectedPlayers(newPlayers);
+
+    // Reload data with updated player list. Rapid clicking previously let an
+    // earlier response land after a later one; the request id discards stale ones.
+    const requestId = ++requestIdRef.current;
+    getWeeklyEvolutionData(newPlayers, periods, metric)
+      .then(newData => {
+        if (requestId === requestIdRef.current) setData(newData);
+      })
+      .catch(err => console.error('Error updating player selection:', err));
   };
 
   if (loading) {

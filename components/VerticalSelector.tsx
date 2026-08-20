@@ -7,6 +7,8 @@ interface VerticalSelectorProps {
   selected: string | null;
   onChange: (subcategory: string | null) => void;
   className?: string;
+  /** Verticals prefetched on the server; skips the mount fetch when provided. */
+  initialVerticals?: Vertical[];
 }
 
 /**
@@ -29,22 +31,26 @@ interface VerticalSelectorProps {
 export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
   selected,
   onChange,
-  className = ''
+  className = '',
+  initialVerticals
 }) => {
-  const [verticals, setVerticals] = useState<Vertical[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [verticals, setVerticals] = useState<Vertical[]>(initialVerticals || []);
+  const [loading, setLoading] = useState(!initialVerticals?.length);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch available verticals on component mount
+  // Fetch available verticals on component mount (skipped when server-supplied)
   useEffect(() => {
+    if (initialVerticals?.length) {
+      setVerticals(initialVerticals);
+      setLoading(false);
+      return;
+    }
+
     async function loadVerticals() {
       try {
         setLoading(true);
         setError(null);
         const data = await getAvailableVerticals();
-        console.log('🔍 Verticals loaded:', data);
-        console.log('📊 Verticals with recent data:', data.filter(v => v.has_recent_data).length);
-        console.log('⚠️ Verticals without recent data:', data.filter(v => !v.has_recent_data).map(v => v.key));
         setVerticals(data);
       } catch (err) {
         console.error('Error loading verticals:', err);
@@ -55,7 +61,7 @@ export const VerticalSelector: React.FC<VerticalSelectorProps> = ({
     }
 
     loadVerticals();
-  }, []);
+  }, [initialVerticals]);
 
   // Loading state
   if (loading) {
