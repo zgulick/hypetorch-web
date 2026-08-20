@@ -566,15 +566,18 @@ export async function getWeeklyEvolutionData(
     }
 
     const evolutionData = recentPeriods.map(period => {
-      const periodEntry: { time_period: string; display_label: string; [key: string]: string | number } = {
+      const periodEntry: { time_period: string; display_label: string; [key: string]: string | number | null } = {
         time_period: period.time_period,
         display_label: period.display_label
       };
 
-      // Add each player's score for this period
+      // Add each player's score for this period. Use null, not 0, when there is
+      // no data - recharts leaves a gap for null but plots 0 as a real value,
+      // which misreads as "scored zero" instead of "no data".
       for (const player of playerNames) {
         const playerData = byPeriodAndName.get(`${period.time_period}::${player}`);
-        periodEntry[player] = playerData?.metrics?.[metric as keyof typeof playerData.metrics] || 0;
+        const value = playerData?.metrics?.[metric as keyof typeof playerData.metrics];
+        periodEntry[player] = typeof value === 'number' ? value : null;
       }
 
       return periodEntry;

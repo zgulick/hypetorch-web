@@ -35,7 +35,7 @@ interface WeeklyEvolutionChartProps {
 interface EvolutionDataPoint {
   time_period: string;
   display_label: string;
-  [playerName: string]: string | number;
+  [playerName: string]: string | number | null;
 }
 
 // Color palette for players

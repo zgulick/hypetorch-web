@@ -52,7 +52,7 @@ const COMPARISON_METRICS = [
 interface EvolutionDataPoint {
   time_period: string;
   display_label: string;
-  [playerName: string]: string | number;
+  [playerName: string]: string | number | null;
 }
 
 export interface DemoInitialData {
@@ -232,13 +232,36 @@ export async function getDemoInitialData(
     })
   ]);
 
+  // Guard against an API that doesn't support multi-period fetches.
+  //
+  // This page is prerendered and cached for an hour, so a bad render sticks
+  // around. If the deployed API predates the `periods` parameter it ignores the
+  // unknown param, falls through to period="current", and returns only the
+  // current week - which used to silently render as four weeks of zeros.
+  // Requiring real period coverage turns that into a client-side fetch instead.
+  const periodsReturned = new Set(
+    (multiPeriodRows || []).map(r => r.time_period).filter(Boolean)
+  );
+  const evolutionUsable =
+    recentPeriods.length > 0 && periodsReturned.size >= Math.min(2, recentPeriods.length);
+
+  if (!evolutionUsable && recentPeriods.length > 0) {
+    console.error(
+      `[demoData] /metrics/recent returned ${periodsReturned.size} distinct periods for ` +
+      `${recentPeriods.length} requested - does the deployed API support the 'periods' ` +
+      `parameter? Falling back to client-side fetching for the evolution chart.`
+    );
+  }
+
   return {
     currentPeriod: timePeriods?.[0] || null,
     verticals: verticalsResp?.verticals || [],
     entities,
     dashboardMetrics: dashboardMetrics || [],
     comparisonMetrics: comparisonMetrics || [],
-    evolutionData: buildEvolutionSeries(recentPeriods, playerNames, multiPeriodRows || [], metric),
+    evolutionData: evolutionUsable
+      ? buildEvolutionSeries(recentPeriods, playerNames, multiPeriodRows || [], metric)
+      : [],
     playerNames,
     degraded: false
   };
@@ -276,7 +299,11 @@ function buildEvolutionSeries(
       };
       for (const player of playerNames) {
         const playerData = byPeriodAndName.get(`${period.time_period}::${player}`);
-        entry[player] = playerData?.metrics?.[metric as keyof typeof playerData.metrics] as number || 0;
+        const value = playerData?.metrics?.[metric as keyof typeof playerData.metrics];
+        // null, not 0, when the player has no data for this period. Recharts
+        // leaves a gap for null but plots 0 as a real datapoint, which reads as
+        // "this player scored zero" rather than "we have nothing here".
+        entry[player] = typeof value === 'number' ? value : null;
       }
       return entry;
     })
