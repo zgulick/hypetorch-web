@@ -4,11 +4,6 @@ import { useState, useEffect } from 'react';
 import { Trash2, Plus } from 'lucide-react';
 import api from '@/lib/api';
 
-// Add this after your imports and before the component definition
-if (!process.env.NEXT_PUBLIC_ADMIN_SECRET) {
-    console.error("WARNING: NEXT_PUBLIC_ADMIN_SECRET environment variable is not set!");
-  }
-
 interface ApiKey {
   id: number;
   client_name: string;

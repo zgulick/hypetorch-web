@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Copy, Check, ChevronDown, ChevronUp, Code, FileText, Lock } from 'lucide-react';
-import { API_KEY } from '@/lib/api';
 
 export default function ApiDocs() {
   const [expandedSection, setExpandedSection] = useState<string | null>("authentication");
@@ -768,9 +767,9 @@ export default function ApiDocs() {
             <div className="bg-gray-900 rounded-md p-4 mb-4">
               <p className="font-mono text-sm mb-2 text-gray-300">Example:</p>
               <div className="flex justify-between items-center">
-                <code className="font-mono text-sm">X-API-Key: {API_KEY || 'YOUR_API_KEY'}</code>
-                <button 
-                  onClick={() => copyToClipboard(`X-API-Key: ${API_KEY || 'YOUR_API_KEY'}`, "auth-header")}
+                <code className="font-mono text-sm">X-API-Key: YOUR_API_KEY</code>
+                <button
+                  onClick={() => copyToClipboard('X-API-Key: YOUR_API_KEY', "auth-header")}
                   className="text-gray-400 hover:text-white"
                 >
                   {copiedEndpoint === "auth-header" ? <Check size={16} /> : <Copy size={16} />}

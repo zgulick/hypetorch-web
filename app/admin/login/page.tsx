@@ -10,13 +10,24 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (loginAdmin(password)) {
-      router.push('/admin');
-    } else {
-      setError('Invalid password. Please try again.');
+    setError('');
+    setSubmitting(true);
+
+    try {
+      if (await loginAdmin(password)) {
+        // The session cookie is set by the server; refresh so any server-rendered
+        // admin content re-evaluates with it.
+        router.push('/admin');
+        router.refresh();
+      } else {
+        setError('Invalid password. Please try again.');
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -53,9 +64,10 @@ export default function AdminLogin() {
           
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-md font-medium mt-2 hover:opacity-90 transition-opacity"
+            disabled={submitting}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-md font-medium mt-2 hover:opacity-90 transition-opacity disabled:opacity-60"
           >
-            Log In
+            {submitting ? 'Signing in…' : 'Log In'}
           </button>
         </form>
         

@@ -1,41 +1,75 @@
-// Basic authentication for admin panel
-// This is a simple implementation for MVP purposes
+// Client-side helpers for the admin session.
 //
-// SECURITY NOTE: this is not a real authentication boundary. The comparison below
-// runs in the browser, and NEXT_PUBLIC_* values are inlined into the client bundle
-// at build time, so the password is readable by anyone who opens devtools. Moving
-// it here only keeps it out of the git repository. Gating anything that actually
-// matters requires server-side auth (a route handler or middleware validating a
-// session), which this module deliberately does not attempt.
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+// The password check used to happen here, in the browser, against
+// NEXT_PUBLIC_ADMIN_PASSWORD — which Next inlines into the client bundle, so it
+// was readable by anyone with devtools. It now happens on the server in
+// app/api/admin/session/route.ts, and the browser holds only an httpOnly cookie
+// it cannot read. That cookie is what authorises mutations through the API proxy.
 
-// Check if the password is correct
-export function validateAdminPassword(password: string): boolean {
-  // Fail closed: with no password configured, reject everything rather than
-  // letting an empty string through.
-  if (!ADMIN_PASSWORD) {
-    console.error('NEXT_PUBLIC_ADMIN_PASSWORD is not set - admin login is disabled.');
+// Purely a UI affordance: lets the navbar decide whether to render the admin
+// link without an auth probe on every public page load. It is trivially
+// forgeable and grants nothing — the real boundary is the httpOnly session
+// cookie checked server-side in app/api/ht/[...path]/route.ts. Never gate
+// anything that matters on this.
+const UI_HINT_KEY = 'admin-ui-hint';
+
+function setUiHint(present: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (present) localStorage.setItem(UI_HINT_KEY, 'true');
+    else localStorage.removeItem(UI_HINT_KEY);
+  } catch {
+    // Private browsing or blocked storage; the hint is optional.
+  }
+}
+
+/** Synchronous, non-authoritative check for rendering admin UI affordances. */
+export function hasAdminUiHint(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(UI_HINT_KEY) === 'true';
+  } catch {
     return false;
   }
-  return password === ADMIN_PASSWORD;
 }
 
-// Check if the user is authenticated on the client side
-export function isAuthenticated(): boolean {
-  if (typeof window === 'undefined') return false;
-  return localStorage.getItem('admin-auth') === 'true';
-}
-
-// Log in the user
-export function loginAdmin(password: string): boolean {
-  if (validateAdminPassword(password)) {
-    localStorage.setItem('admin-auth', 'true');
-    return true;
+/** Submit a password. Resolves true when the server issued a session. */
+export async function loginAdmin(password: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/admin/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    setUiHint(response.ok);
+    return response.ok;
+  } catch (error) {
+    console.error('Admin login failed:', error);
+    return false;
   }
-  return false;
 }
 
-// Log out the user
-export function logoutAdmin(): void {
-  localStorage.removeItem('admin-auth');
+/**
+ * Ask the server whether the current cookie is a valid session.
+ *
+ * Necessarily async: the session cookie is httpOnly, so it cannot be inspected
+ * from JavaScript. Callers must await rather than branching synchronously.
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const response = await fetch('/api/admin/session', { cache: 'no-store' });
+    setUiHint(response.ok);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function logoutAdmin(): Promise<void> {
+  setUiHint(false);
+  try {
+    await fetch('/api/admin/session', { method: 'DELETE' });
+  } catch (error) {
+    console.error('Admin logout failed:', error);
+  }
 }

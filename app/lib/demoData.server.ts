@@ -25,8 +25,9 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://hypetorch-api.onrender.com/api';
 
-// Prefer a server-only key; fall back to the public one so existing deploys keep working.
-const API_KEY = process.env.API_KEY || process.env.NEXT_PUBLIC_API_KEY || '';
+// Server-only. The NEXT_PUBLIC_API_KEY fallback was removed when the browser
+// stopped holding a key at all — see app/api/ht/[...path]/route.ts.
+const API_KEY = process.env.API_KEY || '';
 
 /** How long a rendered /demo page (and its upstream fetches) stay cached. */
 export const DEMO_REVALIDATE_SECONDS = 3600;

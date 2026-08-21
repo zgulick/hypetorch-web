@@ -1,16 +1,20 @@
 import axios from 'axios';
 
-// API configuration
+// API configuration — see app/lib/api_v2.ts for the isomorphic rationale.
+const IS_SERVER = typeof window === 'undefined';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hypetorch-api.onrender.com/api';
-export const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
+
+// Server-only, and deliberately not exported. It was previously exported and
+// rendered by app/admin/docs — which is statically prerendered, so the build
+// baked the live key into public HTML. Keep it module-private.
+const API_KEY = process.env.API_KEY || '';
 
 // Create a configured axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: IS_SERVER ? API_URL : '/api/ht',
   timeout: 30000, // 30 seconds
-  headers: {
-    'X-API-Key': API_KEY
-  }
+  headers: IS_SERVER && API_KEY ? { 'X-API-Key': API_KEY } : {}
 });
 
 // Add response interceptor to normalize data structure
@@ -37,7 +41,6 @@ api.interceptors.response.use(
 );
 
 // Debug info
-console.log('API URL:', API_URL);
-console.log('API Key configured:', API_KEY ? 'Yes' : 'No');
+console.log('API URL:', api.defaults.baseURL);
 
 export default api;

@@ -19,9 +19,11 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   
-  const handleLogout = () => {
-    logoutAdmin();
+  const handleLogout = async () => {
+    // Await so the server has cleared the session cookie before we navigate.
+    await logoutAdmin();
     router.push('/admin/login');
+    router.refresh();
   };
   
   const isActive = (path: string) => pathname === path;

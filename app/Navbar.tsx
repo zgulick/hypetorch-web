@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Activity, BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from 'next/navigation';
-import { isAuthenticated } from './lib/auth';
+import { hasAdminUiHint } from './lib/auth';
 import ContactModal from '@/components/ContactModal';
 import GetStartedButton from '@/components/GetStartedButton';
 
@@ -14,8 +14,15 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  // Read after mount only: localStorage is unavailable during SSR, and reading it
+  // during render would desync the server and client markup.
+  const [showAdminLink, setShowAdminLink] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    setShowAdminLink(hasAdminUiHint());
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -118,7 +125,7 @@ export default function Navbar() {
             >
               About
             </Link>
-            {isAuthenticated() && (
+            {showAdminLink && (
               <Link 
                 href="/admin" 
                 className={`flex items-center space-x-2 font-medium text-sm tracking-wide transition-colors duration-200 ${
@@ -194,7 +201,7 @@ export default function Navbar() {
               >
                 About
               </Link>
-              {isAuthenticated() && (
+              {showAdminLink && (
                 <Link 
                   href="/admin" 
                   onClick={() => setMobileMenuOpen(false)} 
