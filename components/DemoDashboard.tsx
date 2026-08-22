@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { TrendingUp, MessageSquare, Clock, BarChart3, AlertTriangle } from 'lucide-react';
 
 // Import the unified data service
@@ -85,7 +86,9 @@ function PIPNTile({ data, loading, subcategory, verticals }: PIPNTileProps) {
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 h-full flex flex-col">
       <div className="flex items-center mb-4">
         <BarChart3 className="w-5 h-5 text-cyan-400 mr-2" />
-        <h3 className="text-lg font-semibold text-white">💎 Attention Efficiency</h3>
+        <Link href="/methodology#pipn" title="How this is calculated">
+          <h3 className="text-lg font-semibold text-white hover:text-orange-400 transition-colors">💎 Attention Efficiency</h3>
+        </Link>
       </div>
 
       {/* Rising Stars Section - Mobile: stacks vertically */}
@@ -162,9 +165,30 @@ interface MetricTileProps {
   color: string;
   loading: boolean;
   error: string | null;
+  /** Anchor on /methodology explaining this metric. Omitted for metrics with no section. */
+  methodologyAnchor?: string;
 }
 
-function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, error }: MetricTileProps) {
+/**
+ * Renders a tile heading, linking to the methodology page when that metric has a
+ * documented section. The link wraps the rendered heading rather than altering the
+ * `title` string, because sibling components use label strings as control flow.
+ */
+function TileHeading({ title, methodologyAnchor }: { title: string; methodologyAnchor?: string }) {
+  const heading = <h3 className="text-lg font-semibold text-white ml-2">{title}</h3>;
+  if (!methodologyAnchor) return heading;
+  return (
+    <Link
+      href={methodologyAnchor}
+      className="ml-2 hover:text-orange-400 transition-colors"
+      title="How this is calculated"
+    >
+      <h3 className="text-lg font-semibold text-white hover:text-orange-400 transition-colors">{title}</h3>
+    </Link>
+  );
+}
+
+function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, error, methodologyAnchor }: MetricTileProps) {
   if (loading) {
     return (
       <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700">
@@ -191,7 +215,7 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
       <div className="bg-red-900/20 border border-red-500/20 rounded-xl p-6">
         <div className="flex items-center mb-4">
           {icon}
-          <h3 className="text-lg font-semibold text-white ml-2">{title}</h3>
+          <TileHeading title={title} methodologyAnchor={methodologyAnchor} />
         </div>
         <div className="text-center py-4">
           <p className="text-red-400 font-medium mb-2">API Connection Issue</p>
@@ -207,7 +231,7 @@ function MetricTile({ title, icon, data, formatValue, valueKey, color, loading, 
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 border border-gray-700 h-full flex flex-col">
       <div className="flex items-center mb-4">
         <div className={`text-${color}-400`}>{icon}</div>
-        <h3 className="text-lg font-semibold text-white ml-2">{title}</h3>
+        <TileHeading title={title} methodologyAnchor={methodologyAnchor} />
       </div>
       <div className="space-y-3 flex-grow">
         {data.map((player, index) => (
@@ -344,14 +368,15 @@ export default function DemoDashboard({
   const formatCount = (value: number) => value.toLocaleString();
   const formatTime = (value: number) => `${value.toFixed(1)}m`;
 
-  const tiles = [
+  const tiles: Omit<MetricTileProps, 'loading' | 'error'>[] = [
     {
       title: "Top 5 JORDN Scores",
       icon: <TrendingUp className="w-5 h-5" />,
       data: getTopByMetric('hype_score'),
       formatValue: formatScore,
       valueKey: 'hype_score' as const,
-      color: 'orange'
+      color: 'orange',
+      methodologyAnchor: '/methodology#jordn'
     },
     {
       title: "Top 5 RODMN Scores",
@@ -418,6 +443,7 @@ export default function DemoDashboard({
                 formatValue={tile.formatValue}
                 valueKey={tile.valueKey}
                 color={tile.color}
+                methodologyAnchor={tile.methodologyAnchor}
                 loading={loading}
                 error={error}
               />

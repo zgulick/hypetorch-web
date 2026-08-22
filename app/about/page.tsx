@@ -1,585 +1,354 @@
 "use client";
 
-import { useState } from "react";
-import Navbar from "@/app/Navbar";
+import React from 'react';
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-import ContactModal from '@/components/ContactModal';
-import GetStartedButton from '@/components/GetStartedButton';
-import { 
-  BarChart2, TrendingUp, 
-  LineChart, Target, Database, Brain, Users, 
-  Calendar, ChevronRight
-} from "lucide-react";
+import Image from "next/image";
+import Navbar from "../Navbar";
+import { ArrowRight } from "lucide-react";
 
-export default function About() {
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
-  const [partnerModalOpen, setPartnerModalOpen] = useState(false);
-  
+const metrics = [
+  {
+    name: "JORDN",
+    measures: "Attention — who is being talked about right now",
+    scale: "Population mean = 100"
+  },
+  {
+    name: "PIPN",
+    measures: "Attention efficiency — over- or under-valued relative to social reach",
+    scale: "−100 to +100 (0 = fairly valued)"
+  },
+  {
+    name: "RODMN",
+    measures: "Divisiveness of coverage",
+    scale: "0–10"
+  }
+];
+
+const dataSources = [
+  {
+    lead: "Public RSS feeds only.",
+    body: "No scraping behind logins, no terms-of-service violations."
+  },
+  {
+    lead: "Audio is transcribed and discarded.",
+    body: "Source recordings are never retained or redistributed."
+  },
+  {
+    lead: "Transcripts stay private.",
+    body: "They are retained in an internal store used for deduplication and re-scoring, and are never published or redistributed. What powers the scores is derived data — entity, timestamp, talk time, context."
+  },
+  {
+    lead: "Output is factual.",
+    body: "Counts, durations, and scores. No source content is republished."
+  }
+];
+
+const limitations = [
+  "Podcasts and public web signals only. Not TikTok, Instagram, X, or Twitch.",
+  "English-language sources.",
+  "Measures attention, not brand sentiment.",
+  "Descriptive, not predictive. It tells you what's being said now, not what will happen next.",
+  "Coverage is bounded by the source panel. An entity discussed only on shows we don't index won't appear."
+];
+
+export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+    <main className="relative min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Image 
-              src="/hypetorch-logo.svg" 
-              alt="HypeTorch Logo" 
-              width={60} 
-              height={60} 
-              className="mx-auto mb-6"
-            />
-          </motion.div>
+      {/* Why HypeTorch exists */}
+      <section className="relative w-full px-6 pt-32 pb-16">
+        <div className="max-w-4xl mx-auto">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500"
+            className="text-5xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-amber-500 leading-tight mb-8"
           >
-            The Analytics Evolution
+            Why HypeTorch exists
           </motion.h1>
-          
-          <motion.p
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-xl text-gray-300 max-w-4xl mx-auto mb-10"
+            transition={{ delay: 0.5, duration: 1 }}
+            className="space-y-6 text-lg text-gray-300 leading-relaxed"
           >
-            Just as Bill James revolutionized baseball with sabermetrics, we&apos;re bringing 
-            advanced analytics to narrative intelligence across industries. <span className="text-orange-400">Universal methodology, proven across sports, crypto, and entertainment.</span>
-          </motion.p>
-        </div>
-      </section>
-
-      {/* Three Generations of Sports Analytics */}
-      <section className="py-20 px-6 bg-gray-950">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              Three Generations of Sports Analytics
-            </h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              Each generation built on the last, pushing deeper into what really matters for performance and engagement.
+            <p>
+              I&apos;ve spent my career in product management and data analytics, watching advanced
+              metrics change how teams evaluate players. WAR, PER, expected goals — context-aware
+              numbers that replaced counting stats.
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Sports 1.0 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-xl border border-gray-700"
-            >
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center mr-4">
-                  <BarChart2 className="w-6 h-6 text-gray-300" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Sports 1.0</h3>
-                  <p className="text-gray-400 text-sm">Traditional Stats Era</p>
-                </div>
-              </div>
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-300 mb-3">Basic Metrics:</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li>• Points, rebounds, assists</li>
-                  <li>• Batting average, RBIs, home runs</li>
-                  <li>• Win-loss records</li>
-                  <li>• Basic counting stats</li>
-                </ul>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Simple, surface-level metrics that missed the deeper story of player impact and value.
-              </p>
-            </motion.div>
-
-            {/* Sports 2.0 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 p-8 rounded-xl border border-blue-600/30"
-            >
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
-                  <TrendingUp className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Sports 2.0</h3>
-                  <p className="text-blue-300 text-sm">Advanced Metrics Revolution</p>
-                </div>
-              </div>
-              <div className="mb-6">
-                <h4 className="font-semibold text-blue-200 mb-3">Revolutionary Metrics:</h4>
-                <ul className="space-y-2 text-gray-300">
-                  <li>• WAR (Wins Above Replacement)</li>
-                  <li>• PER (Player Efficiency Rating)</li>
-                  <li>• True Shooting Percentage</li>
-                  <li>• Expected Goals (xG)</li>
-                </ul>
-              </div>
-              <p className="text-gray-300 text-sm">
-                Context-aware analytics that revealed true player value beyond traditional stats.
-              </p>
-            </motion.div>
-
-            {/* Sports 3.0 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-gradient-to-br from-orange-900/30 to-red-900/30 p-8 rounded-xl border border-orange-500/50 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-20 h-20 bg-orange-500/10 rounded-full -mr-10 -mt-10"></div>
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mr-4">
-                  <Brain className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Sports 3.0</h3>
-                  <p className="text-orange-300 text-sm">Narrative Intelligence Era</p>
-                </div>
-              </div>
-              <div className="mb-6">
-                <h4 className="font-semibold text-orange-200 mb-3">HypeTorch AI-Powered Analytics:</h4>
-                <ul className="space-y-2 text-gray-200">
-                  <li>• <strong>Semantic Entity Detection</strong> - AI understands context, not just keywords</li>
-                  <li>• <strong>Enhanced JORDN Algorithm</strong> - Dynamic weights with interaction effects</li>
-                  <li>• <strong>Advanced RODMN Score</strong> - Multi-component controversy analysis</li>
-                  <li>• <strong>Vector-Based Intelligence</strong> - 50% better entity recognition accuracy</li>
-                  <li>• <strong>Narrative Evolution AI</strong> - Real-time storyline momentum tracking</li>
-                </ul>
-              </div>
-              <p className="text-gray-200 text-sm font-medium">
-                <strong>Next-level intelligence:</strong> Our AI doesn&apos;t just count mentions—it understands context, identifies &quot;the rookie from Iowa&quot; as Caitlin Clark, and detects narrative patterns before they explode.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Founder Story Section */}
-      <section className="py-20 px-6 bg-gray-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-                Identifying the Gap in Sports Media Analytics
-              </h2>
-              <div className="space-y-6 text-gray-300">
-                <p className="leading-relaxed">
-                  With a background in product management and data analytics, I witnessed firsthand how 
-                  advanced metrics transformed decision-making in sports performance. Yet sports media 
-                  remained stuck with basic social metrics—likes, views, and follower counts.
-                </p>
-                <p className="leading-relaxed">
-                  <span className="text-orange-400 font-semibold">The problem was clear:</span> Sports media companies 
-                  needed deeper intelligence to identify trending storylines, optimize content timing, 
-                  and stay ahead of narrative cycles. Traditional metrics couldn&apos;t distinguish between 
-                  viral moments and sustained influence.
-                </p>
-                <p className="leading-relaxed">
-                  HypeTorch bridges this gap by applying the same advanced analytics approach that 
-                  revolutionized player evaluation to the realm of sports media and cultural influence.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 shadow-xl">
-                <div className="flex items-center mb-6">
-                  <Target className="w-8 h-8 text-orange-400 mr-3" />
-                  <h3 className="text-xl font-bold text-white">The Vision</h3>
-                </div>
-                <blockquote className="text-lg text-gray-300 italic mb-6 leading-relaxed">
-                  &quot;The universal narrative intelligence platform that tracks influence across every platform, 
-                  every industry, every conversation—from podcasts to TikTok, sports to politics, 
-                  entertainment to crypto. Real-time narrative intelligence at global scale.&quot;
-                </blockquote>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-gradient-to-r from-red-900/30 to-pink-900/30 rounded-lg border border-red-500/20">
-                      <div className="text-lg font-bold text-red-400 mb-1">All Platforms</div>
-                      <div className="text-xs text-gray-400">TikTok, X, Instagram, Twitch, YouTube, Meta</div>
-                    </div>
-                    <div className="text-center p-4 bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-lg border border-blue-500/20">
-                      <div className="text-lg font-bold text-blue-400 mb-1">All Industries</div>
-                      <div className="text-xs text-gray-400">Sports, Entertainment, Politics, Crypto, Business</div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-gradient-to-r from-green-900/30 to-teal-900/30 rounded-lg border border-green-500/20">
-                      <div className="text-lg font-bold text-green-400 mb-1">Real-Time</div>
-                      <div className="text-xs text-gray-400">Live narrative tracking & instant alerts</div>
-                    </div>
-                    <div className="text-center p-4 bg-gradient-to-r from-orange-900/30 to-amber-900/30 rounded-lg border border-orange-500/20">
-                      <div className="text-lg font-bold text-orange-400 mb-1">Global Scale</div>
-                      <div className="text-xs text-gray-400">Millions of entities across all markets</div>
-                    </div>
-                  </div>
-                  <div className="text-center p-3 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-lg border border-purple-500/20">
-                    <div className="text-sm text-purple-300 font-semibold">Today: Podcasts + Sports. Tomorrow: Everything, Everywhere.</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Universal Narrative Intelligence Section */}
-      <section className="py-20 px-6 bg-gray-900">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold text-white mb-6">
-              Universal Narrative Intelligence
-            </h2>
-          </motion.div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h3 className="text-orange-400 text-xl mb-4">The Problem We Solve</h3>
-              <p className="text-gray-300 mb-4">
-                Traditional metrics miss the story. Likes, views, and follower counts 
-                tell you what happened, not what&apos;s driving real influence or what&apos;s coming next.
-              </p>
-              <p className="text-gray-300">
-                Podcast conversations contain the most authentic, long-form discussions 
-                about entities across every vertical. Our AI processes these conversations 
-                to generate actionable intelligence.
-              </p>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <h3 className="text-orange-400 text-xl mb-4">Proven Results</h3>
-              <ul className="text-gray-300 space-y-2">
-                <li>🏀 <strong>Sports:</strong> Predicted Caitlin Clark momentum 2 weeks before mainstream coverage</li>
-                <li>🏈 <strong>NFL:</strong> Identified narrative gaps in Chicago Bears player coverage</li>
-                <li>💰 <strong>Crypto:</strong> Quantified discussion volume vs price action correlations</li>
-                <li>🎬 <strong>Entertainment:</strong> Early controversy detection for talent management</li>
-              </ul>
-            </motion.div>
-          </div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="mt-8 p-6 bg-gray-800/50 rounded-lg"
-          >
-            <h4 className="text-white font-semibold mb-2">Why WNBA as Our Live Demo?</h4>
-            <p className="text-gray-400">
-              We chose WNBA/Unrivaled as our public showcase because it&apos;s a rapidly evolving league 
-              with passionate podcast coverage. It perfectly demonstrates our algorithms in action. 
-              The same technology that tracks Caitlin Clark&apos;s narrative momentum can measure 
-              Bitcoin discussion patterns, NFL player perception, or Hollywood star controversies.
+            <p>
+              Sports media never got that upgrade. Decisions about which athletes to sign, feature,
+              or pay still run on follower counts and impressions. Those measure audience size. They
+              don&apos;t measure influence.
+            </p>
+            <p className="text-2xl font-semibold text-white">
+              HypeTorch measures what people actually say.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Value Proposition Section */}
-      <section className="py-20 px-6 bg-gray-950">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              Advanced Analytics for Narrative Intelligence
-            </h2>
-            <p className="text-lg text-gray-400 max-w-4xl mx-auto">
-              Just as advanced metrics revolutionized player evaluation, our algorithms are transforming narrative intelligence across all industries.
-            </p>
-          </motion.div>
-
-          {/* Analogy Comparisons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
-          >
-            <div className="bg-gradient-to-br from-orange-900/20 to-red-900/20 p-8 rounded-xl border border-orange-500/20">
-              <div className="flex items-center mb-4">
-                <LineChart className="w-8 h-8 text-orange-400 mr-3" />
-                <h3 className="text-xl font-bold text-white">Enhanced JORDN Algorithm (HYPE 2.0)</h3>
-              </div>
-              <p className="text-lg text-orange-200 font-medium mb-4">
-                &quot;What WAR was to RBIs, HRs, and Batting Average, Enhanced JORDN is to likes, views and impressions&quot;
-              </p>
-              <div className="space-y-3 mb-4">
-                <div className="text-sm">
-                  <span className="text-orange-300 font-semibold">Dynamic Weighting:</span>
-                  <span className="text-gray-300"> Algorithm adapts weights based on data quality and information gain</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-orange-300 font-semibold">Interaction Effects:</span>
-                  <span className="text-gray-300"> Detects viral moments (talk + mentions), mainstream breakthroughs, and community debates</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-orange-300 font-semibold">Commercial Consistency:</span>
-                  <span className="text-gray-300"> Always averages 100 for reliable benchmarking across time periods</span>
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm">
-                Next-generation influence measurement that captures complex narrative dynamics and momentum patterns traditional metrics miss entirely.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-red-900/20 to-purple-900/20 p-8 rounded-xl border border-red-500/20">
-              <div className="flex items-center mb-4">
-                <TrendingUp className="w-8 h-8 text-red-400 mr-3" />
-                <h3 className="text-xl font-bold text-white">Advanced RODMN Algorithm (Controversy 2.0)</h3>
-              </div>
-              <p className="text-lg text-red-200 font-medium mb-4">
-                &quot;What PER was to points, rebounds, and assists, Enhanced RODMN is to toxicity, controversy and sentiment&quot;
-              </p>
-              <div className="space-y-3 mb-4">
-                <div className="text-sm">
-                  <span className="text-red-300 font-semibold">Multi-Component Analysis:</span>
-                  <span className="text-gray-300"> Polarization (35%), Volatility (25%), Intensity (20%), Disagreement (20%)</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-red-300 font-semibold">Controversy-First Design:</span>
-                  <span className="text-gray-300"> Independent from popularity—controversial unknowns can score 10/10</span>
-                </div>
-                <div className="text-sm">
-                  <span className="text-red-300 font-semibold">JORDN Amplification:</span>
-                  <span className="text-gray-300"> Formula: controversy_coefficient × (1 + JORDN/200) for context weighting</span>
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm">
-                Next-level controversy intelligence that identifies divisive topics and PR risks before they explode into public crises.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Current Capabilities */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-xl border border-gray-700"
-          >
-            <div className="flex items-center mb-6">
-              <Database className="w-8 h-8 text-blue-400 mr-3" />
-              <h3 className="text-2xl font-bold text-white">AI-Enhanced Capabilities</h3>
-              <div className="ml-3 px-3 py-1 bg-orange-600/20 border border-orange-500/30 rounded-full">
-                <span className="text-orange-300 text-sm font-semibold">50% Better Accuracy</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-orange-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Brain className="w-8 h-8 text-orange-400" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Semantic Entity Detection</h4>
-                <p className="text-sm text-gray-400">AI-powered context understanding with 384-dimensional embeddings</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <TrendingUp className="w-8 h-8 text-red-400" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Enhanced JORDN 2.0</h4>
-                <p className="text-sm text-gray-400">Dynamic weighting with interaction effects and viral moment detection</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Database className="w-8 h-8 text-purple-400" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Advanced RODMN 2.0</h4>
-                <p className="text-sm text-gray-400">4-component controversy analysis with polarization detection</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Calendar className="w-8 h-8 text-green-400" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Vector-Based Intelligence</h4>
-                <p className="text-sm text-gray-400">Sentence transformers with cosine similarity for contextual matching</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Vision Forward Section */}
-      <section className="py-20 px-6 bg-gray-900">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-              The AI Revolution is Just Getting Started
-            </h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              Our semantic detection and enhanced algorithms represent Sports 3.0. We&apos;re already building the AI foundation for Sports 4.0—where predictive narrative intelligence meets real-time audience behavior modeling.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
-            >
-              <div className="flex items-center mb-4">
-                <ChevronRight className="w-6 h-6 text-orange-400 mr-2" />
-                <h3 className="text-lg font-semibold text-white">Expanding Data Sources</h3>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Integrating additional platforms and media sources to create the most comprehensive 
-                sports influence database in the industry.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
-            >
-              <div className="flex items-center mb-4">
-                <ChevronRight className="w-6 h-6 text-blue-400 mr-2" />
-                <h3 className="text-lg font-semibold text-white">Predictive Capabilities</h3>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Developing machine learning models to predict narrative timing and viral potential, 
-                helping media companies optimize content strategy.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700"
-            >
-              <div className="flex items-center mb-4">
-                <ChevronRight className="w-6 h-6 text-green-400 mr-2" />
-                <h3 className="text-lg font-semibold text-white">Sports 4.0: Predictive AI</h3>
-              </div>
-              <p className="text-gray-400 text-sm">
-                Advanced transformer models for narrative forecasting, audience behavior prediction, 
-                and real-time content optimization. The next evolution beyond our current semantic intelligence.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-br from-orange-900/20 to-red-900/20">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* What it does */}
+      <section className="relative w-full px-6 py-16 bg-gradient-to-b from-gray-950 to-black">
+        <div className="max-w-4xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-3xl md:text-4xl font-bold mb-6 text-white"
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
           >
-            Ready to Join the <span className="text-orange-400">Analytics Evolution?</span>
+            What it does
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-gray-300 mb-8 text-lg max-w-3xl mx-auto"
+            className="text-lg text-gray-300 leading-relaxed mb-8"
           >
-            Join forward-thinking sports media companies using HypeTorch to identify trending storylines, 
-            optimize content timing, and stay ahead of the narrative cycle.
+            Every week, HypeTorch ingests podcast episodes, transcribes them, and identifies which
+            entities were discussed, for how long, and in what context. Those signals become three
+            scores:
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="bg-gray-800/50 border border-gray-700 rounded-lg divide-y divide-gray-700 mb-6"
           >
-            <GetStartedButton size="lg" href="/pricing">
-              Get Started
-            </GetStartedButton>
-            
-            <button 
-              onClick={() => setPartnerModalOpen(true)}
-              className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg flex items-center justify-center gap-2 transition-colors w-full sm:w-auto"
+            {metrics.map((metric) => (
+              <div key={metric.name} className="px-6 py-5">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+                  <span className="text-lg font-bold text-orange-400">{metric.name}</span>
+                  <span className="text-sm text-gray-500 font-mono">{metric.scale}</span>
+                </div>
+                <p className="text-gray-300">{metric.measures}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mb-10"
+          >
+            <Link
+              href="/methodology"
+              className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 font-semibold transition-colors"
             >
-              <Users size={20} />
-              Partner With Us
-            </button>
+              Full methodology <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-lg text-gray-300 leading-relaxed"
+          >
+            Podcasts are the most honest long-form discussion available. Nobody optimises a two-hour
+            conversation for engagement. What gets talked about is what people genuinely care about —
+            and it shows up there before it shows up anywhere else.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Where the data comes from */}
+      <section className="relative w-full px-6 py-16">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
+          >
+            Where the data comes from
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-lg text-gray-300 mb-8"
+          >
+            If you&apos;re licensing this, you should know exactly what&apos;s underneath it.
+          </motion.p>
+
+          <div className="space-y-4">
+            {dataSources.map((item, index) => (
+              <motion.div
+                key={item.lead}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-gray-800/50 border border-gray-700 rounded-lg px-6 py-5"
+              >
+                <p className="text-gray-300 leading-relaxed">
+                  <strong className="text-white">{item.lead}</strong> {item.body}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What it doesn't do */}
+      <section className="relative w-full px-6 py-16 bg-gradient-to-b from-gray-950 to-black">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
+          >
+            What it doesn&apos;t do
+          </motion.h2>
+
+          <ul className="space-y-4">
+            {limitations.map((item, index) => (
+              <motion.li
+                key={item}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                className="flex items-start gap-3 text-lg text-gray-300 leading-relaxed"
+              >
+                <span className="text-orange-500 mt-1 flex-shrink-0">—</span>
+                <span>{item}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Coverage */}
+      <section className="relative w-full px-6 py-16">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
+          >
+            Coverage
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="space-y-6 text-lg text-gray-300 leading-relaxed"
+          >
+            <p>
+              Currently running weekly across <strong className="text-white">Unrivaled</strong> and{' '}
+              <strong className="text-white">NBA</strong>.
+            </p>
+            <p>
+              New populations and new source panels are configuration, not development.
+            </p>
           </motion.div>
         </div>
       </section>
-      
+
+      {/* Who's behind it */}
+      <section className="relative w-full px-6 py-16 bg-gradient-to-b from-gray-950 to-black">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
+          >
+            Who&apos;s behind it
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="space-y-6 text-lg text-gray-300 leading-relaxed"
+          >
+            <p>
+              HypeTorch is built and run by <strong className="text-white">Zach Burma</strong>.
+            </p>
+            <p>
+              The pipeline has run unattended every week since{' '}
+              <strong className="text-white">January 2026</strong>.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Get in touch */}
+      <section className="relative w-full px-6 py-16 text-center">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-white mb-8"
+          >
+            Get in touch
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Link href="/contact">
+              <button className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg text-white font-semibold text-lg transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105">
+                Contact
+              </button>
+            </Link>
+            <Link href="/demo">
+              <button className="px-8 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
+                See the live demo
+              </button>
+            </Link>
+            <Link href="/pricing">
+              <button className="px-8 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
+                Pricing
+              </button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="w-full py-12 bg-gray-950 border-t border-gray-800 text-gray-400">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
-                <Image 
-                  src="/hypetorch-logo.svg" 
-                  alt="HypeTorch Logo" 
-                  width={32} 
-                  height={32} 
+                <Image
+                  src="/hypetorch-logo.svg"
+                  alt="HypeTorch Logo"
+                  width={32}
+                  height={32}
                   className="mr-3"
                 />
                 <span className="text-xl font-bold text-white">HypeTorch</span>
@@ -592,6 +361,7 @@ export default function About() {
                 <ul className="space-y-2">
                   <li><Link href="/demo" className="hover:text-orange-400 transition-colors">Platform Demo</Link></li>
                   <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
+                  <li><Link href="/methodology" className="hover:text-orange-400 transition-colors">Methodology</Link></li>
                   <li><Link href="/docs" className="hover:text-orange-400 transition-colors">API Docs</Link></li>
                 </ul>
               </div>
@@ -609,23 +379,6 @@ export default function About() {
           </div>
         </div>
       </footer>
-      
-      {/* Contact Modals */}
-      <ContactModal
-        isOpen={demoModalOpen}
-        onClose={() => setDemoModalOpen(false)}
-        title="Request a Demo"
-        subtitle="Experience our advanced analytics intelligence"
-        inquiryType="demo"
-      />
-      
-      <ContactModal
-        isOpen={partnerModalOpen}
-        onClose={() => setPartnerModalOpen(false)}
-        title="Partnership Inquiry"
-        subtitle="Explore partnership opportunities with HypeTorch"
-        inquiryType="partnership"
-      />
-    </div>
+    </main>
   );
 }

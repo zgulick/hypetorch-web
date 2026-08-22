@@ -4,9 +4,21 @@ import React, { useState } from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Navbar from "../Navbar";
-import { Check, Star, Zap, BarChart3, Crown, ChevronDown, ChevronRight, Eye } from "lucide-react";
+import { Star, BarChart3, ChevronDown, ChevronRight, Eye } from "lucide-react";
 import ContactModal from '@/components/ContactModal';
 import GetStartedButton from '@/components/GetStartedButton';
+
+interface PricingTier {
+  name: string;
+  price: string;
+  billing?: string;        // omitted for Free and Contact
+  description: string;
+  popular?: boolean;
+  cta: string;
+  ctaHref?: string;        // Link-based CTA (Live demo)
+  ctaAction?: () => void;  // modal-based CTA
+  hasApiDocs?: boolean;
+}
 
 export default function PricingPage() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -22,84 +34,65 @@ export default function PricingPage() {
     setContactModalOpen(true);
   };
 
-  const pricingTiers = [
+  const pricingTiers: PricingTier[] = [
     {
-      name: "Custom Report",
+      name: "Live demo",
+      price: "Free",
+      description: "Our population, our sources, weekly. Prove it works.",
+      cta: "See the Live Demo",
+      ctaHref: "/demo"
+    },
+    {
+      name: "Pilot",
       price: "$2,500",
-      billing: "One-time",
-      description: "One-time podcast-based analytics report",
-      popular: false,
-      features: [
-        "One-time podcast-based analytics report",
-        "JORDN & RODMN scores for your entities",
-        "Professional PDF with charts and insights",
-        "5-7 business day delivery",
-        "Raw data appendix"
-      ],
-      cta: "Get Started",
-      ctaAction: () => openContactModal('sales', 'Custom Report Request', 'Tell us about your one-time analytics needs')
+      billing: "one-time",
+      description: "Your entity list, our sources, one-time report. Credits to annual.",
+      cta: "Start a Pilot",
+      ctaAction: () => openContactModal('sales', 'Pilot Request', 'Tell us which entities you want measured')
     },
     {
-      name: "Recurring Intelligence",
-      price: "$1,500",
-      billing: "per month",
-      description: "Weekly automated reports plus API access",
+      name: "Standard",
+      price: "$15,000",
+      billing: "per year",
+      description: "Your population, our sources, weekly, API access",
       popular: true,
-      features: [
-        "Weekly automated reports",
-        "Basic API access (500 calls/month)",
-        "Email support",
-        "Historical trend analysis",
-        "Cancel anytime"
-      ],
-      cta: "Configure Intelligence",
-      ctaAction: () => openContactModal('sales', 'Recurring Intelligence Setup', 'Tell us about your ongoing analytics needs')
+      cta: "Get Standard",
+      ctaAction: () => openContactModal('sales', 'Standard Plan Inquiry', 'Tell us about your population and how you want to consume the data'),
+      hasApiDocs: true
     },
     {
-      name: "Full Platform Access",
-      price: "$3,500",
-      billing: "per month",
-      description: "Everything plus unlimited API and early access",
-      popular: false,
-      earlyAccess: true,
-      features: [
-        "Everything in Recurring Intelligence",
-        "Unlimited API access",
-        "Priority support & monthly consultation calls",
-        "EARLY ACCESS: New metrics as we develop them",
-        "BETA: RNALDO Score (Social + Traditional + JORDN hybrid)",
-        "White-label options"
-      ],
-      cta: "Schedule Technical Demo",
-      ctaAction: () => openContactModal('demo', 'Full Platform Demo Request', 'Let\'s schedule a technical demo of our complete platform'),
-      hasApiDocs: true
+      name: "Custom",
+      price: "Contact",
+      description: "Your population, your sources, your cadence, new verticals",
+      cta: "Talk to Us",
+      ctaAction: () => openContactModal('sales', 'Custom Engagement', 'Tell us about your sources, cadence, and vertical')
     }
   ];
 
   const faqItems = [
     {
-      question: "What's included in each tier?",
-      answer: "Each tier builds on the previous one. Custom Report gives you a one-time analysis, Monthly Intelligence adds ongoing reports and API access, and Full Platform Access includes everything plus unlimited API calls, priority support, and early access to new features."
+      question: "What's the difference between the live demo and a pilot?",
+      answer: "The live demo runs on our population and our sources, refreshed weekly. It costs nothing and exists to prove the methodology works before you spend anything. A pilot points the same engine at your entity list and delivers a one-time report on the entities you actually care about."
     },
     {
-      question: "How quickly can I get my first report?",
-      answer: "Custom reports are delivered in 5-7 business days. Monthly Intelligence and Full Platform Access provide immediate API access, with your first automated report generated within 24 hours of setup."
+      question: "Does the pilot cost apply to an annual contract?",
+      answer: "Yes. The $2,500 pilot fee credits in full toward Standard if you move to an annual contract. The pilot is designed as a first step, not a separate purchase."
     },
     {
-      question: "Can I upgrade anytime?",
-      answer: "Yes, you can upgrade or downgrade with 30 days notice. We'll pro-rate your billing accordingly. Custom Report customers get credit toward monthly plans."
+      question: "What does \"your sources\" mean in Custom?",
+      answer: "Standard runs on our source set — the podcasts and feeds we already ingest. Custom means we bring in sources you specify: your own shows, regional or niche feeds, or channels outside our current coverage. Custom also covers non-weekly cadences and standing up an entirely new vertical."
     },
     {
-      question: "Do you offer custom enterprise solutions?",
-      answer: "Yes, we work with enterprise clients on custom data partnerships, white-label solutions, and industry-specific implementations. Contact us to discuss your specific needs."
+      question: "How quickly do I get my first pilot report?",
+      answer: "Pilot reports are delivered in 5-7 business days from the time we have your entity list. Standard customers get their first weekly refresh within 24 hours of setup, with API access live immediately."
     },
     {
-      question: "What industries do you cover?",
-      answer: "We've successfully analyzed WNBA/Unrivaled (live demo), NFL teams, cryptocurrency, and entertainment. Our methodology works for any industry where podcast conversations happen. If people talk about your entities on podcasts, we can measure their influence."
+      question: "Is API access included?",
+      answer: "Standard and Custom both include API access to your scores and historical data. The live demo and pilot are report-only. See the API documentation for endpoints and response formats."
     },
     {
-      question: "Can you analyze my industry even if it's not sports?", 
-      answer: "Yes. Our algorithms work for any vertical where podcast conversations happen. We've successfully analyzed cryptocurrency, NFL teams, entertainment, and business entities. If people talk about it on podcasts, we can measure it."
+      question: "What verticals do you cover, and can you do mine?",
+      answer: "We've analyzed WNBA/Unrivaled (the live demo), NFL teams, cryptocurrency, and entertainment. The methodology works for any vertical where podcast conversations happen — if people talk about your entities on podcasts, we can measure their influence. Standing up a new vertical is a Custom engagement."
     }
   ];
 
@@ -125,7 +118,7 @@ export default function PricingPage() {
             transition={{ delay: 0.5, duration: 1 }}
             className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-4 font-medium"
           >
-            Professional podcast analysis using proven JORDN & RODMN algorithms
+            Start free on our population. Scale to yours.
           </motion.h2>
 
           <motion.p
@@ -134,7 +127,7 @@ export default function PricingPage() {
             transition={{ delay: 0.7, duration: 1 }}
             className="text-lg text-gray-400 max-w-2xl mx-auto mb-8"
           >
-            Choose your analytics tier and get started immediately
+            See the live demo for free, pilot your own entity list, then move to an annual contract with API access
           </motion.p>
 
           <motion.div
@@ -155,159 +148,72 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <section className="relative w-full px-6 py-16">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                className={`relative rounded-2xl p-8 ${
-                  tier.popular 
-                    ? 'bg-gradient-to-b from-orange-900/20 to-red-900/20 border-2 border-orange-500/50' 
-                    : 'bg-gray-800/50 border border-gray-700'
-                }`}
-              >
-                {tier.earlyAccess && (
-                  <div className="absolute -top-4 -right-4">
-                    <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
-                      <Crown size={14} />
-                      EARLY ACCESS
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {pricingTiers.map((tier, index) => {
+              const ctaClasses = `w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
+                tier.popular
+                  ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105'
+                  : 'bg-gray-700 text-white hover:bg-gray-600'
+              }`;
+
+              return (
+                <motion.div
+                  key={tier.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  className={`relative flex flex-col rounded-2xl p-8 ${
+                    tier.popular
+                      ? 'bg-gradient-to-b from-orange-900/20 to-red-900/20 border-2 border-orange-500/50'
+                      : 'bg-gray-800/50 border border-gray-700'
+                  }`}
+                >
+                  {tier.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-1 whitespace-nowrap">
+                        <Star size={14} />
+                        RECOMMENDED
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-2 rounded-full text-sm font-bold flex items-center gap-1">
-                      <Star size={14} />
-                      RECOMMENDED
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                  <p className="text-gray-400 mb-4">{tier.description}</p>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-white">{tier.price}</span>
-                    <span className="text-gray-400 ml-2">/{tier.billing}</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-4 mb-8">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-3">
-                      <Check size={16} className="text-orange-500 mt-1 flex-shrink-0" />
-                      <span className="text-gray-300">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={tier.ctaAction}
-                    className={`w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
-                      tier.popular
-                        ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:shadow-lg hover:shadow-orange-500/25 hover:scale-105'
-                        : 'bg-gray-700 text-white hover:bg-gray-600'
-                    }`}
-                  >
-                    {tier.cta}
-                  </button>
-                  {tier.hasApiDocs && (
-                    <Link href="/docs" className="w-full">
-                      <button className="w-full py-3 bg-transparent border border-gray-600 hover:border-orange-500 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center gap-2">
-                        <BarChart3 size={16} />
-                        View API Documentation
-                      </button>
-                    </Link>
                   )}
-                </div>
-              </motion.div>
-            ))}
+
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-white mb-3">{tier.name}</h3>
+                    <p className="text-gray-400 mb-6 min-h-[4.5rem]">{tier.description}</p>
+                    <div className="mb-8">
+                      <span className="text-4xl font-bold text-white">{tier.price}</span>
+                      {tier.billing && (
+                        <span className="text-gray-400 ml-2">/{tier.billing}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-auto space-y-3">
+                    {tier.ctaHref ? (
+                      <Link href={tier.ctaHref} className="block">
+                        <button className={ctaClasses}>{tier.cta}</button>
+                      </Link>
+                    ) : (
+                      <button onClick={tier.ctaAction} className={ctaClasses}>
+                        {tier.cta}
+                      </button>
+                    )}
+                    {tier.hasApiDocs && (
+                      <Link href="/docs" className="block">
+                        <button className="w-full py-3 bg-transparent border border-gray-600 hover:border-orange-500 rounded-lg text-gray-300 font-medium transition-colors flex items-center justify-center gap-2">
+                          <BarChart3 size={16} />
+                          API Docs
+                        </button>
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-
-      {/* Future Analytics Section */}
-      <section className="relative w-full px-6 py-16 bg-gradient-to-b from-gray-950 to-black">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500"
-          >
-            The Future of &quot;Athletes as Influencer&quot; Analytics
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-xl text-gray-300 max-w-4xl mx-auto mb-12"
-          >
-            We&apos;re building the next generation of off-court performance analytics. While others focus on what happens during games, we measure influence, narrative power, and digital impact that drives modern sports business.
-          </motion.p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[
-              {
-                icon: <Zap className="w-8 h-8 text-orange-500" />,
-                title: "RNALDO Score",
-                description: "Combines social follower momentum, traditional performance metrics, and JORDN influence scores"
-              },
-              {
-                icon: <BarChart3 className="w-8 h-8 text-red-500" />,
-                title: "Predictive Timing",
-                description: "Algorithm that suggests optimal content release timing"
-              },
-              {
-                icon: <Star className="w-8 h-8 text-amber-500" />,
-                title: "Cross-Sport Expansion", 
-                description: "NFL, NBA, entertainment industry applications"
-              },
-              {
-                icon: <Crown className="w-8 h-8 text-orange-600" />,
-                title: "Controversy Impact",
-                description: "Advanced RODMN variants for crisis management"
-              }
-            ].map((metric, index) => (
-              <motion.div
-                key={metric.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-800/50 rounded-lg p-6 border border-gray-700"
-              >
-                <div className="mb-4">{metric.icon}</div>
-                <h3 className="text-lg font-semibold text-white mb-2">{metric.title}</h3>
-                <p className="text-gray-400 text-sm">{metric.description}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-500/30 rounded-lg p-8"
-          >
-            <h3 className="text-2xl font-bold text-white mb-4">Early Access Policy</h3>
-            <p className="text-gray-300 text-lg">
-              <strong className="text-orange-400">Tier 3</strong> customers get immediate access to new metrics. 
-              <strong className="text-orange-400 ml-2">Tier 2</strong> gets access after 3 months. 
-              <strong className="text-orange-400 ml-2">Tier 1</strong> reports include new metrics 6 months after release.
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <section className="relative w-full px-6 py-16">
@@ -373,7 +279,7 @@ export default function PricingPage() {
             viewport={{ once: true }}
             className="text-xl text-gray-300 mb-8"
           >
-            Advanced analytics starting at $2,500 for custom reports, scaling to full API access for enterprise needs.
+            Start with the free live demo. Pilot your own entity list for $2,500 — credited toward your annual.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -389,11 +295,6 @@ export default function PricingPage() {
             >
               Get Started Today
             </GetStartedButton>
-            <Link href="/demo">
-              <button className="px-10 py-4 bg-transparent border border-gray-700 hover:border-orange-500 rounded-lg text-white font-semibold text-lg transition-colors">
-                View Demo First
-              </button>
-            </Link>
           </motion.div>
         </div>
       </section>

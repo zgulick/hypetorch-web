@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
   TrendingUp,
   MessageSquare,
@@ -29,7 +30,16 @@ interface MetricComparisonProps {
   playerTwoName: string;
   formatValue: (value: number) => string;
   color: string;
+  /** Anchor on /methodology explaining this metric. Undefined for metrics with no section. */
+  methodologyAnchor?: string;
 }
+
+// Keyed by API field, not by display label: `label` is load-bearing control flow
+// below (the PIPN branch), so it must stay an untouched plain string.
+const METHODOLOGY_ANCHORS: Record<string, string> = {
+  hype_score: '/methodology#jordn',
+  pipn_score: '/methodology#pipn'
+};
 
 function MetricComparison({
   icon,
@@ -39,7 +49,8 @@ function MetricComparison({
   playerOneName,
   playerTwoName,
   formatValue,
-  color
+  color,
+  methodologyAnchor
 }: MetricComparisonProps) {
   // Special handling for PIPN which can be negative
   let playerOnePercent: number;
@@ -66,7 +77,13 @@ function MetricComparison({
     <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
       <div className="flex items-center mb-3">
         <div className={`text-${color}-400 mr-2`}>{icon}</div>
-        <h4 className="text-white font-semibold text-sm">{label}</h4>
+        {methodologyAnchor ? (
+          <Link href={methodologyAnchor} title="How this is calculated">
+            <h4 className="text-white font-semibold text-sm hover:text-orange-400 transition-colors">{label}</h4>
+          </Link>
+        ) : (
+          <h4 className="text-white font-semibold text-sm">{label}</h4>
+        )}
       </div>
       
       {/* Values */}
@@ -363,6 +380,7 @@ export default function HeadToHeadComparison({
                 playerTwoName={playerTwo}
                 formatValue={metric.formatValue}
                 color={metric.color}
+                methodologyAnchor={METHODOLOGY_ANCHORS[metric.key]}
               />
             </motion.div>
           );

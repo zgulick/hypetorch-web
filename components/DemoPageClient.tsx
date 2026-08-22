@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { LineChart, Users } from 'lucide-react';
+import { LineChart, Users, ArrowRight } from 'lucide-react';
 
 // recharts (~94 KB gzipped) was the single largest contributor to this route's
 // bundle. The chart's own `isVisible` gate means it never rendered during SSR
@@ -134,6 +135,14 @@ export default function DemoPageClient({ initialData }: DemoPageClientProps) {
       {/* Key Metrics Dashboard */}
       <section id="metrics-dashboard" className="py-12 px-6 bg-gray-900">
         <div className="max-w-7xl mx-auto">
+          <div className="flex justify-end mb-4">
+            <Link
+              href="/methodology"
+              className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-orange-400 transition-colors"
+            >
+              How these are calculated <ArrowRight size={14} />
+            </Link>
+          </div>
           <DemoDashboard
             subcategory={selectedVertical}
             initialData={serverViewActive ? initialData.dashboardMetrics : undefined}

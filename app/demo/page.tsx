@@ -203,6 +203,7 @@ export default async function PlatformDemo() {
                 <ul className="space-y-2">
                   <li><Link href="/reports" className="hover:text-orange-400 transition-colors">Reports & Analytics</Link></li>
                   <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
+                  <li><Link href="/methodology" className="hover:text-orange-400 transition-colors">Methodology</Link></li>
                 </ul>
               </div>
               <div>

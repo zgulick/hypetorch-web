@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
-import { BarChart2, Target, Zap, Eye, Calendar } from "lucide-react";
+import { BarChart2, Target, Zap, Eye, Calendar, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 // Import new components
@@ -157,7 +157,7 @@ export default function Home() {
                 talk time, social signals, and search interest into a single popularity score.
               </p>
               <p className="text-sm text-gray-500">
-                Scale: 0-200+ (100 = average)
+                Scale: population average = 100
               </p>
             </div>
 
@@ -187,6 +187,15 @@ export default function Home() {
               <p className="text-sm text-gray-500">
                 Scale: -100 to +100 (0 = fairly valued)
               </p>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <Link
+                href="/methodology"
+                className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 font-semibold transition-colors"
+              >
+                Full methodology <ArrowRight size={16} />
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -526,6 +535,7 @@ export default function Home() {
                 <ul className="space-y-2">
                   <li><Link href="/reports" className="hover:text-orange-400 transition-colors">Reports & Analytics</Link></li>
                   <li><Link href="/pricing" className="hover:text-orange-400 transition-colors">Pricing</Link></li>
+                  <li><Link href="/methodology" className="hover:text-orange-400 transition-colors">Methodology</Link></li>
                 </ul>
               </div>
               <div>

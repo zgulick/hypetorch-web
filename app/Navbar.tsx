@@ -96,7 +96,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center md:space-x-6 lg:space-x-8">
             <a 
               href="#how-it-works" 
               className="font-medium text-sm tracking-wide transition-colors duration-200 text-gray-300 hover:text-orange-400"
@@ -115,8 +115,28 @@ export default function Navbar() {
               <BarChart3 size={16} />
               <span>Live Demo</span>
             </Link>
-            <Link 
-              href="/about" 
+            <Link
+              href="/pricing"
+              className={`font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/pricing')
+                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1'
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/methodology"
+              className={`font-medium text-sm tracking-wide transition-colors duration-200 ${
+                isActiveRoute('/methodology')
+                  ? 'text-orange-400 border-b-2 border-orange-400 pb-1'
+                  : 'text-gray-300 hover:text-orange-400'
+              }`}
+            >
+              Methodology
+            </Link>
+            <Link
+              href="/about"
               className={`font-medium text-sm tracking-wide transition-colors duration-200 ${
                 isActiveRoute('/about') 
                   ? 'text-orange-400 border-b-2 border-orange-400 pb-1' 
@@ -192,8 +212,26 @@ export default function Navbar() {
                 <BarChart3 size={20} />
                 <span>Live Demo</span>
               </Link>
-              <Link 
-                href="/about" 
+              <Link
+                href="/pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/pricing') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                }`}
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/methodology"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`font-medium py-2 border-b border-gray-700 transition-colors ${
+                  isActiveRoute('/methodology') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'
+                }`}
+              >
+                Methodology
+              </Link>
+              <Link
+                href="/about"
                 onClick={() => setMobileMenuOpen(false)} 
                 className={`font-medium py-2 border-b border-gray-700 transition-colors ${
                   isActiveRoute('/about') ? 'text-orange-400' : 'text-gray-300 hover:text-orange-400'

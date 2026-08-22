@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import Navbar from "@/app/Navbar";
 import { motion } from "framer-motion";
 import { 
@@ -262,6 +263,9 @@ print(data)`,
               <TrendingUp className="w-8 h-8 text-blue-400 mb-3" />
               <div className="text-2xl font-bold text-white mb-1">8</div>
               <div className="text-sm text-gray-400">Core Metrics</div>
+              <Link href="/methodology" className="text-xs text-blue-400 hover:text-orange-400 transition-colors">
+                How they&apos;re calculated →
+              </Link>
             </div>
             <div className="bg-gradient-to-br from-green-900/20 to-teal-900/20 p-6 rounded-xl border border-green-500/20">
               <BarChart3 className="w-8 h-8 text-green-400 mb-3" />
