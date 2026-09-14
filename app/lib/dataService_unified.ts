@@ -260,8 +260,11 @@ export async function getRecentMetrics(
     const params: Record<string, string | number> = { period, limit };
     if (entities) params.entities = entities.join(',');
     if (metrics) params.metrics = metrics.join(',');
-    if (category) params.category = category;
+    // subcategory wins - see the note in getEntitiesWithMetrics. Callers pass
+    // 'Sports' positionally by default, so sending both would return nothing for
+    // any vertical outside Sports.
     if (subcategory) params.subcategory = subcategory;
+    else if (category) params.category = category;
 
     const response = await apiV2.get('/metrics/recent', { params });
     return response.data;
@@ -343,11 +346,16 @@ export async function getEntitiesWithMetrics(params?: MetricsParams): Promise<En
     console.log('getEntitiesWithMetrics called with:', params);
     console.log('Query params being sent:', queryParams);
 
-    // Default to Sports category if not specified
+    // A subcategory already identifies exactly one vertical, and the server ANDs
+    // category with it - so defaulting category to 'Sports' made every request
+    // for a non-Sports vertical return an empty list. Hospitality/Hotels went
+    // out as `?subcategory=Hotels&category=Sports` and matched nothing.
+    //
+    // The default still applies to the unfiltered view, where it is what keeps
+    // stale Crypto entities out of the cross-vertical lists.
     if (params?.category) {
       queryParams.category = params.category;
-    } else if (params?.category !== null) {
-      // Only add default if category wasn't explicitly set to null
+    } else if (params?.category !== null && !queryParams.subcategory) {
       queryParams.category = 'Sports';
     }
 

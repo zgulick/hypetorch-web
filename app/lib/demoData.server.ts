@@ -194,16 +194,21 @@ export async function getDemoInitialData(
   metric: string = 'hype_score',
   periods: number = 5
 ): Promise<DemoInitialData> {
-  const entityParams: Record<string, string | number> = { limit: 50, category: 'Sports' };
+  // category and subcategory are ANDed server-side, and a subcategory already
+  // identifies one vertical - so category is sent only for the unfiltered view,
+  // where it keeps stale Crypto entities out. Sending both returned nothing for
+  // any vertical outside Sports.
+  const entityParams: Record<string, string | number> = { limit: 50 };
   if (subcategory) entityParams.subcategory = subcategory;
+  else entityParams.category = 'Sports';
 
   const dashboardParams: Record<string, string | number> = {
     period: 'current',
     limit: 100,
-    metrics: DASHBOARD_METRICS.join(','),
-    category: 'Sports'
+    metrics: DASHBOARD_METRICS.join(',')
   };
   if (subcategory) dashboardParams.subcategory = subcategory;
+  else dashboardParams.category = 'Sports';
 
   // Wave 1 — independent requests, all in parallel.
   const [timePeriods, verticalsResp, entitiesResp, dashboardMetrics] = await Promise.all([
@@ -233,7 +238,9 @@ export async function getDemoInitialData(
           entities: playerNames.join(','),
           metrics: metric,
           limit: 100,
-          category: 'Sports'
+          // Named entities are already the filter; a category on top of them
+          // would drop every name outside Sports.
+          ...(subcategory ? {} : { category: 'Sports' })
         })
       : Promise.resolve<EntityData[]>([]),
     apiGet<EntityData[]>('/metrics/recent', {
@@ -241,7 +248,7 @@ export async function getDemoInitialData(
       entities: `${playerOne},${playerTwo}`,
       metrics: COMPARISON_METRICS.join(','),
       limit: 50,
-      category: 'Sports'
+      ...(subcategory ? {} : { category: 'Sports' })
     })
   ]);
 
