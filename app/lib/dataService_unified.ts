@@ -294,7 +294,11 @@ export async function getRecentMetricsForPeriods(
     };
     if (entities) params.entities = entities.join(',');
     if (metrics) params.metrics = metrics.join(',');
-    if (category) params.category = category;
+    // Named entities are already the filter, and category is ANDed with them
+    // server-side - so the 'Sports' default silently emptied the evolution chart
+    // for every hotel brand. Only the sole caller exists
+    // (getWeeklyEvolutionData) and it always passes names.
+    if (category && !entities?.length) params.category = category;
 
     const response = await apiV2.get('/metrics/recent', { params });
     return response.data;
