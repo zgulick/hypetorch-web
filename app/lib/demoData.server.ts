@@ -29,8 +29,20 @@ const API_URL =
 // stopped holding a key at all — see app/api/ht/[...path]/route.ts.
 const API_KEY = process.env.API_KEY || '';
 
-/** How long a rendered /demo page (and its upstream fetches) stay cached. */
-export const DEMO_REVALIDATE_SECONDS = 3600;
+/**
+ * How long a rendered /demo page (and its upstream fetches) stay cached.
+ *
+ * 60s rather than an hour so a pipeline run shows up on the site promptly.
+ * This is cheap here because the site has essentially one visitor: ISR only
+ * regenerates on request, so a page nobody loads costs nothing. It is
+ * stale-while-revalidate either way, so visitors never wait on a rebuild -
+ * they get the cached copy while the new one is built behind them.
+ *
+ * Keep in sync with `export const revalidate` in app/demo/page.tsx, which has
+ * to be a literal. Changing only one of the two means the page rebuilds on the
+ * shorter interval but re-uses fetch data cached on the longer one.
+ */
+export const DEMO_REVALIDATE_SECONDS = 60;
 
 /** Metrics the dashboard and comparison views render. */
 const DASHBOARD_METRICS = [

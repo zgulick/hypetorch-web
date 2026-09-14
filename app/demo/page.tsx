@@ -36,7 +36,7 @@ import { getDemoInitialData } from '@/app/lib/demoData.server';
 // Must be a literal - Next.js statically analyses this export, so it cannot be
 // an imported constant. Keep in sync with DEMO_REVALIDATE_SECONDS in
 // app/lib/demoData.server.ts, which controls the upstream fetch cache.
-export const revalidate = 3600; // 1 hour
+export const revalidate = 60; // 1 minute - see DEMO_REVALIDATE_SECONDS
 
 export default async function PlatformDemo() {
   const initialData = await getDemoInitialData();
