@@ -23,6 +23,7 @@ export interface Vertical {
   has_recent_data: boolean;       // Whether vertical has data in last 30 days
   last_updated: string | null;    // Last metric timestamp (ISO format)
   has_person_entities: boolean;   // Whether vertical contains person-type entities
+  has_reach_data?: boolean;       // Whether any entity has social reach collected (gates PIPN)
 }
 
 // Cache for verticals data

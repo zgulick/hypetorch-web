@@ -20,9 +20,16 @@ interface PIPNTileProps {
 function PIPNTile({ data, loading, subcategory, verticals }: PIPNTileProps) {
   // Get vertical metadata from verticals array
   const currentVertical = verticals.find(v => v.key === subcategory);
-  const isNonPersonVertical = currentVertical && !currentVertical.has_person_entities;
+  // PIPN is attention percentile minus reach percentile, so what gates it is
+  // whether we have follower counts - not whether the entities are people. A
+  // hotel brand has an Instagram account and a meaningful attention-per-
+  // follower score. Falls back to the old person check when the deployed API
+  // predates has_reach_data, so an API/web version skew degrades to the
+  // previous behaviour rather than hiding the tile everywhere.
+  const hasReachData = currentVertical?.has_reach_data ?? currentVertical?.has_person_entities;
+  const missingReachData = currentVertical && !hasReachData;
 
-  if (isNonPersonVertical) {
+  if (missingReachData) {
     return (
       <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700/50 opacity-50">
         <div className="flex items-center mb-4">
@@ -30,7 +37,7 @@ function PIPNTile({ data, loading, subcategory, verticals }: PIPNTileProps) {
           <h3 className="text-lg font-semibold text-gray-500">Attention Efficiency</h3>
         </div>
         <div className="text-center py-8">
-          <p className="text-gray-500">PIPN available for people only</p>
+          <p className="text-gray-500">No social reach data for this vertical</p>
         </div>
       </div>
     );
