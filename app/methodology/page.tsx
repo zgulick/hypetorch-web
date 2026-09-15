@@ -31,6 +31,10 @@ const pipelineSteps = [
     body: "For each entity and episode: mention count, talk time, and context. Transcripts are retained in a private internal store used for deduplication and re-scoring; they are never published or redistributed."
   },
   {
+    title: "Collect external signals",
+    body: "Each entity is then looked up against public sources outside the podcast corpus: Wikipedia pageviews, Google Trends search interest, Reddit mention volume, and Google News mention counts. Lookups run one entity at a time and are deliberately paced to stay inside each source's rate limits, so this is the slowest stage of the run. Google News is collected for context but is not a JORDN component."
+  },
+  {
     title: "Score",
     body: "Signals are combined into JORDN, PIPN, and RODMN, then written to the database and exposed via API."
   }
