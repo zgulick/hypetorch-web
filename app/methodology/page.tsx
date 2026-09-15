@@ -32,7 +32,7 @@ const pipelineSteps = [
   },
   {
     title: "Collect external signals",
-    body: "Each entity is then looked up against public sources outside the podcast corpus: Wikipedia pageviews, Google Trends search interest, Reddit mention volume, and Google News mention counts. Lookups run one entity at a time and are deliberately paced to stay inside each source's rate limits, so this is the slowest stage of the run. Google News is collected for context but is not a JORDN component."
+    body: "Each entity is then looked up against public sources outside the podcast corpus: Wikipedia pageviews, Google Trends search interest, Reddit mention volume, and Google News mention counts. Lookups run one entity at a time and are deliberately paced to stay inside each source's rate limits, so this is the slowest stage of the run."
   },
   {
     title: "Score",
